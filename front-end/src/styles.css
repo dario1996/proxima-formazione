@@ -1,0 +1,69 @@
+/* You can add global styles to this file, and also import other style files */
+/* ================== BASE =================== */
+:root {
+  --primary-color: #add7f6;
+  --secondary-color: #f0f9ff;
+}
+
+.sc-primary {
+  background-color: var(--primary-color) !important;
+  /* Altri stili del pulsante... */
+}
+
+.sc-secondary {
+  background-color: var(--secondary-color) !important;
+  /* Altri stili del pulsante... */
+}
+
+/* body {
+  position: relative;
+  min-height: 100vh;
+}
+
+body.offcanvas-active {
+  overflow: hidden;
+} */
+
+.main-wrap {
+  margin-left: 260px;
+}
+
+.content-main {
+  padding: 30px 3%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(255, 255, 255);
+}
+
+.content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.content-header a {
+  margin-right: 5px;
+}
+
+.content-header .content-title {
+  margin-bottom: 0;
+}
+
+.main-header {
+  padding-left: 3%;
+  padding-right: 3%;
+  min-height: 72px;
+  background-color: #fff;
+  border-bottom: 1px solid rgba(108, 117, 125, 0.25);
+}
+
+.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.col-lg-10 {
+  height: calc(100vh - 120px); /* Altezza disponibile tra header e footer */
+  overflow-y: auto; /* Abilita lo scroll interno se necessario */
+}

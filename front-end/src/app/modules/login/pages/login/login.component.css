@@ -1,0 +1,25 @@
+.alert {
+  margin-top: 2%;
+}
+
+.background-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/images/light-bulb-with-drawing-graph.jpg'); /* Percorso assoluto */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1; /* Assicura che l'immagine sia dietro a tutto il contenuto */
+}
+
+.form-container {
+  position: relative; /* Necessario per assicurare che il contenuto del form sia sopra l'immagine di sfondo */
+  z-index: 1;
+}
+
+.margin {
+  padding-top: 8%;
+}

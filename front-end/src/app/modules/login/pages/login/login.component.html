@@ -1,0 +1,78 @@
+<div class="container-fluid">
+  <app-external-header [title]="titolo"></app-external-header>
+
+  <div class="row">
+    <div class="col-12 d-flex justify-content-center align-items-start mt-5">
+      <form #myForm="ngForm" (ngSubmit)="gestAuth()" class="w-100" style="max-width: 600px;">
+        <div class="card shadow-lg p-3">
+          <!-- Titolo -->
+          <div class="card-header text-center sc-primary fw-bold fs-4">
+            Accesso al sistema
+          </div>
+
+          <div class="card-body">
+            <!-- Username -->
+            <div class="mb-4">
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" id="username" name="username" class="form-control form-control-default"
+                  [(ngModel)]="userId" required placeholder="Inserisci username">
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                <input type="password" id="password" name="password" class="form-control form-control-default"
+                  [(ngModel)]="password" required placeholder="Inserisci password">
+              </div>
+            </div>
+
+            <!-- Link "Password dimenticata?" -->
+            <div class="text-center mb-3">
+              <a href="#" class="text-primary text-decoration-none">
+                <i class="fas fa-question-circle me-1"></i> Password dimenticata?
+              </a>
+            </div>
+
+            <!-- Link "Non hai un account? Registrati" -->
+            <div class="text-center mb-4">
+              <span class="text-muted me-2">Non hai un account?</span>
+              <a routerLink="/signup" class="text-primary text-decoration-none">
+                <i class="fas fa-user-plus me-1"></i> Registrati
+              </a>
+            </div>
+
+
+            <!-- Pulsanti -->
+            <div class="d-flex justify-content-between mb-3">
+              <button type="submit" class="btn btn-primary btn-sm w-100 me-2">
+                <i class="fas fa-sign-in-alt me-1"></i> Accedi
+              </button>
+              <button type="button" (click)="annulla()" class="btn btn-secondary btn-sm w-100">
+                <i class="fas fa-times me-1"></i> Annulla
+              </button>
+            </div>
+
+            <app-spinner></app-spinner>
+
+            @if (viewMsg) {
+            <div class="alert alert-danger" role="alert">
+              {{ errMsg }}
+            </div>
+            } @else if (notlogged) {
+            <div class="alert alert-danger" role="alert">
+              {{ errMsg2 }}
+            </div>
+            } @else if (expired) {
+            <div class="alert alert-danger" role="alert">
+              {{ errMsg3 }}
+            </div>
+            }
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

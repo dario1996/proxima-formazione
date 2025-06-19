@@ -1,0 +1,16 @@
+<form class="d-flex align-items-center gap-2">
+  <label for="language" class="fw-bold text-muted d-flex align-items-center gap-1">
+    <i class="fas fa-store text-primary"></i>
+    Negozio:
+  </label>
+  <div class="position-relative">
+    <select class="form-select shadow-sm border-primary fw-semibold" [(ngModel)]="negozioAttivoId" name="negozio"
+      (change)="switchNegozio()">
+      @for (negozio of negozi; track negozio) {
+        <option [value]="negozio.shopId">
+          {{ negozio.shopName }}
+        </option>
+      }
+    </select>
+  </div>
+</form>

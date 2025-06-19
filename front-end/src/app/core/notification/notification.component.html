@@ -1,0 +1,43 @@
+<div class="bell">
+  <button class="bell-button" (click)="openModal()">
+    <i class="material-icons md-notifications_active"></i>
+  </button>
+  <div class="bell__count">
+    <div class="bell__count__digits">
+      {{ notCount }}
+    </div>
+  </div>
+</div>
+@if (isOpenModal) {
+<app-modal [title]="modalTitle" (closeModal)="closeModal()">
+  <div class="modal-body-content">
+    <!-- Notifiche Nuove -->
+    <span class="section-title">Nuove</span>
+    <div class="alert alert-warning mt-3 text-center" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span class="ms-2">Nessun servizio disponibile a sistema.</span>
+    </div>
+
+    <!-- Separatore -->
+    <div class="separator">
+      <span>Da leggere</span>
+    </div>
+
+    <!-- Notifiche Da Leggere -->
+    <div class="alert alert-danger mt-3 text-center" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span class="ms-2">Nessun servizio disponibile a sistema.</span>
+    </div>
+    <div class="alert alert-info mt-3 text-center" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span class="ms-2">Nessun servizio disponibile a sistema.</span>
+    </div>
+  </div>
+
+  <div class="modal-footer-content">
+    <button type="button" class="btn btn-secondary btn-sm me-2" (click)="closeModal()">
+      Chiudi
+    </button>
+  </div>
+</app-modal>
+}

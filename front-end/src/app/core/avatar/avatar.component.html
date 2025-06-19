@@ -1,0 +1,39 @@
+<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#">
+  @if (isLogged) {
+    <img
+      class="img-xs rounded-circle"
+      src="/assets/images/avatars/avatar4.jpg"
+      alt="User"
+      width="35"
+      height="35"
+    />
+  } @else {
+    <img
+      class="img-xs rounded-circle"
+      src="/assets/images/avatars/offline_user.png"
+      alt="User"
+      width="35"
+      height="35"
+    />
+  }
+</a>
+<div class="dropdown-menu dropdown-menu-end">
+  <a class="dropdown-item" routerLink="/login">Accedi</a>
+  <a class="dropdown-item" routerLink="/signup">Registrati</a>
+
+  @if (!isLogged) {
+    <a class="dropdown-item disabled" href="#">Settings</a>
+  } @else {
+    <a class="dropdown-item" routerLink="/user/settings">Settings</a>
+  }
+
+  <hr class="dropdown-divider" />
+
+  @if (isLogged) {
+    <a class="dropdown-item text-danger" routerLink="/logout"
+      >Logout {{ userName }}</a
+    >
+  } @else {
+    <a class="dropdown-item disabled" routerLink="/logout">Logout</a>
+  }
+</div>

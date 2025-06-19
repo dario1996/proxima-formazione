@@ -1,0 +1,23 @@
+<!-- Select Lingua -->
+<!-- <form class="d-flex">
+    <select class="form-select me-2" id="language" [value]="currentLang" (change)="changeLanguage($event)">
+        <option disabled>Seleziona un'opzione</option>
+        <option value="it">Italiano</option>
+        <option value="en">English</option>
+    </select>
+</form> -->
+
+<!-- Selettore Lingua con Stile Migliorato -->
+<form class="d-flex align-items-center gap-2">
+    <label for="language" class="fw-bold text-muted">
+        🌍 Lingua:
+    </label>
+    <div class="position-relative">
+        <select class="form-select shadow-sm border-primary fw-semibold" id="language" [value]="currentLang"
+            (change)="changeLanguage($event)">
+            <!-- <option disabled>🌐 Seleziona una lingua</option> -->
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="en">🇬🇧 English</option>
+        </select>
+    </div>
+</form>

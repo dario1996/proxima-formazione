@@ -1,0 +1,39 @@
+/* Logo adattabile */
+.logo-img {
+  height: 80px;
+  width: 80px;
+  border-radius: 30%;
+}
+
+/* Testo responsivo con limite massimo */
+.logo_name {
+  font-size: clamp(24px, 5vw, 50px); /* Minimo 24px, dinamico fino a max 50px */
+  color: #333;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  font-family: 'Lucida Handwriting', cursive;
+  text-align: center;
+}
+
+/* Regole specifiche per schermi piccoli */
+@media (max-width: 768px) {
+  .logo_name {
+    font-size: clamp(20px, 6vw, 40px); /* Adatta per tablet e telefoni */
+  }
+
+  .logo-img {
+    height: 60px;
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo_name {
+    font-size: clamp(18px, 7vw, 35px); /* Ancora più piccolo su mobile */
+  }
+
+  .logo-img {
+    height: 50px;
+    width: 50px;
+  }
+}
