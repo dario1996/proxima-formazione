@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
     console.log(`Lo stato di autenticazione è: (${this.autenticato()})`);
 
     if (this.autenticato()) {
-      this.route.navigate(['smart-control']);
+      this.route.navigate(['gestionale-formazione']);
     }
   });
 

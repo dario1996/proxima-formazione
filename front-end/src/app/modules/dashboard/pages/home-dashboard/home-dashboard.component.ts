@@ -287,19 +287,19 @@ export class HomeDashboardComponent implements OnInit, AfterViewInit {
 
   // Azioni rapide
   async goToNuovoAppuntamento() {
-    this.route.navigate(['smart-control/appointment-calendar'], {
+    this.route.navigate(['gestionale-formazione/appointment-calendar'], {
       queryParams: { openNew: true },
     });
   }
 
   goToNuovoCliente() {
-    this.route.navigate(['smart-control/customers-management'], {
+    this.route.navigate(['gestionale-formazione/customers-management'], {
       queryParams: { openNew: true },
     });
   }
 
   goToNuovoServizio() {
-    this.route.navigate(['smart-control/services-management'], {
+    this.route.navigate(['gestionale-formazione/services-management'], {
       queryParams: { openNew: true },
     });
   }

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "smart-control-ui": {
+    "gestionale-formazione-ui": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/smart-control-ui",
+            "outputPath": "dist/gestionale-formazione-ui",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -59,10 +59,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "smart-control-ui:build:production"
+              "buildTarget": "gestionale-formazione-ui:build:production"
             },
             "development": {
-              "buildTarget": "smart-control-ui:build:development"
+              "buildTarget": "gestionale-formazione-ui:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -70,7 +70,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "smart-control-ui:build"
+            "buildTarget": "gestionale-formazione-ui:build"
           }
         },
         "test": {

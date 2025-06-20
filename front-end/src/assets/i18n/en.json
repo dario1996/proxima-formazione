@@ -1,7 +1,7 @@
 {
   "common": {
     "goBack": "Go Back",
-    "externalTitle": "Smart Control | {{ title }}",
+    "externalTitle": "Management Training | {{ title }}",
     "pagination": {
       "previous": "Previous",
       "next": "Next"

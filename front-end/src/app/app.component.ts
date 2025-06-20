@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
   imports: [RouterOutlet, FooterComponent],
 })
 export class AppComponent implements OnInit {
-  title = 'smart-control-ui';
+  title = 'gestionale-formazione-ui';
   private translate = inject(TranslateService);
   private defaultLang = 'it';
 
