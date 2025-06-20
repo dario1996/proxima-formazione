@@ -22,11 +22,9 @@ body {
   font-style: normal !important;
 }
 
-/* ...existing code... */
-
-body.offcanvas-active {
+/* body.offcanvas-active {
   overflow: hidden;
-} */
+}  */
 
 .main-wrap {
   margin-left: 260px;

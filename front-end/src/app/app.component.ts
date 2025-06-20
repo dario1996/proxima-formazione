@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 
-import { FooterComponent } from './core/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -9,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
   standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  imports: [RouterOutlet, FooterComponent],
+  imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {
   title = 'gestionale-formazione-ui';
