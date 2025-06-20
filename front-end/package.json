@@ -14,7 +14,7 @@
     "serve:en": "ng serve --configuration=en",
     "prettier:check": "npx prettier --check .",
     "prettier:write": "npx prettier --write .",
-    "start-all": "concurrently \"mvn -f ../backend/pom.xml spring-boot:run\" \"ng serve\""
+    "start-all": "concurrently \"cd ../back-end && mvnw.cmd spring-boot:run\" \"ng serve\""
   },
   "private": true,
   "dependencies": {

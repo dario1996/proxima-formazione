@@ -11,7 +11,7 @@ import { map } from 'rxjs';
 })
 export class AuthJwtService {
   server: string = environment.server;
-  port: string = environment.negozioServicePort;
+  //port: string = environment.negozioServicePort;
 
   constructor(
     private httpClient: HttpClient,
