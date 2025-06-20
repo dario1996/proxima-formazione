@@ -112,8 +112,8 @@
 				<version>3.3.1</version>
 				<executions>
 					<execution>
-						<id>copy-react-build</id>
-						<phase>prepare-package</phase>
+						<id>copy-angular-build</id>
+						<phase>process-resources</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
@@ -121,7 +121,7 @@
 							<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
 							<resources>
 								<resource>
-									<directory>../front-end/dist</directory>
+									<directory>../front-end/dist/smart-control-ui</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>
