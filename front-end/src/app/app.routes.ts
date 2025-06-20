@@ -9,7 +9,7 @@ export const routes: Routes = [
     redirectTo: 'login',
   },
   {
-    path: 'smart-control',
+    path: 'gestionale-formazione',
     loadComponent: () =>
       import('./modules/home/pages/welcome/welcome.component').then(
         m => m.WelcomeComponent,

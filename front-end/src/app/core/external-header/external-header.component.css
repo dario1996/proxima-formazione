@@ -1,17 +1,15 @@
 /* Logo adattabile */
 .logo-img {
-  height: 80px;
-  width: 80px;
-  border-radius: 30%;
+  width: 200px;
+  /* border-radius: 30%; */
 }
 
 /* Testo responsivo con limite massimo */
 .logo_name {
   font-size: clamp(24px, 5vw, 50px); /* Minimo 24px, dinamico fino a max 50px */
   color: #333;
-  font-weight: bold;
+  /* font-weight: bold; */
   transition: all 0.3s ease;
-  font-family: 'Lucida Handwriting', cursive;
   text-align: center;
 }
 

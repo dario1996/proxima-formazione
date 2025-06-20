@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 /* ================== BASE =================== */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
+
 :root {
   --primary-color: #add7f6;
   --secondary-color: #f0f9ff;
@@ -15,10 +17,12 @@
   /* Altri stili del pulsante... */
 }
 
-/* body {
-  position: relative;
-  min-height: 100vh;
+body {
+  font-family: 'Roboto Slab', serif !important;
+  font-style: normal !important;
 }
+
+/* ...existing code... */
 
 body.offcanvas-active {
   overflow: hidden;

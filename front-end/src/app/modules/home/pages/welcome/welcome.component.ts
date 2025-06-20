@@ -136,7 +136,7 @@ export class WelcomeComponent implements OnInit {
 
   utente = '';
 
-  titolo = 'Benvenuti in Smart Control';
+  titolo = 'Benvenuti in Gestionale Fortmazione';
   sottotitolo = 'Visualizza le offerte del giorno';
 
   constructor(
