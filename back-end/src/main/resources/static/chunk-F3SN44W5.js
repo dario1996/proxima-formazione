@@ -1,0 +1,1 @@
+import{S as e,k as i}from"./chunk-LKX4623Y.js";var n=(()=>{class t{constructor(){this.loading=new i(!1),this.loading$=this.loading.asObservable(),this.show=()=>this.loading.next(!0),this.hide=()=>this.loading.next(!1)}static{this.\u0275fac=function(o){return new(o||t)}}static{this.\u0275prov=e({token:t,factory:t.\u0275fac,providedIn:"root"})}}return t})();export{n as a};
