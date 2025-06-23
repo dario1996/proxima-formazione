@@ -19,7 +19,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Utenti
 {
-	
 	@Id
 	@Column(name = "username")
 	private String username;
@@ -30,14 +29,8 @@ public class Utenti
 	@Column(name = "password")
 	private String password;
 	
-	@Column(name = "cellulare")
-	private String cellulare;
-	
 	@Column(name = "attivo")
 	private String attivo = "Si";
-	
-	@Column(name = "flagprivacy")
-	private String flagPrivacy = "Si";
 	
 	@Column(name = "ruoli")
 	private List<String> ruoli;
