@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
     console.log(`Lo stato di autenticazione è: (${this.autenticato()})`);
 
     if (this.autenticato()) {
-      this.route.navigate(['gestionale-formazione']);
+      this.route.navigate(['/corsi']);
     }
   });
 
@@ -83,11 +83,11 @@ export class LoginComponent implements OnInit {
 
     this.Auth.autenticaService(this.userId, this.password).subscribe({
       next: response => {
-        console.log(response);
+        console.log('Login effettuato con successo:', response);
         this.autenticato.set(true);
       },
       error: error => {
-        console.log(error);
+        console.error('Errore durante il login:', error);
         this.viewMsg = true;
         this.autenticato.set(false);
       },
@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit {
   };
 
   annulla() {
-    this.userId = ''; // Resetta il campo username
-    this.password = ''; // Resetta il campo password
+    this.userId = '';
+    this.password = '';
   }
 }

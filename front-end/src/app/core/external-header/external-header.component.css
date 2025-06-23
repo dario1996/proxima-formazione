@@ -1,7 +1,9 @@
 /* Logo adattabile */
 .logo-img {
-  width: 200px;
-  /* border-radius: 30%; */
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 /* Testo responsivo con limite massimo */
@@ -20,8 +22,7 @@
   }
 
   .logo-img {
-    height: 60px;
-    width: 60px;
+    max-width: 150px;
   }
 }
 
@@ -31,7 +32,6 @@
   }
 
   .logo-img {
-    height: 50px;
-    width: 50px;
+    max-width: 120px;
   }
 }
