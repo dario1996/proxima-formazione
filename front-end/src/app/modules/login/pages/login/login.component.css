@@ -1,7 +1,7 @@
 .container-fluid {
   min-height: 100vh;
-  /*background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);*/
-  background-image: url('../../../../assets/images/bg-login.jpg');
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
+  /*background-image: url('../../../../assets/images/bg-login.jpg');*/
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
