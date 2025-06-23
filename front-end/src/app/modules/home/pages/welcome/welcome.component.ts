@@ -1,4 +1,4 @@
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { SalutiDataService } from '../../../../core/services/data/saluti-data.service';
 
@@ -59,6 +59,7 @@ export class WelcomeComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private salutiSrv: SalutiDataService,
+    private router: Router // aggiunto qui
   ) {}
 
   ngOnInit(): void {
@@ -93,4 +94,11 @@ export class WelcomeComponent implements OnInit {
   selectLink(link: any): void {
     this.selectedLink = link;
   }
+
+  logout() {
+  // Sostituisci con il tuo servizio di logout se necessario
+  // Esempio:
+  //this.authService.logout();
+  this.router.navigate(['/logout']);
+}
 }

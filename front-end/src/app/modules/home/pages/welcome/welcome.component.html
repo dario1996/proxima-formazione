@@ -11,53 +11,51 @@
       <aside>
         <div class="accordion accordion-flush mb-5" id="sidebarAccordion">
           @for (menuItem of menuItems; track menuItem; let index = $index) {
-            <div class="accordion-item">
-              @if (menuItem.links.length > 1) {
-                <h2 class="accordion-header" [id]="'panelsStayOpen' + index">
-                  <button style="color: white; background-color: #6aaad8"
-                    class="accordion-button d-flex align-items-center" type="button" data-bs-toggle="collapse"
-                    [attr.data-bs-target]="'#collapse' + index" aria-expanded="false"
-                    [attr.aria-controls]="'collapse' + index" (click)="toggleAccordion(index)"
-                    [class.collapsed]="!isOpen[index]" data-bs-disable-animation="true">
-                    <i [class]="menuItem.icon" style="margin-right: 20px"></i>
-                    {{ menuItem.title }}
-                  </button>
-                </h2>
-                <div [id]="'collapse' + index" class="accordion-collapse collapse"
-                  [attr.aria-labelledby]="'heading' + index">
-                  @for (link of menuItem.links; track link; let linkIndex = $index) {
-                    <div
-                      class="accordion-body sc-secondary border" style="cursor: pointer"
-                      [class.selected]="selectedLink === link" (click)="selectLink(link)" (keydown.enter)="selectLink(link)"
-                      tabindex="0" [routerLink]="link.url">
-                      <div class="row">
-                        <div class="col-10">
-                          <a style="text-decoration: none; color: black">
-                            {{ link.label }}
-                          </a>
-                        </div>
-                        <div class="col-2 d-flex justify-content-end">
-                          <div>
-                            <i [class]="link.icon"></i>
-                          </div>
-                        </div>
-                      </div>
+          <div class="accordion-item">
+            @if (menuItem.links.length > 1) {
+            <h2 class="accordion-header" [id]="'panelsStayOpen' + index">
+              <button style="color: white; background-color: #6aaad8" class="accordion-button d-flex align-items-center"
+                type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + index"
+                aria-expanded="false" [attr.aria-controls]="'collapse' + index" (click)="toggleAccordion(index)"
+                [class.collapsed]="!isOpen[index]" data-bs-disable-animation="true">
+                <i [class]="menuItem.icon" style="margin-right: 20px"></i>
+                {{ menuItem.title }}
+              </button>
+            </h2>
+            <div [id]="'collapse' + index" class="accordion-collapse collapse"
+              [attr.aria-labelledby]="'heading' + index">
+              @for (link of menuItem.links; track link; let linkIndex = $index) {
+              <div class="accordion-body sc-secondary border" style="cursor: pointer"
+                [class.selected]="selectedLink === link" (click)="selectLink(link)" (keydown.enter)="selectLink(link)"
+                tabindex="0" [routerLink]="link.url">
+                <div class="row">
+                  <div class="col-10">
+                    <a style="text-decoration: none; color: black">
+                      {{ link.label }}
+                    </a>
+                  </div>
+                  <div class="col-2 d-flex justify-content-end">
+                    <div>
+                      <i [class]="link.icon"></i>
                     </div>
-                  }
+                  </div>
                 </div>
-              } @else {
-                <h2 class="accordion-header" id="homeBtn" style="--bs-accordion-btn-icon: none">
-                  <button (click)="selectLink(menuItem.links[0])" [routerLink]="menuItem.links[0].url"
-                    style="color: white; background-color: #6aaad8" class="accordion-button d-flex align-items-center"
-                    type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + index"
-                    aria-expanded="false" [attr.aria-controls]="'collapse' + index" [class.collapsed]="!isOpen[index]"
-                    data-bs-disable-animation="true">
-                    <i [class]="menuItem.icon" style="margin-right: 20px"></i>
-                    {{ menuItem.title }}
-                  </button>
-                </h2>
+              </div>
               }
             </div>
+            } @else {
+            <h2 class="accordion-header" id="homeBtn" style="--bs-accordion-btn-icon: none">
+              <button (click)="selectLink(menuItem.links[0])" [routerLink]="menuItem.links[0].url"
+                style="color: white; background-color: #6aaad8" class="accordion-button d-flex align-items-center"
+                type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + index"
+                aria-expanded="false" [attr.aria-controls]="'collapse' + index" [class.collapsed]="!isOpen[index]"
+                data-bs-disable-animation="true">
+                <i [class]="menuItem.icon" style="margin-right: 20px"></i>
+                {{ menuItem.title }}
+              </button>
+            </h2>
+            }
+          </div>
           }
         </div>
       </aside>

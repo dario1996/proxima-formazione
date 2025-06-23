@@ -1,26 +1,30 @@
-<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#">
+<a class="dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown" href="#">
   @if (isLogged) {
     <img
       class="img-xs rounded-circle"
-      src="/assets/images/avatars/avatar4.jpg"
+      src="/assets/images/proxima_icon.png"
       alt="User"
-      width="35"
-      height="35"
+      width="45"
+      height="45"
     />
+    <div class="d-flex flex-column align-items-start">
+      <span
+        class="fw-semibold text-uppercase"
+        style="font-size: 0.95rem; text-decoration: none !important; color: #222;"
+        >{{ userName }}</span
+      >
+    </div>
   } @else {
     <img
       class="img-xs rounded-circle"
       src="/assets/images/avatars/offline_user.png"
       alt="User"
-      width="35"
-      height="35"
+      width="45"
+      height="45"
     />
   }
 </a>
 <div class="dropdown-menu dropdown-menu-end">
-  <a class="dropdown-item" routerLink="/login">Accedi</a>
-  <a class="dropdown-item" routerLink="/signup">Registrati</a>
-
   @if (!isLogged) {
     <a class="dropdown-item disabled" href="#">Settings</a>
   } @else {

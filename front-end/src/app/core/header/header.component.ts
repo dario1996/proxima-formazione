@@ -3,8 +3,6 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { Component } from '@angular/core';
 import { NotificationComponent } from '../notification/notification.component';
 import { RouterModule } from '@angular/router';
-import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
-import { NegozioSwitcherComponent } from '../negozio-switcher/negozio-switcher.component';
 
 @Component({
   selector: 'app-header',
@@ -14,8 +12,6 @@ import { NegozioSwitcherComponent } from '../negozio-switcher/negozio-switcher.c
   imports: [
     AvatarComponent,
     NotificationComponent,
-    LanguageSelectorComponent,
-    NegozioSwitcherComponent,
     RouterModule,
   ],
 })

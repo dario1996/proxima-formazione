@@ -1,0 +1,9 @@
+span.fw-semibold {
+  text-decoration: none !important;
+}
+a.dropdown-toggle {
+  text-decoration: none !important;
+}
+a.dropdown-toggle * {
+  text-decoration: none !important;
+}
