@@ -1,86 +1,74 @@
 <div class="container-fluid">
-  <app-external-header [title]="titolo"></app-external-header>
-
   <div class="row">
-    <div class="col-12 d-flex justify-content-center align-items-start mt-5">
-      <form #myForm="ngForm" (ngSubmit)="gestAuth()" class="w-100" style="max-width: 400px;">
-        <div class="card shadow-lg">
-          <!-- Titolo -->
-          <div class="card-header text-center py-4">
-            <h3 class="mb-0">Accesso al gestionale</h3>
-          </div>
-
-          <div class="card-body">
-            <!-- Username -->
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="fas fa-user"></i>
-              </span>
-              <input 
-                type="text" 
-                id="username" 
-                name="username" 
-                class="form-control" 
-                [(ngModel)]="userId" 
-                required 
-                placeholder="Inserisci username"
-                autocomplete="off">
-            </div>
-
-            <!-- Password -->
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="fas fa-key"></i>
-              </span>
-              <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                class="form-control" 
-                [(ngModel)]="password" 
-                required 
-                placeholder="Inserisci password">
-            </div>
-
-            <!-- Link "Non hai un account? Registrati" -->
-            <div class="text-center mb-4">
-              <span class="text-white-50">Non hai un account?</span>
-              <a routerLink="/signup" class="ms-2">
-                <i class="fas fa-user-plus me-1"></i>Registrati
-              </a>
-            </div>
-
-            <!-- Pulsanti -->
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt me-2"></i>Accedi
-              </button>
-              <button type="button" (click)="annulla()" class="btn btn-secondary">
-                <i class="fas fa-times me-2"></i>Annulla
-              </button>
-            </div>
-
-            <app-spinner></app-spinner>
-
-            @if (viewMsg) {
-            <div class="alert d-flex align-items-center gap-2 mt-4" role="alert">
-              <i class="fas fa-exclamation-triangle"></i>
-              <span>{{ errMsg }}</span>
-            </div>
-            } @else if (notlogged) {
-            <div class="alert d-flex align-items-center gap-2 mt-4" role="alert">
-              <i class="fas fa-exclamation-triangle"></i>
-              <span>{{ errMsg2 }}</span>
-            </div>
-            } @else if (expired) {
-            <div class="alert d-flex align-items-center gap-2 mt-4" role="alert">
-              <i class="fas fa-exclamation-triangle"></i>
-              <span>{{ errMsg3 }}</span>
-            </div>
-            }
-          </div>
+    <div class="col-12 d-flex justify-content-center align-items-center min-vh-100">
+      <div class="glass-card">
+        <div class="text-center mb-4">
+          <img src="../../../../assets/images/proxima_logo.png" alt="Logo" class="logo-img" />
+          <h2 class="login-title">Gestionale Formazione</h2>
         </div>
-      </form>
+
+        <form #myForm="ngForm" (ngSubmit)="gestAuth()" class="login-form">
+          <!-- Username -->
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="fas fa-user"></i>
+            </span>
+            <input 
+              type="text" 
+              id="username" 
+              name="username" 
+              class="form-control" 
+              [(ngModel)]="userId" 
+              required 
+              placeholder="Username"
+              autocomplete="off">
+          </div>
+
+          <!-- Password -->
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="fas fa-key"></i>
+            </span>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              class="form-control" 
+              [(ngModel)]="password" 
+              required 
+              placeholder="Password">
+          </div>
+
+          <!-- Pulsanti -->
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary flex-grow-1">
+              <i class="fas fa-sign-in-alt me-2"></i>Accedi
+            </button>
+            <button type="button" (click)="annulla()" class="btn btn-secondary flex-grow-1">
+              <i class="fas fa-times me-2"></i>Annulla
+            </button>
+          </div>
+
+          <app-spinner></app-spinner>
+
+          @if (viewMsg) {
+          <div class="alert d-flex align-items-center gap-2 mt-4" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>{{ errMsg }}</span>
+          </div>
+          } @else if (notlogged) {
+          <div class="alert d-flex align-items-center gap-2 mt-4" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>{{ errMsg2 }}</span>
+          </div>
+          } @else if (expired) {
+          <div class="alert d-flex align-items-center gap-2 mt-4" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>{{ errMsg3 }}</span>
+          </div>
+          }
+        </form>
+      </div>
     </div>
   </div>
 </div>
