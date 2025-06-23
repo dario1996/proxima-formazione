@@ -24,16 +24,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService userDetailsService;
+    private final JwtConfig jwtConfig;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String header = request.getHeader("Authorization");
+        final String header = request.getHeader(jwtConfig.getHeader());
         String username = null;
         String token = null;
 
-        if (header != null && header.startsWith("Bearer ")) {
+        if (header != null && header.startsWith(jwtConfig.getPrefix())) {
             token = header.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(token);
