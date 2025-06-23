@@ -45,6 +45,7 @@ public class JWTWebSecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, authenticationPath).permitAll()
                 .requestMatchers(HttpMethod.GET, refreshPath).permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/utenti/inserisci").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // 👈 aggiunta qui
