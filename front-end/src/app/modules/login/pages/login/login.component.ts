@@ -6,6 +6,7 @@ import {
 } from '@angular/router';
 import { Component, effect, signal, OnInit } from '@angular/core';
 import { Observable, map, of } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AuthJwtService } from '../../../../core/services/authJwt.service';
 import { FormsModule } from '@angular/forms';
@@ -23,6 +24,7 @@ import { ExternalHeaderComponent } from '../../../../core/external-header/extern
     SpinnerComponent,
     ExternalHeaderComponent,
     FormsModule,
+    TranslateModule,
   ],
 })
 export class LoginComponent implements OnInit {
