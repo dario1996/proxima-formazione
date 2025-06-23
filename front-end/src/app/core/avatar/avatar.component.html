@@ -1,4 +1,4 @@
-<a class="dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown" href="#">
+<div class="avatar-sidebar d-flex flex-column align-items-center w-100">
   @if (isLogged) {
     <img
       class="img-xs rounded-circle"
@@ -7,13 +7,10 @@
       width="45"
       height="45"
     />
-    <div class="d-flex flex-column align-items-start">
-      <span
-        class="fw-semibold text-uppercase"
-        style="font-size: 0.95rem; text-decoration: none !important; color: #222;"
-        >{{ userName }}</span
-      >
-    </div>
+    <span
+      class="fw-semibold text-uppercase user-name-sidebar mt-2"
+      >{{ userName }}</span
+    >
   } @else {
     <img
       class="img-xs rounded-circle"
@@ -22,22 +19,5 @@
       width="45"
       height="45"
     />
-  }
-</a>
-<div class="dropdown-menu dropdown-menu-end">
-  @if (!isLogged) {
-    <a class="dropdown-item disabled" href="#">Settings</a>
-  } @else {
-    <a class="dropdown-item" routerLink="/user/settings">Settings</a>
-  }
-
-  <hr class="dropdown-divider" />
-
-  @if (isLogged) {
-    <a class="dropdown-item text-danger" routerLink="/logout"
-      >Logout {{ userName }}</a
-    >
-  } @else {
-    <a class="dropdown-item disabled" routerLink="/logout">Logout</a>
   }
 </div>

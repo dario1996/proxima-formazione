@@ -2,14 +2,16 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { SalutiDataService } from '../../../../core/services/data/saluti-data.service';
 
-import { HeaderComponent } from '../../../../core/header/header.component';
+import { NotificationComponent } from '../../../../core/notification/notification.component';
+import { AvatarComponent } from '../../../../core/avatar/avatar.component';
+import { AuthJwtService } from '../../../../core/services/authJwt.service';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css',
-  imports: [RouterModule, HeaderComponent],
+  imports: [RouterModule, NotificationComponent, AvatarComponent],
 })
 export class WelcomeComponent implements OnInit {
   menuItems = [
@@ -46,6 +48,17 @@ export class WelcomeComponent implements OnInit {
         },
       ],
     },
+    {
+      title: 'Settings',
+      icon: 'fa-solid fa-gears fa-xl',
+      links: [
+        {
+          label: 'Corsi',
+          url: 'product-scanner',
+          icon: 'fa-solid fa-gears fa-lg',
+        },
+      ],
+    },
   ];
 
   isOpen: boolean[] = [];
@@ -59,7 +72,8 @@ export class WelcomeComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private salutiSrv: SalutiDataService,
-    private router: Router // aggiunto qui
+    private router: Router,
+    public BasicAuth: AuthJwtService // aggiunto qui
   ) {}
 
   ngOnInit(): void {

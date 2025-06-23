@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
 
 :root {
-  --primary-color: #add7f6;
+  --primary-color: rgba(255, 255, 255, 0.9);
   --secondary-color: #f0f9ff;
 }
 

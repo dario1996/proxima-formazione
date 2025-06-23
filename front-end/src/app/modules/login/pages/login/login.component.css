@@ -1,6 +1,8 @@
 .container-fluid {
-  min-height: 100vh;
-  overflow: auto;
+  height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-top: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,7 +11,6 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding-top: 2rem;
 }
 
 .card {
@@ -151,9 +152,9 @@ a:hover {
   -webkit-backdrop-filter: blur(10px);
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  padding: 2.5rem;
+  padding: 1.2rem;
   width: 100%;
-  max-width: 450px;
+  max-width: 340px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
@@ -199,7 +200,7 @@ a:hover {
 }
 
 .btn {
-  padding: 0.75rem;
+  padding: 0.5rem 1rem;
   border-radius: 10px;
   font-weight: 500;
   transition: all 0.3s ease;
@@ -265,9 +266,9 @@ a:hover {
 
 /* Qui puoi modificare la dimensione del titolo */
 h2.login-title {
-  font-size: 2rem;  /* Aumenta/diminuisci questo valore per cambiare la dimensione */
+  font-size: 1.3rem;     /* Aumenta/diminuisci questo valore per cambiare la dimensione */
   font-weight: 600;
   color: #1a1a1a;
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
   text-align: center;
 }

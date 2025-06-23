@@ -12,7 +12,6 @@ import { AuthJwtService } from '../../../../core/services/authJwt.service';
 import { FormsModule } from '@angular/forms';
 // import { JumbotronComponent } from '../../../../core/jumbotron/jumbotron.component';
 import { SpinnerComponent } from '../../../../core/spinner/spinner.component';
-import { ExternalHeaderComponent } from '../../../../core/external-header/external-header.component';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +21,6 @@ import { ExternalHeaderComponent } from '../../../../core/external-header/extern
   imports: [
     RouterModule,
     SpinnerComponent,
-    ExternalHeaderComponent,
     FormsModule,
     TranslateModule,
   ],

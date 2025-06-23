@@ -1,62 +1,44 @@
-<app-header></app-header>
+<!-- <app-header></app-header> -->
 
-<div class="container-fluid" style="margin-top: 60px;"> <!-- Altezza dell'header -->
+<div class="container-fluid">
   <div class="row">
     <!-- Sidebar -->
-    <div class="col-lg-2 p-0" style="
-        background-color: #6aaad8;
-        height: calc(100vh - 60px); /* Altezza meno header */
-        overflow-y: auto;
-      ">
-      <aside>
-        <div class="accordion accordion-flush mb-5" id="sidebarAccordion">
-          @for (menuItem of menuItems; track menuItem; let index = $index) {
-          <div class="accordion-item">
-            @if (menuItem.links.length > 1) {
-            <h2 class="accordion-header" [id]="'panelsStayOpen' + index">
-              <button style="color: white; background-color: #6aaad8" class="accordion-button d-flex align-items-center"
-                type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + index"
-                aria-expanded="false" [attr.aria-controls]="'collapse' + index" (click)="toggleAccordion(index)"
-                [class.collapsed]="!isOpen[index]" data-bs-disable-animation="true">
-                <i [class]="menuItem.icon" style="margin-right: 20px"></i>
-                {{ menuItem.title }}
-              </button>
-            </h2>
-            <div [id]="'collapse' + index" class="accordion-collapse collapse"
-              [attr.aria-labelledby]="'heading' + index">
-              @for (link of menuItem.links; track link; let linkIndex = $index) {
-              <div class="accordion-body sc-secondary border" style="cursor: pointer"
-                [class.selected]="selectedLink === link" (click)="selectLink(link)" (keydown.enter)="selectLink(link)"
-                tabindex="0" [routerLink]="link.url">
-                <div class="row">
-                  <div class="col-10">
-                    <a style="text-decoration: none; color: black">
-                      {{ link.label }}
-                    </a>
-                  </div>
-                  <div class="col-2 d-flex justify-content-end">
-                    <div>
-                      <i [class]="link.icon"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              }
-            </div>
-            } @else {
-            <h2 class="accordion-header" id="homeBtn" style="--bs-accordion-btn-icon: none">
-              <button (click)="selectLink(menuItem.links[0])" [routerLink]="menuItem.links[0].url"
-                style="color: white; background-color: #6aaad8" class="accordion-button d-flex align-items-center"
-                type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + index"
-                aria-expanded="false" [attr.aria-controls]="'collapse' + index" [class.collapsed]="!isOpen[index]"
-                data-bs-disable-animation="true">
-                <i [class]="menuItem.icon" style="margin-right: 20px"></i>
-                {{ menuItem.title }}
-              </button>
-            </h2>
+    <div class="col-lg-2 p-0 sidebar-custom">
+      <aside class="d-flex flex-column h-100">
+        <!-- Logo -->
+        <div class="sidebar-logo text-center py-4 ">
+          <img src="assets/images/proxima_logo.png" alt="Logo" class="sidebar-logo-img" />
+        </div>
+
+        <!-- Menu -->
+        <nav class="flex-grow-1">
+          <ul class="nav flex-column gap-2">
+            @for (menuItem of menuItems; track menuItem; let index = $index) {
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 sidebar-link"
+                [routerLink]="menuItem.links[0].url" routerLinkActive="active" (click)="selectLink(menuItem.links[0])">
+                <i [class]="menuItem.icon + ' fs-4'"></i>
+                <span class="sidebar-label">{{ menuItem.title }}</span>
+              </a>
+            </li>
             }
+          </ul>
+        </nav>
+
+        <!-- Logout in basso -->
+        <div class="mt-auto mb-4 px-3">
+          <!-- Avatar utente sopra il logout -->
+          <div class="mb-3 text-center">
+            <app-avatar [isLogged]="BasicAuth.isLogged()" [userName]="BasicAuth.loggedUser()"></app-avatar>
           </div>
-          }
+          <hr class="sidebar-divider my-3" />
+          <div class="d-flex justify-content-center">
+            <button class="btn btn-outline-light sidebar-link d-inline-flex justify-content-center align-items-center gap-1"
+              (click)="logout()" style="font-weight: bold;">
+              <i class="bi bi-box-arrow-right fs-5"></i>
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
       </aside>
     </div>
@@ -65,5 +47,6 @@
     <div class="col-lg-10 mt-3">
       <router-outlet></router-outlet>
     </div>
+    <app-notification class="notification-floating"></app-notification>
   </div>
 </div>
