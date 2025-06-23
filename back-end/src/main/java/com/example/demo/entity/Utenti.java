@@ -2,7 +2,10 @@ package com.example.demo.entity;
 
 import java.util.List;
 
+import com.example.demo.converter.StringListConverter;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -33,6 +36,7 @@ public class Utenti
 	private String attivo = "Si";
 	
 	@Column(name = "ruoli")
-	private List<String> ruoli;
+    @Convert(converter = StringListConverter.class)
+    private List<String> ruoli;
 	
 }

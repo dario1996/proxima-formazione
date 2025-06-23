@@ -25,107 +25,24 @@ export class WelcomeComponent implements OnInit {
       ],
     },
     {
-      title: 'Negozio',
-      icon: 'fa-solid fa-basket-shopping fa-xl',
+      title: 'Dipendenti',
+      icon: 'fa-solid fa-users fa-xl',
       links: [
         {
           label: 'Dipendenti',
           url: 'employees-management',
           icon: 'fa-solid fa-users fa-lg',
         },
-        {
-          label: 'Clienti',
-          url: 'customers-management',
-          icon: 'fa-solid fa-user-tie fa-lg',
-        },
-        // {
-        //   label: 'Prodotti e Brand',
-        //   url: 'products-management',
-        //   icon: 'fa-solid fa-basket-shopping fa-lg',
-        // },
-        {
-          label: 'Servizi',
-          url: 'services-management',
-          icon: 'fa-solid fa-person-booth fa-lg',
-        },
-        // {
-        //   label: 'Fatture negozio',
-        //   url: 'shop-invoices',
-        //   icon: 'fa-solid fa-file-lines fa-lg',
-        // },
       ],
     },
     {
-      title: 'Magazzino',
-      icon: 'fa-solid fa-warehouse fa-lg',
+      title: 'Corsi',
+      icon: 'fa-solid fa-book fa-xl',
       links: [
         {
-          label: 'Scanner Prodotti',
+          label: 'Corsi',
           url: 'product-scanner',
-          icon: 'fa-solid fa-barcode fa-lg',
-        },
-        {
-          label: 'Sommario magazzino',
-          url: 'summary-warehouse',
-          icon: 'fa-solid fa-warehouse fa-lg',
-        },
-        // {
-        //   label: 'Fatture prodotti',
-        //   url: 'product-invoices',
-        //   icon: 'fa-solid fa-file-invoice-dollar fa-lg',
-        // },
-      ],
-    },
-    {
-      title: 'Appuntamenti',
-      icon: 'fa-solid fa-calendar fa-xl',
-      links: [
-        {
-          label: 'Agenda',
-          url: 'appointment-calendar',
-          icon: 'fa-solid fa-calendar-days fa-lg',
-        },
-        {
-          label: 'Messaggi automatici',
-          url: 'manage-automatic-message',
-          icon: 'fa-solid fa-comment-sms fa-lg',
-        },
-      ],
-    },
-    {
-      title: 'Vendite',
-      icon: 'fa-solid fa-cash-register fa-xl',
-      links: [
-        {
-          label: 'Cassa',
-          url: 'cash-register',
-          icon: 'fa-solid fa-cash-register fa-lg',
-        },
-        {
-          label: 'Registro giornaliero',
-          url: 'sales-register',
           icon: 'fa-solid fa-book fa-lg',
-        },
-        {
-          label: 'Archivio',
-          url: 'sales-archive',
-          icon: 'fa-solid fa-box-archive fa-lg',
-        },
-      ],
-    },
-    {
-      title: 'Statistiche',
-      icon: 'fa-solid fa-chart-line fa-lg',
-      links: [
-        {
-          label: 'Andamento negozio',
-          url: 'shop-performance',
-          icon: 'fa-solid fa-chart-line fa-lg',
-        },
-        {
-          label: 'Andamento personale (dipendenti)',
-          url: 'staff-performance',
-          icon: 'fa-solid fa-users fa-lg',
         },
       ],
     },
