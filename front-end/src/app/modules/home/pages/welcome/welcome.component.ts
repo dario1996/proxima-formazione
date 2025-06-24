@@ -1,20 +1,22 @@
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { SalutiDataService } from '../../../../core/services/data/saluti-data.service';
 
-import { HeaderComponent } from '../../../../core/header/header.component';
+import { NotificationComponent } from '../../../../core/notification/notification.component';
+import { AvatarComponent } from '../../../../core/avatar/avatar.component';
+import { AuthJwtService } from '../../../../core/services/authJwt.service';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css',
-  imports: [RouterModule, HeaderComponent],
+  imports: [RouterModule, NotificationComponent, AvatarComponent],
 })
 export class WelcomeComponent implements OnInit {
   menuItems = [
     {
-      title: 'Home',
+      title: 'Dashboard',
       icon: 'fa-solid fa-house-user fa-xl',
       links: [
         {
@@ -25,107 +27,35 @@ export class WelcomeComponent implements OnInit {
       ],
     },
     {
-      title: 'Negozio',
-      icon: 'fa-solid fa-basket-shopping fa-xl',
+      title: 'Dipendenti',
+      icon: 'fa-solid fa-users fa-xl',
       links: [
         {
           label: 'Dipendenti',
-          url: 'employees-management',
+          url: 'dipendenti',
           icon: 'fa-solid fa-users fa-lg',
         },
-        {
-          label: 'Clienti',
-          url: 'customers-management',
-          icon: 'fa-solid fa-user-tie fa-lg',
-        },
-        // {
-        //   label: 'Prodotti e Brand',
-        //   url: 'products-management',
-        //   icon: 'fa-solid fa-basket-shopping fa-lg',
-        // },
-        {
-          label: 'Servizi',
-          url: 'services-management',
-          icon: 'fa-solid fa-person-booth fa-lg',
-        },
-        // {
-        //   label: 'Fatture negozio',
-        //   url: 'shop-invoices',
-        //   icon: 'fa-solid fa-file-lines fa-lg',
-        // },
       ],
     },
     {
-      title: 'Magazzino',
-      icon: 'fa-solid fa-warehouse fa-lg',
+      title: 'Corsi',
+      icon: 'fa-solid fa-book fa-xl',
       links: [
         {
-          label: 'Scanner Prodotti',
+          label: 'Corsi',
           url: 'product-scanner',
-          icon: 'fa-solid fa-barcode fa-lg',
-        },
-        {
-          label: 'Sommario magazzino',
-          url: 'summary-warehouse',
-          icon: 'fa-solid fa-warehouse fa-lg',
-        },
-        // {
-        //   label: 'Fatture prodotti',
-        //   url: 'product-invoices',
-        //   icon: 'fa-solid fa-file-invoice-dollar fa-lg',
-        // },
-      ],
-    },
-    {
-      title: 'Appuntamenti',
-      icon: 'fa-solid fa-calendar fa-xl',
-      links: [
-        {
-          label: 'Agenda',
-          url: 'appointment-calendar',
-          icon: 'fa-solid fa-calendar-days fa-lg',
-        },
-        {
-          label: 'Messaggi automatici',
-          url: 'manage-automatic-message',
-          icon: 'fa-solid fa-comment-sms fa-lg',
-        },
-      ],
-    },
-    {
-      title: 'Vendite',
-      icon: 'fa-solid fa-cash-register fa-xl',
-      links: [
-        {
-          label: 'Cassa',
-          url: 'cash-register',
-          icon: 'fa-solid fa-cash-register fa-lg',
-        },
-        {
-          label: 'Registro giornaliero',
-          url: 'sales-register',
           icon: 'fa-solid fa-book fa-lg',
         },
-        {
-          label: 'Archivio',
-          url: 'sales-archive',
-          icon: 'fa-solid fa-box-archive fa-lg',
-        },
       ],
     },
     {
-      title: 'Statistiche',
-      icon: 'fa-solid fa-chart-line fa-lg',
+      title: 'Settings',
+      icon: 'fa-solid fa-gears fa-xl',
       links: [
         {
-          label: 'Andamento negozio',
-          url: 'shop-performance',
-          icon: 'fa-solid fa-chart-line fa-lg',
-        },
-        {
-          label: 'Andamento personale (dipendenti)',
-          url: 'staff-performance',
-          icon: 'fa-solid fa-users fa-lg',
+          label: 'Corsi',
+          url: 'product-scanner',
+          icon: 'fa-solid fa-gears fa-lg',
         },
       ],
     },
@@ -136,12 +66,14 @@ export class WelcomeComponent implements OnInit {
 
   utente = '';
 
-  titolo = 'Benvenuti in Smart Control';
+  titolo = 'Benvenuti in Gestionale Fortmazione';
   sottotitolo = 'Visualizza le offerte del giorno';
 
   constructor(
     private route: ActivatedRoute,
     private salutiSrv: SalutiDataService,
+    private router: Router,
+    public BasicAuth: AuthJwtService // aggiunto qui
   ) {}
 
   ngOnInit(): void {
@@ -176,4 +108,11 @@ export class WelcomeComponent implements OnInit {
   selectLink(link: any): void {
     this.selectedLink = link;
   }
+
+  logout() {
+  // Sostituisci con il tuo servizio di logout se necessario
+  // Esempio:
+  //this.authService.logout();
+  this.router.navigate(['/login']);
+}
 }

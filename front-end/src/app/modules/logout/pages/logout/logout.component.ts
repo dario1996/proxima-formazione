@@ -1,11 +1,10 @@
-import { ExternalHeaderComponent } from '../../../../core/external-header/external-header.component';
 import { AuthJwtService } from '../../../../core/services/authJwt.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-logout',
   standalone: true,
-  imports: [ExternalHeaderComponent],
+  imports: [],
   templateUrl: './logout.component.html',
   styleUrl: './logout.component.css',
 })

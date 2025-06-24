@@ -1,0 +1,79 @@
+# Application Configuration
+spring:
+  application:
+    name: gestionale-formazione
+
+  # --- Configurazione H2 (commentata) ---
+  # datasource:
+  #   url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+  #   driver-class-name: org.h2.Driver
+  #   username: sa
+  #   password: 
+  # h2:
+  #   console:
+  #     enabled: true
+  #     path: /h2-console
+  # jpa:
+  #   database-platform: org.hibernate.dialect.H2Dialect
+  #   hibernate:
+  #     ddl-auto: none
+  #   show-sql: true
+  #   format-sql: true
+
+  sql:
+    init:
+      mode: always
+      platform: mysql
+
+  # --- Configurazione MySQL (attiva) ---
+  datasource:
+    url: jdbc:mysql://localhost:3307/gest-form?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: Agostino96!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+
+  # --- Configurazione PostgreSQL (commentata) ---
+  # datasource:
+  #   url: jdbc:postgresql://localhost:5433/smartcontrol
+  #   username: postgres
+  #   password: 123_Stella
+
+  # jpa:
+  #   hibernate:
+  #     ddl-auto: none
+  #   properties:
+  #     hibernate:
+  #       dialect: org.hibernate.dialect.PostgreSQLDialect
+  #   show-sql: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: PUBLIC
+
+sicurezza:
+  uri: /auth
+  refresh: /refresh
+  header: Authorization
+  prefix: Bearer 
+  expiration: 600
+  secret: wNoe5AlDAtrrRJtbPQZ6UtdgvYwF2DKYSlNEVcCD/IzToqX9bXpmRzflYBGDViZDJgV3HTPfDGY5ix1U9hJtfA==
+
+logging:
+  level:
+    liquibase: INFO
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

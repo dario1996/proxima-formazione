@@ -6,6 +6,6 @@ export const environment = {
   venditeServicePort: '5053',
   portUser: '8019',
   //Auth Server JWT EndPoint
-  authServerUri: 'http://localhost:8019/auth',
+  authServerUri: 'http://localhost:8080/auth',
   imageUrl: 'http://www.loyapp.cloud',
 };

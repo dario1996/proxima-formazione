@@ -6,12 +6,12 @@ import {
 } from '@angular/router';
 import { Component, effect, signal, OnInit } from '@angular/core';
 import { Observable, map, of } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AuthJwtService } from '../../../../core/services/authJwt.service';
 import { FormsModule } from '@angular/forms';
 // import { JumbotronComponent } from '../../../../core/jumbotron/jumbotron.component';
 import { SpinnerComponent } from '../../../../core/spinner/spinner.component';
-import { ExternalHeaderComponent } from '../../../../core/external-header/external-header.component';
 
 @Component({
   selector: 'app-login',
@@ -21,8 +21,8 @@ import { ExternalHeaderComponent } from '../../../../core/external-header/extern
   imports: [
     RouterModule,
     SpinnerComponent,
-    ExternalHeaderComponent,
     FormsModule,
+    TranslateModule,
   ],
 })
 export class LoginComponent implements OnInit {
@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
     console.log(`Lo stato di autenticazione è: (${this.autenticato()})`);
 
     if (this.autenticato()) {
-      this.route.navigate(['smart-control']);
+      this.route.navigate(['/gestionale-formazione']);
     }
   });
 
@@ -83,11 +83,11 @@ export class LoginComponent implements OnInit {
 
     this.Auth.autenticaService(this.userId, this.password).subscribe({
       next: response => {
-        console.log(response);
+        console.log('Login effettuato con successo:', response);
         this.autenticato.set(true);
       },
       error: error => {
-        console.log(error);
+        console.error('Errore durante il login:', error);
         this.viewMsg = true;
         this.autenticato.set(false);
       },
@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit {
   };
 
   annulla() {
-    this.userId = ''; // Resetta il campo username
-    this.password = ''; // Resetta il campo password
+    this.userId = '';
+    this.password = '';
   }
 }

@@ -1,7 +1,7 @@
 {
   "common": {
     "goBack": "Torna Indietro",
-    "externalTitle": "Smart Control | {{ title }}",
+    "externalTitle": "Formazione | {{ title }}",
     "pagination": {
       "previous": "Precedente",
       "next": "Successivo"
