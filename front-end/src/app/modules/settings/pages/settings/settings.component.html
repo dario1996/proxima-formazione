@@ -3,4 +3,49 @@
         <i class="fa-solid fa-gears fa-2x me-3"></i>
         <span class="fs-3 fw-bold">Settings</span>
     </div>
+    <ul class="nav nav-tabs mt-3">
+        <li class="nav-item">
+            <button class="nav-link"
+                [ngClass]="{active: selectedTab === 'piattaforme', 'tab-disabled-look': selectedTab !== 'piattaforme'}"
+                (click)="selectedTab = 'piattaforme'">
+                Piattaforme
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link"
+                [ngClass]="{active: selectedTab === 'stato_corsi', 'tab-disabled-look': selectedTab !== 'stato_corsi'}"
+                (click)="selectedTab = 'stato_corsi'">
+                Stato corsi
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link"
+                [ngClass]="{active: selectedTab === 'link1', 'tab-disabled-look': selectedTab !== 'link1'}"
+                (click)="selectedTab = 'link1'">
+                Sedi
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link"
+                [ngClass]="{active: selectedTab === 'link2', 'tab-disabled-look': selectedTab !== 'link2'}"
+                (click)="selectedTab = 'link2'">
+                Ruoli dipendenti
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-4">
+        <div *ngIf="selectedTab === 'piattaforme'">
+            <!-- Contenuto Piattaforme -->
+            <p>Contenuto della tab Piattaforme</p>
+        </div>
+        <div *ngIf="selectedTab === 'link1'">
+            <!-- Contenuto Link 1 -->
+            <p>Contenuto della tab Sedi</p>
+        </div>
+        <div *ngIf="selectedTab === 'link2'">
+            <!-- Contenuto Link 2 -->
+            <p>Contenuto della tab Link 2</p>
+        </div>
+    </div>
 </div>
