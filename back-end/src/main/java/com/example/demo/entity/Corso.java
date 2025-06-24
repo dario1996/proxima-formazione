@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -8,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "corsi")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Corso {
 
     @Id
@@ -85,6 +88,7 @@ public class Corso {
 
     // Relazione molti-a-molti con Dipendente attraverso Assegnazione
     @OneToMany(mappedBy = "corso", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Assegnazione> assegnazioni;
 
     // Enum per stato corso
