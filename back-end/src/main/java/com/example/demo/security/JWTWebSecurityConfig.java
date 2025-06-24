@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.config.Customizer;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +27,6 @@ public class JWTWebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-
     @Value("${sicurezza.uri}")
     private String authenticationPath;
 
@@ -38,31 +36,31 @@ public class JWTWebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
         http
-            .cors(Customizer.withDefaults())
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(HttpMethod.POST, authenticationPath).permitAll()
-                .requestMatchers(HttpMethod.GET, refreshPath).permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/utenti/inserisci").permitAll()
-                // .requestMatchers(
-                //     "/swagger-ui/**",
-                //     "/v3/api-docs/**",
-                //     "/swagger-resources/**",
-                //     "/swagger-ui.html",
-                //     "/login"
-                // ).permitAll()
-                .requestMatchers("/api/**").authenticated() // 👈 Protegge SOLO le API
-                .requestMatchers("/**").permitAll()
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions().disable()) // Allow H2 console frames
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, authenticationPath).permitAll()
+                        .requestMatchers(HttpMethod.GET, refreshPath).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/utenti/inserisci").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll() // 👈 H2 Console access
+                        // .requestMatchers(
+                        // "/swagger-ui/**",
+                        // "/v3/api-docs/**",
+                        // "/swagger-resources/**",
+                        // "/swagger-ui.html",
+                        // "/login"
+                        // ).permitAll()
+                        .requestMatchers("/api/**").authenticated() // 👈 Protegge SOLO le API
+                        .requestMatchers("/**").permitAll()
                 // .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // 👈 aggiunta qui
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // 👈 aggiunta qui
 
         return http.build();
     }
-
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
