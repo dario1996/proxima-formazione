@@ -17,12 +17,12 @@ export class WelcomeComponent implements OnInit {
   menuItems = [
     {
       title: 'Dashboard',
-      icon: 'fa-solid fa-house-user fa-xl',
+      icon: 'fa-solid fa-tachometer-alt fa-xl',
       links: [
         {
           label: 'Dashboard',
           url: 'dashboard',
-          icon: 'fa-solid fa-house-user fa-lg',
+          icon: 'fa-solid fa-tachometer-alt fa-lg',
         },
       ],
     },
