@@ -35,17 +35,28 @@
     </ul>
 
     <div class="tab-content mt-4">
-        <div *ngIf="selectedTab === 'piattaforme'">
-            <!-- Contenuto Piattaforme -->
-            <p>Contenuto della tab Piattaforme</p>
+        @if (selectedTab === 'piattaforme') {
+        <div>
+            <app-piattaforme></app-piattaforme>
         </div>
-        <div *ngIf="selectedTab === 'link1'">
-            <!-- Contenuto Link 1 -->
+        }
+        @if (selectedTab === 'stato_corsi') {
+        <div>
+            <!-- Contenuto Stato corsi -->
+            <p>Contenuto della tab Stato corsi</p>
+        </div>
+        }
+        @if (selectedTab === 'link1') {
+        <div>
+            <!-- Contenuto Sedi -->
             <p>Contenuto della tab Sedi</p>
         </div>
-        <div *ngIf="selectedTab === 'link2'">
-            <!-- Contenuto Link 2 -->
-            <p>Contenuto della tab Link 2</p>
+        }
+        @if (selectedTab === 'link2') {
+        <div>
+            <!-- Contenuto Ruoli dipendenti -->
+            <p>Contenuto della tab Ruoli dipendenti</p>
         </div>
+        }
     </div>
 </div>
