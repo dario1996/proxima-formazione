@@ -23,6 +23,13 @@ export const routes: Routes = [
             './modules/dashboard/pages/home-dashboard/home-dashboard.component'
           ).then(m => m.HomeDashboardComponent),
       },
+      {
+        path: 'dipendenti',
+        loadComponent: () =>
+          import(
+            './modules/dipendenti/pages/dipendenti/dipendenti.component'
+          ).then(m => m.DipendentiComponent),
+      },
     ],
     canActivate: [AuthGuard],
     data: { roles: [Ruoli.amministratore] },

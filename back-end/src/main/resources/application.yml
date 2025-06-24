@@ -27,7 +27,7 @@ spring:
 
   # --- Configurazione MySQL (attiva) ---
   datasource:
-    url: jdbc:mysql://localhost:3307/gest-form?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3307/gest-form?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: root
     password: Agostino96!
     driver-class-name: com.mysql.cj.jdbc.Driver
