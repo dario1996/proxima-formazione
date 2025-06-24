@@ -196,3 +196,17 @@ nav.flex-grow-1 ul.nav {
   text-align: center;
   display: inline-block;
 }
+
+.logout-btn {
+  border: none !important;
+  transition: none !important;
+}
+
+.logout-btn:hover,
+.logout-btn:focus,
+.logout-btn:active {
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  transition: none !important;
+}

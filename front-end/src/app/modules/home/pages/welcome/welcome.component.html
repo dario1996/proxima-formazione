@@ -26,20 +26,20 @@
         </nav>
 
         <!-- Logout in basso -->
-        <div class="mt-auto mb-4 px-3">
+        <!-- <div class="mt-auto mb-4 px-3"> -->
           <!-- Avatar utente sopra il logout -->
           <div class="mb-3 text-center">
             <app-avatar [isLogged]="BasicAuth.isLogged()" [userName]="BasicAuth.loggedUser()"></app-avatar>
           </div>
           <hr class="sidebar-divider my-3" />
-          <div class="d-flex justify-content-center">
-            <button class="btn btn-outline-light sidebar-link d-inline-flex justify-content-center align-items-center gap-1"
+          <div class="text-center mb-3">
+            <button class="btn btn-outline-light logout-btn d-inline-flex justify-content-center align-items-center gap-1"
               (click)="logout()" style="font-weight: bold;">
               <i class="bi bi-box-arrow-right fs-5"></i>
               <span>Logout</span>
             </button>
           </div>
-        </div>
+        <!-- </div> -->
       </aside>
     </div>
 
