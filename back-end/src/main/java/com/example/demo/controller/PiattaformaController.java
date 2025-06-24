@@ -2,6 +2,13 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Piattaforma;
 import com.example.demo.repository.PiattaformaRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +18,17 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/piattaforme")
-@CrossOrigin(origins = "*") // Allow CORS for development
+@CrossOrigin(origins = "*")
+@Tag(name = "Piattaforme", description = "Gestione delle piattaforme di formazione")
 public class PiattaformaController {
 
     @Autowired
     private PiattaformaRepository piattaformaRepository;
 
-    // GET all platforms
+    @Operation(summary = "Recupera tutte le piattaforme", description = "Restituisce l'elenco completo delle piattaforme di formazione registrate")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista piattaforme recuperata con successo", content = @Content(mediaType = "application/json", schema = @Schema(type = "array", implementation = Piattaforma.class)))
+    })
     @GetMapping
     public List<Piattaforma> getAllPiattaforme() {
         return piattaformaRepository.findAll();

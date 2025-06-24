@@ -1,11 +1,13 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "log_login")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class LogLogin {
 
     @Id
@@ -15,11 +17,13 @@ public class LogLogin {
     // Relazione molti-a-uno con Dipendente
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dipendente_id", nullable = false)
+    @JsonIgnoreProperties({ "assegnazioni", "logLogin" })
     private Dipendente dipendente;
 
     // Relazione molti-a-uno con Corso (opzionale)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "corso_id")
+    @JsonIgnoreProperties({ "assegnazioni" })
     private Corso corso;
 
     @Column(name = "nome_contenuto", length = 300)

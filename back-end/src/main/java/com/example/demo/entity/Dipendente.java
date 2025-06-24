@@ -1,11 +1,14 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "dipendenti")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Dipendente {
 
     @Id
@@ -50,10 +53,12 @@ public class Dipendente {
 
     // Relazione molti-a-molti con Corso attraverso Assegnazione
     @OneToMany(mappedBy = "dipendente", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Assegnazione> assegnazioni;
 
     // Relazione uno-a-molti con LogLogin
     @OneToMany(mappedBy = "dipendente", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<LogLogin> logLogin;
 
     // Costruttori
