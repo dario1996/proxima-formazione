@@ -46,7 +46,16 @@ public class JWTWebSecurityConfig {
                 .requestMatchers(HttpMethod.POST, authenticationPath).permitAll()
                 .requestMatchers(HttpMethod.GET, refreshPath).permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/utenti/inserisci").permitAll()
-                .anyRequest().authenticated()
+                // .requestMatchers(
+                //     "/swagger-ui/**",
+                //     "/v3/api-docs/**",
+                //     "/swagger-resources/**",
+                //     "/swagger-ui.html",
+                //     "/login"
+                // ).permitAll()
+                .requestMatchers("/api/**").authenticated() // 👈 Protegge SOLO le API
+                .requestMatchers("/**").permitAll()
+                // .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // 👈 aggiunta qui
 

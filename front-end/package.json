@@ -9,7 +9,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build:prod": "ng build --configuration production",
-    "build:copy": "ng build && cpr dist/smart-control-ui/browser/ ../back-end/src/main/resources/static/ -o",
+    "build:copy": "ng build && cpr dist/gestionale-formazione-ui/browser/ ../back-end/src/main/resources/static/ -o",
     "serve:it": "ng serve --configuration=it",
     "serve:en": "ng serve --configuration=en",
     "prettier:check": "npx prettier --check .",

@@ -16,7 +16,7 @@ import { AuthJwtService } from '../../../../core/services/authJwt.service';
 export class WelcomeComponent implements OnInit {
   menuItems = [
     {
-      title: 'Home',
+      title: 'Dashboard',
       icon: 'fa-solid fa-house-user fa-xl',
       links: [
         {
@@ -32,7 +32,7 @@ export class WelcomeComponent implements OnInit {
       links: [
         {
           label: 'Dipendenti',
-          url: 'employees-management',
+          url: 'dipendenti',
           icon: 'fa-solid fa-users fa-lg',
         },
       ],
@@ -113,6 +113,6 @@ export class WelcomeComponent implements OnInit {
   // Sostituisci con il tuo servizio di logout se necessario
   // Esempio:
   //this.authService.logout();
-  this.router.navigate(['/logout']);
+  this.router.navigate(['/login']);
 }
 }
