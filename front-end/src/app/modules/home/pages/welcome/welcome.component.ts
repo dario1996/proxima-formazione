@@ -53,8 +53,8 @@ export class WelcomeComponent implements OnInit {
       icon: 'fa-solid fa-gears fa-xl',
       links: [
         {
-          label: 'Corsi',
-          url: 'product-scanner',
+          label: 'Settings',
+          url: 'settings',
           icon: 'fa-solid fa-gears fa-lg',
         },
       ],
