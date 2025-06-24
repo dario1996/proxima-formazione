@@ -43,7 +43,7 @@ export class WelcomeComponent implements OnInit {
       links: [
         {
           label: 'Corsi',
-          url: 'product-scanner',
+          url: 'corsi',
           icon: 'fa-solid fa-book fa-lg',
         },
       ],

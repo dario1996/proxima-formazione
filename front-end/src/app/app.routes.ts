@@ -24,6 +24,13 @@ export const routes: Routes = [
           ).then(m => m.HomeDashboardComponent),
       },
       {
+        path: 'corsi',
+        loadComponent: () =>
+          import(
+            './modules/corsi/pages/corsi/corsi.component'
+          ).then(m => m.CorsiComponent),
+      },
+      {
         path: 'dipendenti',
         loadComponent: () =>
           import(
