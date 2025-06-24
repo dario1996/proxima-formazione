@@ -30,6 +30,13 @@ export const routes: Routes = [
             './modules/dipendenti/pages/dipendenti/dipendenti.component'
           ).then(m => m.DipendentiComponent),
       },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import(
+            './modules/settings/pages/settings/settings.component'
+          ).then(m => m.SettingsComponent),
+      },
     ],
     canActivate: [AuthGuard],
     data: { roles: [Ruoli.amministratore] },

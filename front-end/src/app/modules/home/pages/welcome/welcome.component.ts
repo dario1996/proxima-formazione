@@ -17,12 +17,12 @@ export class WelcomeComponent implements OnInit {
   menuItems = [
     {
       title: 'Dashboard',
-      icon: 'fa-solid fa-house-user fa-xl',
+      icon: 'fa-solid fa-tachometer-alt fa-xl',
       links: [
         {
           label: 'Dashboard',
           url: 'dashboard',
-          icon: 'fa-solid fa-house-user fa-lg',
+          icon: 'fa-solid fa-tachometer-alt fa-lg',
         },
       ],
     },
@@ -53,8 +53,8 @@ export class WelcomeComponent implements OnInit {
       icon: 'fa-solid fa-gears fa-xl',
       links: [
         {
-          label: 'Corsi',
-          url: 'product-scanner',
+          label: 'Settings',
+          url: 'settings',
           icon: 'fa-solid fa-gears fa-lg',
         },
       ],
