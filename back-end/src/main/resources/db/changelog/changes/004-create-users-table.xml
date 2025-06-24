@@ -35,25 +35,13 @@
     <changeSet id="004-02" author="sistema-formazione">
         <comment>Insert initial user data with encrypted password</comment>
 
-        <!-- Insert user l.manconi with BCrypt encrypted password for "test123" -->
-        <insert tableName="utenti">
-            <column name="username" value="l.manconi" />
-            <column name="email" value="l.manconi@proximagroup.eu" />
-            <!-- BCrypt hash of "test123" with salt rounds 10 -->
-            <column name="password"
-                value="$2a$10$N9qo8uLOickgx2ZMRZoMye6p8SLYjk.EkzQS7fRLZ0EzYQQWEKqgS" />
-            <column name="attivo" value="Si" />
-            <column name="ruoli" value="ADMIN,USER" />
-            <column name="data_creazione" valueComputed="CURRENT_TIMESTAMP" />
-        </insert>
-
         <!-- Insert additional admin user for testing -->
         <insert tableName="utenti">
-            <column name="username" value="admin" />
+            <column name="username" value="l.manconi" />
             <column name="email" value="admin@proximagroup.eu" />
             <!-- BCrypt hash of "admin123" with salt rounds 10 -->
             <column name="password"
-                value="$2a$10$dOmb7L2e6ycYNaZnb8Q9cOQZUhZlmN9q4jV5KQr4.TgNLUPvnUKbm" />
+                value="$2a$10$SAFTjDJLm1kN6KaDpBjc.eZWGKdRcFW/eBt5WR.ciDDWkYZj2.69." />
             <column name="attivo" value="Si" />
             <column name="ruoli" value="ADMIN,SUPER_USER" />
             <column name="data_creazione" valueComputed="CURRENT_TIMESTAMP" />
