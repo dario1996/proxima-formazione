@@ -1,18 +1,31 @@
 <div class="row mt-3">
     <div class="col-12">
-        <table class="table table-striped shadow-sm">
+        <table class="table  table-hover shadow-sm">
             <thead>
                 <tr>
                     <th>Nome</th>
                     <th>Descrizione</th>
+                    <th>URL Sito</th>
+                    <th class="text-center">Attiva</th>
                     <th class="text-center">Azioni</th>
                 </tr>
             </thead>
             <tbody>
                 @for (piattaforma of piattaforme; track piattaforma.id) {
                 <tr>
-                    <td>{{ piattaforma.nome }}</td>
-                    <td>{{ piattaforma.descrizione }}</td>
+                    <td class="align-middle">{{ piattaforma.nome }}</td>
+                    <td class="align-middle">{{ piattaforma.descrizione }}</td>
+                    <td class="align-middle">{{ piattaforma.urlSito }}</td>
+                    <td class="align-middle text-center">
+                        @if (piattaforma.attiva) {
+                        <i class="fa-solid fa-circle-check text-success" style="font-size: 35px"
+                            title="Piattaforma attiva"></i>
+                        }
+                        @if (!piattaforma.attiva) {
+                        <i class="fa-solid fa-circle-xmark text-danger" style="font-size: 35px"
+                            title="Piattaforma non attiva"></i>
+                        }
+                    </td>
                     <td class="align-middle text-center">
                         <!-- [title]="'store.employees.updEmployee' | translate" -->
                         <button

@@ -57,13 +57,6 @@ export const routes: Routes = [
       ).then(m => m.RegistrazioneComponent),
   },
   {
-    path: 'user/settings',
-    loadComponent: () =>
-      import('./modules/login/pages/settings/settings.component').then(
-        m => m.SettingsComponent,
-      ),
-  },
-  {
     path: 'welcome',
     loadComponent: () =>
       import('./modules/home/pages/welcome/welcome.component').then(
