@@ -45,7 +45,6 @@ export class RegistrazioneComponent implements OnInit {
     attivo: '',
     flagPrivacy: '',
     ruoli: [],
-    negozi: [],
   };
 
   apiMsg!: ApiMsg;
