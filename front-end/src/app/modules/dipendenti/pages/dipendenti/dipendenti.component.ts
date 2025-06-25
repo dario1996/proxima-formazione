@@ -3,6 +3,7 @@ import { PageTitleComponent } from "../../../../core/page-title/page-title.compo
 
 @Component({
   selector: 'app-dipendenti',
+  standalone: true,
   imports: [PageTitleComponent],
   templateUrl: './dipendenti.component.html',
   styleUrl: './dipendenti.component.css'

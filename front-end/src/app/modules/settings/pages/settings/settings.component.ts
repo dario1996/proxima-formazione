@@ -5,6 +5,7 @@ import { PageTitleComponent } from "../../../../core/page-title/page-title.compo
 
 @Component({
   selector: 'app-settings',
+  standalone: true,
   imports: [CommonModule, PiattaformeComponent, PageTitleComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'

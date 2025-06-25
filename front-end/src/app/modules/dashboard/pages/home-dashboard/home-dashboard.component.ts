@@ -3,6 +3,7 @@ import { PageTitleComponent } from "../../../../core/page-title/page-title.compo
 
 @Component({
   selector: 'app-home-dashboard',
+  standalone: true,
   templateUrl: './home-dashboard.component.html',
   styleUrls: ['./home-dashboard.component.css'],
   imports: [PageTitleComponent],
