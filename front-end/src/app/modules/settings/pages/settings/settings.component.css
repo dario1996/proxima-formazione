@@ -1,4 +1,8 @@
-.sc-section-title {
-  border-left: 6px solid #054b9a;
-  background: rgba(255, 255, 255, 0.9);
+.tab-disabled-look {
+  color: #3c4146 !important;
+  /* grigio Bootstrap */
+  opacity: 0.65;
+  cursor: pointer;
+  background-color: #f8f9fa !important;
+  border-color: #dee2e6 !important;
 }

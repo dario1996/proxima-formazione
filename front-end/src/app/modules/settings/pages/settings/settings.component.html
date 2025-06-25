@@ -1,6 +1,59 @@
 <div class="container-fluid">
-    <div class="sc-section-title d-flex align-items-center mb-4 p-3 rounded shadow-sm">
-        <i class="fa-solid fa-gears fa-2x me-3"></i>
-        <span class="fs-3 fw-bold">Settings</span>
+    <app-page-title [title]="title" [icon]="icon"></app-page-title>
+    <ul class="nav nav-tabs mt-3">
+        <li class="nav-item">
+            <button class="nav-link"
+                [ngClass]="{active: selectedTab === 'piattaforme', 'tab-disabled-look': selectedTab !== 'piattaforme'}"
+                (click)="selectedTab = 'piattaforme'">
+                Piattaforme
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link"
+                [ngClass]="{active: selectedTab === 'stato_corsi', 'tab-disabled-look': selectedTab !== 'stato_corsi'}"
+                (click)="selectedTab = 'stato_corsi'">
+                Stato corsi
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link"
+                [ngClass]="{active: selectedTab === 'link1', 'tab-disabled-look': selectedTab !== 'link1'}"
+                (click)="selectedTab = 'link1'">
+                Sedi
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link"
+                [ngClass]="{active: selectedTab === 'link2', 'tab-disabled-look': selectedTab !== 'link2'}"
+                (click)="selectedTab = 'link2'">
+                Ruoli dipendenti
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-4">
+        @if (selectedTab === 'piattaforme') {
+        <div>
+            <app-piattaforme></app-piattaforme>
+        </div>
+        }
+        @if (selectedTab === 'stato_corsi') {
+        <div>
+            <!-- Contenuto Stato corsi -->
+            <p>Contenuto della tab Stato corsi</p>
+        </div>
+        }
+        @if (selectedTab === 'link1') {
+        <div>
+            <!-- Contenuto Sedi -->
+            <p>Contenuto della tab Sedi</p>
+        </div>
+        }
+        @if (selectedTab === 'link2') {
+        <div>
+            <!-- Contenuto Ruoli dipendenti -->
+            <p>Contenuto della tab Ruoli dipendenti</p>
+        </div>
+        }
     </div>
 </div>
