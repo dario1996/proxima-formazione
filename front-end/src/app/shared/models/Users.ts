@@ -1,5 +1,3 @@
-import { INegozi } from './Negozi';
-
 export interface IUsers {
   username: string;
   email: string;
@@ -8,5 +6,4 @@ export interface IUsers {
   attivo: string;
   flagPrivacy: string;
   ruoli: string[];
-  negozi: INegozi[];
 }
