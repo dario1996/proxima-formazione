@@ -14,3 +14,12 @@
   border-radius: 14px;
   overflow: hidden;
 }
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem; /* riduci il gap, oppure usa gap: 0; per nessuno spazio */
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+}
