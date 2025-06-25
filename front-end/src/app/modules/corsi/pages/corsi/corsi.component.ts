@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { ICorsi } from '../../../../shared/models/Corsi';
+import { CorsiService } from '../../../../core/services/data/corsi.service';
 
 @Component({
   selector: 'app-corsi',
@@ -11,16 +12,24 @@ import { ICorsi } from '../../../../shared/models/Corsi';
 })
 export class CorsiComponent implements OnInit {
 
-  constructor() { }
+  constructor(private corsiService: CorsiService) { }
 
   title: string = 'Corsi';
   icon: string = 'fa-solid fa-book';
 
-  corsi: ICorsi[] = [
-    { id: 1, nome: 'Java for beginners', piattaformaId: '1', statusId: 1, macro_argomento: 'Sviluppo back-end', durata: '30 ora' },
-    { id: 2, nome: 'Angular', piattaformaId: '2', statusId: 2, macro_argomento: 'Sviluppo front-end', durata: '2 ore' },
-    { id: 3, nome: 'Spring Boot', piattaformaId: '3', statusId: 3, macro_argomento: 'Framework per sviluppo back-end', durata: '3 ore' }
-  ]; 
+  corsi: ICorsi[] = []; 
+
+  ngOnInit(): void {
+    this.loadCorsi();
+  }
+
+  private loadCorsi() {
+    this.corsiService.getListaCorsi().subscribe({
+      next: data => {
+        this.corsi = data;
+    }
+  });
+}
 
   modifica(id: number) {
     // Logica per modificare la piattaforma
@@ -32,7 +41,6 @@ export class CorsiComponent implements OnInit {
     alert('Elimina corso ' + id);
   }
 
-  ngOnInit(): void {
-  }
+
 
 } 

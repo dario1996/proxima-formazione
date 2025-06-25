@@ -16,9 +16,9 @@
         @for (corsi of corsi; track corsi.id) {
         <tr>
           <td>{{ corsi.nome }}</td>
-          <td>{{ corsi.macro_argomento }}</td>
+          <td>{{ corsi.argomento }}</td>
           <td>{{ corsi.durata }}</td>
-          <td>{{ corsi.piattaformaId }}</td>
+          <td>{{ corsi.piattaforma.nome }}</td>
           <td class="align-middle text-center">
             <!-- [title]="'store.employees.updEmployee' | translate" -->
             <button
