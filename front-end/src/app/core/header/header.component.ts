@@ -19,4 +19,9 @@ export class HeaderComponent {
   count = 1;
 
   constructor(public BasicAuth: AuthJwtService) {}
+
+  toggleSidebar() {
+    // Emit an event that will be caught by the parent component to toggle the sidebar
+    document.body.classList.toggle('sidebar-open');
+  }
 }

@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { SalutiDataService } from '../../../../core/services/data/saluti-data.service';
 
 import { NotificationComponent } from '../../../../core/notification/notification.component';
@@ -69,12 +69,31 @@ export class WelcomeComponent implements OnInit {
   titolo = 'Benvenuti in Gestionale Fortmazione';
   sottotitolo = 'Visualizza le offerte del giorno';
 
+  isSidebarOpen: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private salutiSrv: SalutiDataService,
     private router: Router,
-    public BasicAuth: AuthJwtService // aggiunto qui
+    public BasicAuth: AuthJwtService
   ) {}
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (window.innerWidth > 991.98) {
+      this.isSidebarOpen = false;
+    }
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebarOnMobile() {
+    if (window.innerWidth <= 991.98) {
+      this.isSidebarOpen = false;
+    }
+  }
 
   ngOnInit(): void {
     this.isOpen = Array(this.menuItems.length).fill(false); // inizializza tutti chiusi

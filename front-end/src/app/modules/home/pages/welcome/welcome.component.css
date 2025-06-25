@@ -24,97 +24,179 @@
   color: white; /* Colore del testo per l'elemento selezionato */
 }
 
-.sidebar-custom {
-  background: #07255b;
-  min-height: 100vh; /* togli -60px */
-  height: 100vh;
-  color: #fff;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+.app-container {
   display: flex;
-  flex-direction: column;
-  padding: 0;
+  min-height: 100vh;
   position: relative;
+  overflow-x: hidden; /* Previene lo scroll orizzontale */
+  width: 100%;
 }
 
+.sidebar-wrapper {
+  width: 280px;
+  background: #07255b;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1040;
+}
+
+.main-wrapper {
+  flex: 1;
+  margin-left: 280px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding: 20px;
+  width: calc(100% - 280px); /* Assicura che non superi la larghezza disponibile */
+  overflow-x: hidden;
+}
+
+@media (max-width: 991.98px) {
+  .sidebar-wrapper {
+    left: -280px;
+    transition: left 0.3s ease-in-out;
+  }
+
+  .sidebar-wrapper.sidebar-mobile-open {
+    left: 0;
+  }
+
+  .main-wrapper {
+    margin-left: 0;
+    width: 100%;
+    padding: 15px; /* Riduce il padding su mobile */
+  }
+}
+
+/* Logo styles */
 .sidebar-logo {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 32px 0 24px 0; /* più spazio sopra e sotto */
+  padding: 32px 0 24px 0;
+  width: 100%;
 }
 
 .sidebar-logo-img {
   background: #fff;
   padding: 12px 20px;
   border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 0 0 4px #e6eef8; /* ombra più marcata e bordo chiaro */
-  border: 2px solid #e6eef8; /* bordo chiaro */
-  display: block;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 0 0 4px #e6eef8;
+  border: 2px solid #e6eef8;
   margin: 0 auto;
-  width: 100%;
-  max-width: 210px;
+  max-width: 200px;
   min-width: 120px;
   height: auto;
 }
 
-/* Tutte le voci hanno lo stesso padding */
+/* Menu items base styles */
+.nav-item {
+  width: 100%;
+}
+
 .sidebar-link {
   color: #fff !important;
   background: transparent !important;
-  border-radius: 0 !important;
   transition: background 0.2s, color 0.2s;
   font-size: 1.08rem;
-  padding-left: 3.5rem !important;
   position: relative;
-  overflow: hidden;
-  margin-right: 0;
   width: 100%;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start !important;
+  padding-left: 3.5rem !important;
 }
 
-/* Effetto pill bianco solo a sinistra con ::before */
+/* Menu item content */
+.sidebar-link .d-flex {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: auto;
+}
+
+.sidebar-link i {
+  width: 24px;
+  text-align: center;
+  z-index: 2;
+}
+
+.sidebar-label {
+  margin: 0;
+  text-align: left;
+  z-index: 2;
+}
+
+/* Navigation and dividers */
+nav.flex-grow-1 ul.nav {
+  margin-top: 4.5rem;
+}
+
+.sidebar-divider {
+  border-top: 1px solid #2a4170;
+  margin: 0.5rem 0 1.2rem 0;
+  opacity: 0.7;
+}
+
+/* Rimuovo gli stili di allineamento precedenti */
+.sidebar-link {
+  width: 100%;
+}
+
+/* Stili per l'icona e il testo */
+.sidebar-link i,
+.sidebar-link .sidebar-label {
+  position: relative;
+  z-index: 2;
+  transition: color 0.2s ease;
+}
+
+/* Contenitore flex per icona e testo */
+.sidebar-link .d-flex {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: auto;
+}
+
+/* Rimuovo margini extra dalle icone */
+.sidebar-link i {
+  margin: 0;
+  width: 24px;
+  text-align: center;
+}
+
+/* Effetto hover/active mantenendo il testo fermo */
 .sidebar-link.active::before,
 .sidebar-link:focus::before,
 .sidebar-link:hover::before {
   content: '';
   position: absolute;
-  left: 2.2rem; /* dove vuoi che inizi il bianco */
+  left: 0;
   top: 0;
   height: 100%;
-  width: calc(100% - 2.2rem);
+  width: 100%;
   background: #fff;
-  border-top-left-radius: 24px;
-  border-bottom-left-radius: 24px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  z-index: 0;
+  z-index: 1;
   transition: background 0.2s;
 }
 
-/* Porta il testo sopra la pill */
+/* Colore del testo in hover/active */
 .sidebar-link.active,
 .sidebar-link:focus,
 .sidebar-link:hover {
   color: #07255b !important;
-  font-weight: 600;
-  position: relative;
-  z-index: 1;
-  background: transparent !important; /* niente gradiente */
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding-left: 3.5rem !important;
 }
 
-/* Testo e icona della voce attiva */
-.sidebar-link.active .sidebar-label,
-.sidebar-link:focus .sidebar-label,
-.sidebar-link:hover .sidebar-label,
 .sidebar-link.active i,
 .sidebar-link:focus i,
-.sidebar-link:hover i {
+.sidebar-link:hover i,
+.sidebar-link.active .sidebar-label,
+.sidebar-link:focus .sidebar-label,
+.sidebar-link:hover .sidebar-label {
   color: #07255b !important;
-  position: relative;
-  z-index: 1;
 }
 
 /* Rimuovi queste regole per evitare arrotondamenti */
@@ -129,12 +211,6 @@
 .sidebar-custom {
   position: relative;
   z-index: 1;
-}
-
-.sidebar-label {
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  margin-left: 1.2rem; /* più spazio tra icona e testo */
 }
 
 .btn-outline-light.sidebar-link {
@@ -170,31 +246,11 @@
   content: none !important;
 }
 
-nav.flex-grow-1 ul.nav {
-  margin-top: 4.5rem; /* aumenta o diminuisci a piacere */
-}
-
 .notification-floating {
   position: fixed;
   right: 2.5rem;
   bottom: 2.5rem;
   z-index: 9999;
-  display: flex;
-  align-items: flex-end;
-  flex-direction: column;
-}
-
-.sidebar-divider {
-  border: none;
-  border-top: 1px solid #2a4170;
-  margin: 0.5rem 0 1.2rem 0;
-  opacity: 0.7;
-}
-
-.sidebar-link i {
-  min-width: 32px; /* o la larghezza che preferisci */
-  text-align: center;
-  display: inline-block;
 }
 
 .logout-btn {
@@ -209,4 +265,201 @@ nav.flex-grow-1 ul.nav {
   color: inherit !important;
   box-shadow: none !important;
   transition: none !important;
+}
+
+/* Stili per il menu mobile */
+@media (max-width: 991.98px) {
+  .sidebar-custom {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Usa la stessa larghezza fissa */
+    width: 280px;
+    height: 100vh;
+    z-index: 1040;
+    transition: left 0.3s ease-in-out;
+  }
+
+  .col-lg-2 {
+    width: 280px !important; /* Forza la larghezza anche su mobile */
+    min-width: 280px !important;
+  }
+
+  .sidebar-custom.sidebar-mobile-open {
+    left: 0;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.5rem;
+    background: transparent;
+    box-shadow: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    height: 48px;
+  }
+
+  .page-header-title {
+    font-size: 1.25rem;
+    margin: 0;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1rem;
+  }
+
+  .menu-toggle {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin: 0;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+
+  /*.menu-toggle i {
+    font-size: 1.2rem;
+  }*/
+
+  /* Aggiusta il padding del contenuto principale */
+  .main-content {
+    padding-top: 48px;
+  }
+
+  /* Sposta la sidebar sotto la barra */
+  /*.sidebar-custom {
+    top: 48px;
+    height: calc(100vh - 48px);
+  }*/
+}
+
+/* Stili comuni per i pulsanti mobili (menu e notifiche) */
+.mobile-button {
+  position: fixed;
+  width: 48px !important; /* Forza la stessa dimensione */
+  height: 48px !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #07255b;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1050;
+  transition: transform 0.2s ease;
+}
+
+.mobile-button:hover {
+  transform: scale(1.05);
+}
+
+.mobile-button i {
+  font-size: 24px;
+}
+
+/* Menu toggle button */
+.menu-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1050;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #07255b;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+
+.menu-toggle i {
+  font-size: 1.25rem;
+}
+
+.menu-toggle:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 991.98px) {
+  .menu-toggle {
+    display: flex;
+  }
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1039;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.sidebar-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Aggiusta il contenuto principale */
+.main-content {
+  margin-left: 0;
+  width: calc(100% - 280px); /* Sottrae la larghezza della sidebar */
+}
+
+@media (max-width: 991.98px) {
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+.container-fluid {
+  min-height: 100vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  flex: 1;
+  margin: 0;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  margin: 0;
+}
+
+@media (min-width: 992px) {
+  .main-content {
+    margin-left: 280px; /* Larghezza della sidebar */
+    width: calc(100% - 280px);
+  }
 }

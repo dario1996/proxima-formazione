@@ -1,52 +1,59 @@
-<!-- <app-header></app-header> -->
+<div class="app-container">
+  <!-- Sidebar -->
+  <div class="sidebar-wrapper" [class.sidebar-mobile-open]="isSidebarOpen">
+    <aside class="d-flex flex-column h-100">
+      <!-- Logo -->
+      <div class="sidebar-logo text-center py-4">
+        <img src="assets/images/proxima_logo.png" alt="Logo" class="sidebar-logo-img" />
+      </div>
 
-<div class="container-fluid">
-  <div class="row">
-    <!-- Sidebar -->
-    <div class="col-lg-2 p-0 sidebar-custom">
-      <aside class="d-flex flex-column h-100">
-        <!-- Logo -->
-        <div class="sidebar-logo text-center py-4 ">
-          <img src="assets/images/proxima_logo.png" alt="Logo" class="sidebar-logo-img" />
-        </div>
-
-        <!-- Menu -->
-        <nav class="flex-grow-1">
-          <ul class="nav flex-column gap-2">
-            @for (menuItem of menuItems; track menuItem; let index = $index) {
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 sidebar-link"
-                [routerLink]="menuItem.links[0].url" routerLinkActive="active" (click)="selectLink(menuItem.links[0])">
+      <!-- Menu -->
+      <nav class="flex-grow-1">
+        <ul class="nav flex-column gap-2">
+          @for (menuItem of menuItems; track menuItem; let index = $index) {
+          <li class="nav-item">
+            <a class="nav-link sidebar-link"
+              [routerLink]="menuItem.links[0].url" 
+              routerLinkActive="active" 
+              (click)="selectLink(menuItem.links[0]); closeSidebarOnMobile()">
+              <div class="d-flex">
                 <i [class]="menuItem.icon + ' fs-4'"></i>
                 <span class="sidebar-label">{{ menuItem.title }}</span>
-              </a>
-            </li>
-            }
-          </ul>
-        </nav>
+              </div>
+            </a>
+          </li>
+          }
+        </ul>
+      </nav>
 
-        <!-- Logout in basso -->
-        <!-- <div class="mt-auto mb-4 px-3"> -->
-          <!-- Avatar utente sopra il logout -->
-          <div class="mb-3 text-center">
-            <app-avatar [isLogged]="BasicAuth.isLogged()" [userName]="BasicAuth.loggedUser()"></app-avatar>
-          </div>
-          <hr class="sidebar-divider my-3" />
-          <div class="text-center mb-3">
-            <button class="btn btn-outline-light logout-btn d-inline-flex justify-content-center align-items-center gap-1"
-              (click)="logout()" style="font-weight: bold;">
-              <i class="bi bi-box-arrow-right fs-5"></i>
-              <span>Logout</span>
-            </button>
-          </div>
-        <!-- </div> -->
-      </aside>
-    </div>
-
-    <!-- Main content -->
-    <div class="col-lg-10 mt-3">
-      <router-outlet></router-outlet>
-    </div>
-    <app-notification class="notification-floating"></app-notification>
+      <!-- Logout in basso -->
+      <div class="mb-3 text-center">
+        <app-avatar [isLogged]="BasicAuth.isLogged()" [userName]="BasicAuth.loggedUser()"></app-avatar>
+      </div>
+      <hr class="sidebar-divider my-3" />
+      <div class="text-center mb-3">
+        <button class="btn btn-outline-light logout-btn d-inline-flex justify-content-center align-items-center gap-1"
+          (click)="logout()" style="font-weight: bold;">
+          <i class="bi bi-box-arrow-right fs-5"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
   </div>
+
+  <!-- Menu toggle button per mobile -->
+  <button class="btn btn-primary menu-toggle d-lg-none" type="button" (click)="toggleSidebar()">
+    <i class="fa-solid" [class.fa-bars]="!isSidebarOpen" [class.fa-times]="isSidebarOpen"></i>
+  </button>
+
+  <!-- Overlay per chiusura menu su mobile -->
+  <div class="sidebar-overlay" [class.show]="isSidebarOpen" (click)="closeSidebarOnMobile()"></div>
+
+  <!-- Main content -->
+  <main class="main-wrapper">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Notifiche -->
+  <app-notification class="notification-floating"></app-notification>
 </div>

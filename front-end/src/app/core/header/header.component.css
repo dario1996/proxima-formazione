@@ -60,14 +60,32 @@ nav {
   object-fit: contain;
 }
 
+/* Menu Toggle Button */
+.menu-toggle {
+  color: #333;
+  padding: 0;
+}
+
+.menu-toggle i {
+  font-size: 24px;
+}
+
 @media (max-width: 768px) {
   .logo-img {
     max-width: 150px;
+  }
+  
+  .navbar {
+    padding: 0.5rem 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .logo-img {
     max-width: 120px;
+  }
+  
+  .gap-3 {
+    gap: 0.5rem !important;
   }
 }
