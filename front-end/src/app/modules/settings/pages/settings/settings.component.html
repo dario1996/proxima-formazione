@@ -34,7 +34,7 @@
     <div class="tab-content mt-4">
         @if (selectedTab === 'piattaforme') {
         <div>
-            <app-piattaforme [piattaforme]="piattaforme"></app-piattaforme>
+            <app-piattaforme [piattaforme]="piattaforme" (action)="onAction($event)"></app-piattaforme>
         </div>
         }
         @if (selectedTab === 'stato_corsi') {

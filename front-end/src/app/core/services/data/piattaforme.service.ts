@@ -18,20 +18,35 @@ export class PiattaformeService {
       `http://${this.server}:${this.port}/api/piattaforme/lista`,
     );
 
-//   insCliente = (shopId: string, cliente: IClienti) =>
-//     this.httpClient.post<ApiMsg>(
-//       `http://${this.server}:${this.port}/api/clienti/inserisci?shopId=${shopId}`,
-//       cliente,
-//     );
+  //   insCliente = (shopId: string, cliente: IClienti) =>
+  //     this.httpClient.post<ApiMsg>(
+  //       `http://${this.server}:${this.port}/api/clienti/inserisci?shopId=${shopId}`,
+  //       cliente,
+  //     );
 
-//   updCliente = (shopId: string, cliente: IClienti) =>
-//     this.httpClient.put<ApiMsg>(
-//       `http://${this.server}:${this.port}/api/clienti/modifica?shopId=${shopId}`,
-//       cliente,
-//     );
+  //   updCliente = (shopId: string, cliente: IClienti) =>
+  //     this.httpClient.put<ApiMsg>(
+  //       `http://${this.server}:${this.port}/api/clienti/modifica?shopId=${shopId}`,
+  //       cliente,
+  //     );
 
-//   delCliente = (shopId: string, codiceCliente: string) =>
-//     this.httpClient.delete<ApiMsg>(
-//       `http://${this.server}:${this.port}/api/clienti/elimina/${codiceCliente}?shopId=${shopId}`,
-//     );
+  //   delCliente = (shopId: string, codiceCliente: string) =>
+  //     this.httpClient.delete<ApiMsg>(
+  //       `http://${this.server}:${this.port}/api/clienti/elimina/${codiceCliente}?shopId=${shopId}`,
+  //     );
+
+  addPiattaforma(piattaforma: any) {
+    // Da implementare: chiamata POST all'API
+    return { subscribe: (cb: any) => cb() }; // placeholder
+  }
+
+  editPiattaforma(piattaforma: any) {
+    // Da implementare: chiamata PUT/PATCH all'API
+    return { subscribe: (cb: any) => cb() }; // placeholder
+  }
+
+  deletePiattaforma(id: any) {
+    // Da implementare: chiamata DELETE all'API
+    return { subscribe: (cb: any) => cb() }; // placeholder
+  }
 }
