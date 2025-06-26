@@ -49,6 +49,17 @@ export class WelcomeComponent implements OnInit {
       ],
     },
     {
+      title: 'Piano Formativo',
+      icon: 'fa-solid fa-graduation-cap fa-xl',
+      links: [
+        {
+          label: 'Piano Formativo',
+          url: 'piano-formativo',
+          icon: 'fa-solid fa-graduation-cap fa-lg',
+        },
+      ],
+    },
+    {
       title: 'Settings',
       icon: 'fa-solid fa-gears fa-xl',
       links: [
@@ -75,7 +86,7 @@ export class WelcomeComponent implements OnInit {
     private route: ActivatedRoute,
     private salutiSrv: SalutiDataService,
     private router: Router,
-    public BasicAuth: AuthJwtService
+    public BasicAuth: AuthJwtService,
   ) {}
 
   @HostListener('window:resize', ['$event'])
@@ -129,9 +140,9 @@ export class WelcomeComponent implements OnInit {
   }
 
   logout() {
-  // Sostituisci con il tuo servizio di logout se necessario
-  // Esempio:
-  //this.authService.logout();
-  this.router.navigate(['/login']);
-}
+    // Sostituisci con il tuo servizio di logout se necessario
+    // Esempio:
+    //this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }

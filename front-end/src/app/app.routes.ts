@@ -26,9 +26,9 @@ export const routes: Routes = [
       {
         path: 'corsi',
         loadComponent: () =>
-          import(
-            './modules/corsi/pages/corsi/corsi.component'
-          ).then(m => m.CorsiComponent),
+          import('./modules/corsi/pages/corsi/corsi.component').then(
+            m => m.CorsiComponent,
+          ),
       },
       {
         path: 'dipendenti',
@@ -38,11 +38,18 @@ export const routes: Routes = [
           ).then(m => m.DipendentiComponent),
       },
       {
-        path: 'settings',
+        path: 'piano-formativo',
         loadComponent: () =>
           import(
-            './modules/settings/pages/settings/settings.component'
-          ).then(m => m.SettingsComponent),
+            './modules/piano-formativo/pages/piano-formativo/piano-formativo.component'
+          ).then(m => m.PianoFormativoComponent),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./modules/settings/pages/settings/settings.component').then(
+            m => m.SettingsComponent,
+          ),
       },
     ],
     canActivate: [AuthGuard],
@@ -94,7 +101,7 @@ export const routes: Routes = [
       import('./modules/errors/pages/forbidden/forbidden.component').then(
         m => m.ForbiddenComponent,
       ),
-      //canActivate: [AuthGuard],
+    //canActivate: [AuthGuard],
     //data: { roles: [Ruoli.utente] },
   },
   {

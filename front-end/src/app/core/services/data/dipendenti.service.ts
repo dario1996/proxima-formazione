@@ -9,29 +9,29 @@ import { ApiMsg } from '../../../shared/models/ApiMsg';
 })
 export class DipendentiService {
   server: string = environment.server;
-  port: string = environment.negozioServicePort;
+  port: string = environment.port;
 
   constructor(private httpClient: HttpClient) {}
 
-  getListaDipendenti = (shopId: string) =>
+  getListaDipendenti = () =>
     this.httpClient.get<IDipendenti[]>(
-      `http://${this.server}:${this.port}/api/dipendenti/lista?shopId=${shopId}`,
+      `http://${this.server}:${this.port}/api/dipendenti`,
     );
 
-  insDipendente = (shopId: string, dipendente: IDipendenti) =>
+  insDipendente = (dipendente: IDipendenti) =>
     this.httpClient.post<ApiMsg>(
-      `http://${this.server}:${this.port}/api/dipendenti/inserisci?shopId=${shopId}`,
+      `http://${this.server}:${this.port}/api/dipendenti`,
       dipendente,
     );
 
-  updDipendente = (shopId: string, dipendente: IDipendenti) =>
+  updDipendente = (dipendente: IDipendenti) =>
     this.httpClient.put<ApiMsg>(
-      `http://${this.server}:${this.port}/api/dipendenti/modifica?shopId=${shopId}`,
+      `http://${this.server}:${this.port}/api/dipendenti/${dipendente.id}`,
       dipendente,
     );
 
-  delDipendente = (shopId: string, codiceDipendente: string) =>
+  delDipendente = (id: number) =>
     this.httpClient.delete<ApiMsg>(
-      `http://${this.server}:${this.port}/api/dipendenti/elimina/${codiceDipendente}?shopId=${shopId}`,
+      `http://${this.server}:${this.port}/api/dipendenti/${id}`,
     );
 }
