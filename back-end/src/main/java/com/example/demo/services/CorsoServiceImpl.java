@@ -18,5 +18,13 @@ public class CorsoServiceImpl implements CorsoService {
     public List<Corso> SelAllCorsi() {
         return corsoRepository.findAll();
     }
-    
+
+    @Override
+    public void deleteCorso(Long id) {
+        if (!corsoRepository.existsById(id)) {
+            throw new RuntimeException("Corso non trovato");
+        }
+        corsoRepository.deleteById(id);
+    }
+
 }

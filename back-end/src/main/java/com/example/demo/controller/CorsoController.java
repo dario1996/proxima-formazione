@@ -138,6 +138,21 @@ public class CorsoController {
     }*/
 
 
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Elimina un corso", description = "Rimuove un corso dal sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Corso eliminato con successo"),
+            @ApiResponse(responseCode = "404", description = "Corso non trovato"),
+            @ApiResponse(responseCode = "409", description = "Impossibile eliminare corso con assegnazioni attive")
+    })
+    public ResponseEntity<?> deleteCorso(
+            @Parameter(description = "ID del corso da eliminare", required = true) 
+            @PathVariable Long id) {
+                
+        corsoService.deleteCorso(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @SneakyThrows
     @GetMapping(value = "/lista", produces = "application/json")
     public ResponseEntity<List<Corso>> getAllCorsi() {
@@ -226,7 +241,7 @@ public class CorsoController {
         return ResponseEntity.ok(updatedCorso);
     }
 
-    @Operation(summary = "Elimina un corso", description = "Rimuove un corso dal sistema (solo se non ha assegnazioni attive)")
+    /* @Operation(summary = "Elimina un corso", description = "Rimuove un corso dal sistema (solo se non ha assegnazioni attive)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Corso eliminato con successo"),
             @ApiResponse(responseCode = "404", description = "Corso non trovato"),
@@ -247,13 +262,16 @@ public class CorsoController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Impossibile eliminare il corso: potrebbe avere assegnazioni attive");
         }
-    }
+    } */
+
+    
 
     @Operation(summary = "Recupera corsi per piattaforma", description = "Restituisce tutti i corsi associati a una specifica piattaforma")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista corsi recuperata con successo"),
-            @ApiResponse(responseCode = "404", description = "Piattaforma non trovata")
-    })
+            @ApiResponse(responseCode = "404", description = "Piattaforma non trovata"),
+            @ApiResponse(responseCode = "409", description = "Impossibile eliminare corso con assegnazioni attive")
+        })
     @GetMapping("/piattaforma/{piattaformaId}")
     public ResponseEntity<List<Corso>> getCorsiByPiattaforma(
             @Parameter(description = "ID della piattaforma", required = true) @PathVariable Long piattaformaId) {

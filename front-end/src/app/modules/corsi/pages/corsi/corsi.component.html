@@ -13,19 +13,19 @@
         </tr>
       </thead>
       <tbody>
-        @for (corsi of corsi; track corsi.id) {
+        @for (corso of corsi; track corso.id) {
         <tr>
-          <td>{{ corsi.nome }}</td>
-          <td>{{ corsi.argomento }}</td>
-          <td>{{ corsi.durata }}</td>
-          <td>{{ corsi.piattaforma.nome }}</td>
+          <td>{{ corso.nome }}</td>
+          <td>{{ corso.argomento }}</td>
+          <td>{{ corso.durata }}</td>
+          <td>{{ corso.piattaforma.nome }}</td>
           <td class="align-middle text-center">
             <button
-              class="btn btn-primary btn-action" (click)="modifica(corsi.id)">
+              class="btn btn-primary btn-action" (click)="openModal('EDIT', corso)">
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
             <button
-              class="btn btn-danger btn-action" (click)="elimina(corsi.id)">
+              class="btn btn-danger btn-action" (click)="openModal('DELETE', corso)">
               <i class="fa-solid fa-trash"></i>
             </button>
           </td>
@@ -37,8 +37,81 @@
 
   <div class="button-container">
     <!-- (click)="openModal('ADD')" -->
-    <button class="btn btn-success btn-sm px-4" title="Aggiungi corso">
+    <button class="btn btn-success btn-sm px-4" title="Aggiungi corso" (click)="openModal('ADD')">
       Aggiungi corso
     </button>
   </div>
 </div>
+@if (isOpenModal) {
+  <app-modal [title]="modalTitle" (closeModal)="closeModal()">
+    <div class="modal-body-content">
+      @if (modalActionType === 'EDIT' || modalActionType === 'ADD') {
+        <form (ngSubmit)="onSubmit()" [formGroup]="form">
+          <div class="row mb-3">
+              <div class="col-12">
+                  <label for="nome" class="form-label">Nome</label>
+                  <input id="nome" type="text" class="form-control" formControlName="nome"
+                      [ngClass]="{'is-invalid': submitted && form.controls['nome'].invalid}" />
+                  <div *ngIf="submitted && form.controls['nome'].invalid" class="invalid-feedback">
+                      Il nome è obbligatorio (min 3, max 99 caratteri).
+                  </div>
+              </div>
+          </div>
+          <div class="row mb-3">
+              <div class="col-12">
+                  <label for="argomento" class="form-label">Macro argomento</label>
+                  <input id="argomento" type="text" class="form-control" formControlName="argomento"
+                      [ngClass]="{'is-invalid': submitted && form.controls['argomento'].invalid}" />
+                  <div *ngIf="submitted && form.controls['argomento'].invalid" class="invalid-feedback">
+                      Il Macro argomento è obbligatorio (min 3, max 99 caratteri).
+                  </div>
+              </div>
+          </div>
+          <div class="row mb-3">
+              <div class="col-6">
+                  <label for="durata" class="form-label">Durata</label>
+                  <input id="durata" type="number" class="form-control" formControlName="durata"
+                      [ngClass]="{'is-invalid': submitted && form.controls['durata'].invalid}" />
+                  <div *ngIf="submitted && form.controls['durata'].invalid" class="invalid-feedback">
+                      La Durata è obbligatorio (min 3, max 254 caratteri).
+                  </div>
+              </div>
+              <div class="col-6">
+                  <label for="piattaforma" class="form-label">Piattaforma</label>
+                  <select id="piattaforma" class="form-select" formControlName="piattaforma"
+                      [ngClass]="{'is-invalid': submitted && form.controls['piattaforma'].invalid}">
+                      @for (piattaforma of piattaforme; track piattaforma.id) {
+                        <option value="{{ piattaforma.id }}">{{ piattaforma.nome }}</option>
+                      }
+                  </select>
+                  <div *ngIf="submitted && form.controls['piattaforma'].invalid" class="invalid-feedback">
+                      Seleziona se la piattaforma.
+                  </div>
+              </div>
+          </div>
+      </form>
+      }
+      @else {
+        <div class="alert alert-danger mt-3 text-center" role="alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span class="ms-2">Sei sicuro di voler eliminare questa piattaforma?</span>
+        </div>
+      }
+    </div>
+    <div class="modal-footer-content">
+      <button class="btn btn-secondary btn-sm me-2" (click)="closeModal()">Annulla</button>
+      @if (modalActionType === 'EDIT' || modalActionType === 'ADD') {
+        <button class="btn btn-success btn-sm" (click)="onSubmit()">Salva
+          <i class="fa-solid fa-save ms-1"></i>
+        </button>
+        <!-- (click)="saveCorso()" -->
+      }
+      @else {
+        <button class="btn btn-danger btn-sm" (click)="deleteCorso(corsoToDelete)">Elimina 
+          <i class="fa-solid fa-trash ms-1"></i>
+        </button>
+        
+      }
+    </div>
+  </app-modal>
+}

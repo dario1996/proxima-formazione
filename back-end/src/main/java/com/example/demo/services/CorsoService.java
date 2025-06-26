@@ -7,5 +7,6 @@ import com.example.demo.entity.Corso;
 public interface CorsoService {
 
     public List<Corso> SelAllCorsi();
+    public void deleteCorso(Long id);
 
 }

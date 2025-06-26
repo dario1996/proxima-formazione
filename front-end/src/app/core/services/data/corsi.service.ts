@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ICorsi } from '../../../shared/models/Corsi';
 import { environment } from '../../../../environments/environment.development';
+import { Observable } from 'rxjs';
+import { ApiMsg } from '../../../shared/models/ApiMsg';
 
 @Injectable({
   providedIn: 'root',
@@ -16,5 +18,24 @@ export class CorsiService {
     this.httpClient.get<ICorsi[]>(
       `http://${this.server}:${this.port}/api/corsi/lista`,
     );
+
+
+  createCorso = (corso: ICorsi) : Observable<ApiMsg> =>
+    this.httpClient.post<ApiMsg>(
+      `http://${this.server}:${this.port}/api/corsi`,
+      corso
+    );
+
+  updateCorso = (id: number, corso: ICorsi) : Observable<ApiMsg> =>
+    this.httpClient.put<ApiMsg>(
+      `http://${this.server}:${this.port}/api/corsi/${id}`,
+      corso
+    );
+
+  deleteCorso = (id: number) : Observable<ApiMsg> =>
+    this.httpClient.delete<ApiMsg>(
+      `http://${this.server}:${this.port}/api/corsi/${id}`
+    );
+
 
 }
