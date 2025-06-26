@@ -1,6 +1,5 @@
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Component, OnInit, HostListener } from '@angular/core';
-import { SalutiDataService } from '../../../../core/services/data/saluti-data.service';
 
 import { NotificationComponent } from '../../../../core/notification/notification.component';
 import { AvatarComponent } from '../../../../core/avatar/avatar.component';
@@ -77,14 +76,10 @@ export class WelcomeComponent implements OnInit {
 
   utente = '';
 
-  titolo = 'Benvenuti in Gestionale Fortmazione';
-  sottotitolo = 'Visualizza le offerte del giorno';
-
   isSidebarOpen: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
-    private salutiSrv: SalutiDataService,
     private router: Router,
     public BasicAuth: AuthJwtService,
   ) {}
@@ -111,19 +106,7 @@ export class WelcomeComponent implements OnInit {
     this.utente = this.route.snapshot.params['userid'];
   }
 
-  saluti = '';
   errore = '';
-
-  getSaluti = (): void => {
-    this.salutiSrv.getSaluti(this.utente).subscribe({
-      next: this.handleResponse.bind(this),
-      error: this.handleError.bind(this),
-    });
-  };
-
-  handleResponse(response: object) {
-    this.saluti = response.toString();
-  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError(error: any) {
