@@ -60,3 +60,6 @@ dist-ssr
 # filepath: back-end/.gitignore
 .env
 *.env
+
+# IDE
+.cursor
