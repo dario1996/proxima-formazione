@@ -28,23 +28,41 @@ export class RouteGuardService {
   ): boolean {
     if (!this.Auth.isLogged()) {
       console.log('Accesso NON Consentito - Utente non autenticato');
-      this.route.navigate(['forbidden']); // 🔹 Ora reindirizza a /forbidden
+      this.route.navigate(['login']);
       return false;
     }
 
     this.token = this.Auth.getAuthToken();
     if (!this.token) {
       console.log('Token non presente - Accesso negato');
-      this.route.navigate(['forbidden']);
+      this.Auth.clearAll();
+      this.route.navigate(['login']);
       return false;
     }
 
     const helper = new JwtHelperService();
+
+    // Check if token is expired
+    try {
+      if (helper.isTokenExpired(this.token)) {
+        console.log('Token scaduto - Reindirizzamento al login');
+        this.Auth.clearAll();
+        this.route.navigate(['login'], { queryParams: { expired: true } });
+        return false;
+      }
+    } catch (error) {
+      console.log('Errore nel controllo del token - Token non valido');
+      this.Auth.clearAll();
+      this.route.navigate(['login']);
+      return false;
+    }
+
     const decodedToken = helper.decodeToken(this.token);
 
     if (!decodedToken || !decodedToken['authorities']) {
       console.log('Token non valido o senza ruoli - Accesso negato');
-      this.route.navigate(['forbidden']);
+      this.Auth.clearAll();
+      this.route.navigate(['login']);
       return false;
     }
 

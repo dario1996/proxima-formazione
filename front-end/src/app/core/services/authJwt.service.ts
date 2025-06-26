@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { AppCookieService } from './app-cookie.service';
 import { Injectable } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Token } from '../../shared/models/Token';
 import { environment } from '../../../environments/environment.development';
 import { map } from 'rxjs';
@@ -11,6 +12,7 @@ import { map } from 'rxjs';
 })
 export class AuthJwtService {
   server: string = environment.server;
+  private helper = new JwtHelperService();
   //port: string = environment.negozioServicePort;
 
   constructor(
@@ -54,10 +56,30 @@ export class AuthJwtService {
     return AuthHeader ? AuthHeader : '';
   };
 
+  isTokenExpired = (): boolean => {
+    const token = this.getAuthToken();
+    if (!token) {
+      return true;
+    }
+
+    try {
+      return this.helper.isTokenExpired(token);
+    } catch (error) {
+      console.error('Error checking token expiration:', error);
+      return true;
+    }
+  };
+
   loggedUser = (): string | null =>
     sessionStorage.getItem('Utente') ? sessionStorage.getItem('Utente') : '';
 
-  isLogged = (): boolean => (sessionStorage.getItem('Utente') ? true : false);
+  isLogged = (): boolean => {
+    const userLogged = sessionStorage.getItem('Utente');
+    const tokenExists = this.getAuthToken();
+
+    // User is logged if they have a session AND a non-expired token
+    return userLogged ? !this.isTokenExpired() : false;
+  };
 
   clearUser = (): void => sessionStorage.removeItem('Utente');
 
