@@ -24,14 +24,12 @@
                     </td>
                     <td class="align-middle text-center">
                         <div class="action-buttons">
-                            <button
-                                class="btn btn-primary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
-                                style="width: 35px; height: 35px;" (click)="modifica(piattaforma.id)">
+                            <button class="btn btn-primary d-inline-flex align-items-center justify-content-center me-2"
+                                (click)="modifica(piattaforma.id)">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button
-                                class="btn btn-danger btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
-                                style="width: 35px; height: 35px;" (click)="openModal('DELETE', piattaforma)">
+                            <button class="btn btn-danger d-inline-flex align-items-center justify-content-center"
+                                (click)="openModal('DELETE', piattaforma)">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>

@@ -83,11 +83,10 @@
 }
 
 .table thead th {
-  background: #f8f9fa;
-  border-bottom: 2px solid #dee2e6;
-  font-weight: 600;
-  color: #495057;
-  padding: 1rem 0.75rem;
+  background-color: #054b9a;
+  /* border-bottom: 2px solid #dee2e6; */
+  font-weight: bo;
+  color: #f8f9fa;
 }
 
 .table tbody tr {
@@ -110,6 +109,14 @@
   font-size: 0.875rem;
   border-radius: 6px;
   transition: all 0.2s;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .btn-action:hover {
