@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
-import { IDipendenti } from '../../../shared/models/Dipendenti';
+import {
+  IDipendenti,
+  DipendenteCreateRequest,
+} from '../../../shared/models/Dipendenti';
 import { ApiMsg } from '../../../shared/models/ApiMsg';
 
 @Injectable({
@@ -9,29 +12,57 @@ import { ApiMsg } from '../../../shared/models/ApiMsg';
 })
 export class DipendentiService {
   server: string = environment.server;
-  port: string = environment.negozioServicePort;
+  port: string = environment.port;
 
   constructor(private httpClient: HttpClient) {}
 
-  getListaDipendenti = (shopId: string) =>
+  getListaDipendenti = () =>
     this.httpClient.get<IDipendenti[]>(
-      `http://${this.server}:${this.port}/api/dipendenti/lista?shopId=${shopId}`,
+      `http://${this.server}:${this.port}/api/dipendenti`,
     );
 
-  insDipendente = (shopId: string, dipendente: IDipendenti) =>
-    this.httpClient.post<ApiMsg>(
-      `http://${this.server}:${this.port}/api/dipendenti/inserisci?shopId=${shopId}`,
+  getDipendenteById = (id: number) =>
+    this.httpClient.get<IDipendenti>(
+      `http://${this.server}:${this.port}/api/dipendenti/${id}`,
+    );
+
+  getDipendenteByCodice = (codiceDipendente: string) =>
+    this.httpClient.get<IDipendenti>(
+      `http://${this.server}:${this.port}/api/dipendenti/codice/${codiceDipendente}`,
+    );
+
+  insDipendente = (dipendente: DipendenteCreateRequest) =>
+    this.httpClient.post<IDipendenti>(
+      `http://${this.server}:${this.port}/api/dipendenti`,
       dipendente,
     );
 
-  updDipendente = (shopId: string, dipendente: IDipendenti) =>
-    this.httpClient.put<ApiMsg>(
-      `http://${this.server}:${this.port}/api/dipendenti/modifica?shopId=${shopId}`,
+  updDipendente = (id: number, dipendente: DipendenteCreateRequest) =>
+    this.httpClient.put<IDipendenti>(
+      `http://${this.server}:${this.port}/api/dipendenti/${id}`,
       dipendente,
     );
 
-  delDipendente = (shopId: string, codiceDipendente: string) =>
-    this.httpClient.delete<ApiMsg>(
-      `http://${this.server}:${this.port}/api/dipendenti/elimina/${codiceDipendente}?shopId=${shopId}`,
+  delDipendente = (id: number) =>
+    this.httpClient.delete<void>(
+      `http://${this.server}:${this.port}/api/dipendenti/${id}`,
+    );
+
+  searchDipendenti = (
+    search?: string,
+    reparto?: string,
+    commerciale?: string,
+    soloAttivi: boolean = true,
+  ) =>
+    this.httpClient.get<IDipendenti[]>(
+      `http://${this.server}:${this.port}/api/dipendenti`,
+      {
+        params: {
+          ...(search && { search }),
+          ...(reparto && { reparto }),
+          ...(commerciale && { commerciale }),
+          soloAttivi: soloAttivi.toString(),
+        },
+      },
     );
 }
