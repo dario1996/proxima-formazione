@@ -178,7 +178,7 @@ nav.flex-grow-1 ul.nav {
   top: 0;
   height: 100%;
   width: 100%;
-  background: #fff;
+  background: #f8f9fa;
   z-index: 1;
   transition: background 0.2s;
 }
@@ -466,4 +466,13 @@ nav.flex-grow-1 ul.nav {
     margin-left: 280px; /* Larghezza della sidebar */
     width: calc(100% - 280px);
   }
+}
+
+.sidebar-link.active,
+.sidebar-link:hover,
+.sidebar-link:focus {
+  font-weight: bold !important;
+  color: #fff !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
