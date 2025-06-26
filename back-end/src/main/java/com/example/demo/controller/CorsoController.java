@@ -18,15 +18,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
+import com.example.demo.services.CorsoService;
+import com.example.demo.exceptions.NotFoundException;
 
 @RestController
 @RequestMapping("/api/corsi")
 @CrossOrigin(origins = "*")
+@Log
 @Tag(name = "Corsi", description = "Gestione dei corsi di formazione")
 public class CorsoController {
+
+    @Autowired
+    private CorsoService corsoService;
 
     @Autowired
     private CorsoRepository corsoRepository;
@@ -82,11 +89,11 @@ public class CorsoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCorso);
     }
 
-    @Operation(summary = "Recupera l'elenco dei corsi", description = "Restituisce tutti i corsi con possibilità di filtro per piattaforma, stato o nome")
+    /*@Operation(summary = "Recupera l'elenco dei corsi", description = "Restituisce tutti i corsi con possibilità di filtro per piattaforma, stato o nome")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista corsi recuperata con successo", content = @Content(mediaType = "application/json", schema = @Schema(type = "array", implementation = Corso.class)))
-    })
-    @GetMapping
+    })*/
+    /*@GetMapping
     public ResponseEntity<List<Corso>> getAllCorsi(
             @Parameter(description = "ID della piattaforma per filtrare i corsi") @RequestParam(required = false) Long piattaformaId,
             @Parameter(description = "Stato del corso per filtrare", schema = @Schema(allowableValues = { "PIANIFICATO",
@@ -128,6 +135,25 @@ public class CorsoController {
         }
 
         return ResponseEntity.ok(corsi);
+    }*/
+
+
+    @SneakyThrows
+    @GetMapping(value = "/lista", produces = "application/json")
+    public ResponseEntity<List<Corso>> getAllCorsi() {
+        log.info("****** Otteniamo i Corsi *******");
+        
+        List<Corso> corsi = corsoService.SelAllCorsi();
+        
+        if(corsi.isEmpty()) {
+            String ErrMsg = String.format("Nessun corso disponibile a sistema.");
+            
+            log.warning(ErrMsg);
+            
+            throw new NotFoundException(ErrMsg);
+        }
+
+        return new ResponseEntity<List<Corso>>(corsi, HttpStatus.OK);
     }
 
     @Operation(summary = "Recupera un corso per ID", description = "Restituisce i dettagli completi di un corso specifico")

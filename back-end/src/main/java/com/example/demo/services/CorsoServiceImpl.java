@@ -1,0 +1,22 @@
+package com.example.demo.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.entity.Corso;
+import com.example.demo.repository.CorsoRepository;
+
+@Service
+public class CorsoServiceImpl implements CorsoService {
+
+    @Autowired
+    private CorsoRepository corsoRepository;
+
+    @Override
+    public List<Corso> SelAllCorsi() {
+        return corsoRepository.findAll();
+    }
+    
+}
