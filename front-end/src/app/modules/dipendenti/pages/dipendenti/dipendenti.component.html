@@ -114,7 +114,13 @@
             </tr>
           }
           @for (dipendente of filteredDipendenti; track dipendente.id) {
-            <tr [class.table-secondary]="!dipendente.attivo">
+            <tr
+              [class.table-secondary]="!dipendente.attivo"
+              class="clickable-row"
+              (click)="openDetailModal(dipendente)"
+              style="cursor: pointer"
+              title="Clicca per vedere i dettagli"
+            >
               <td>
                 <strong>{{ dipendente.codiceDipendente }}</strong>
               </td>
@@ -153,7 +159,10 @@
                   {{ dipendente.attivo ? 'Attivo' : 'Disabilitato' }}
                 </span>
               </td>
-              <td class="align-middle text-center">
+              <td
+                class="align-middle text-center"
+                (click)="$event.stopPropagation()"
+              >
                 <button
                   class="btn btn-primary btn-action me-1"
                   (click)="modifica(dipendente.id)"
@@ -372,6 +381,146 @@
           role="status"
         ></span>
         {{ modalMode === 'add' ? 'Aggiungi' : 'Salva Modifiche' }}
+      </button>
+    </div>
+  </app-modal>
+
+  <!-- Detail Modal -->
+  <app-modal
+    *ngIf="isDetailModalOpen && selectedDipendente"
+    [isOpen]="isDetailModalOpen"
+    [title]="'Dettagli Dipendente'"
+    (closeModal)="closeDetailModal()"
+  >
+    <div class="modal-body-content">
+      <div class="row">
+        <!-- Header con avatar e info principali -->
+        <div class="col-12 mb-4">
+          <div class="d-flex align-items-center">
+            <div class="avatar-placeholder me-3">
+              <i class="fa-solid fa-user fa-3x text-muted"></i>
+            </div>
+            <div>
+              <h4 class="mb-1">{{ getNomeCompleto(selectedDipendente) }}</h4>
+              <p class="text-muted mb-1">{{ selectedDipendente.email }}</p>
+              <span
+                class="badge"
+                [class.bg-success]="selectedDipendente.attivo"
+                [class.bg-secondary]="!selectedDipendente.attivo"
+              >
+                {{ selectedDipendente.attivo ? 'Attivo' : 'Disabilitato' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informazioni dettagliate -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Codice Dipendente</label>
+          <div class="form-control-plaintext">
+            {{ selectedDipendente.codiceDipendente }}
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Email</label>
+          <div class="form-control-plaintext">
+            <a [href]="'mailto:' + selectedDipendente.email">
+              {{ selectedDipendente.email }}
+            </a>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Reparto</label>
+          <div class="form-control-plaintext">
+            <span *ngIf="selectedDipendente.reparto; else noReparto">
+              {{ selectedDipendente.reparto }}
+            </span>
+            <ng-template #noReparto>
+              <em class="text-muted">Non specificato</em>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Area Commerciale</label>
+          <div class="form-control-plaintext">
+            <span *ngIf="selectedDipendente.commerciale; else noCommerciale">
+              {{ selectedDipendente.commerciale }}
+            </span>
+            <ng-template #noCommerciale>
+              <em class="text-muted">Non specificato</em>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Azienda</label>
+          <div class="form-control-plaintext">
+            <span *ngIf="selectedDipendente.azienda; else noAzienda">
+              {{ selectedDipendente.azienda }}
+            </span>
+            <ng-template #noAzienda>
+              <em class="text-muted">Non specificato</em>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Ruolo</label>
+          <div class="form-control-plaintext">
+            <span *ngIf="selectedDipendente.ruolo; else noRuolo">
+              {{ selectedDipendente.ruolo }}
+            </span>
+            <ng-template #noRuolo>
+              <em class="text-muted">Non specificato</em>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3" *ngIf="selectedDipendente.dataCreazione">
+          <label class="form-label fw-bold">Data Creazione</label>
+          <div class="form-control-plaintext">
+            {{ formatDate(selectedDipendente.dataCreazione) }}
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3" *ngIf="selectedDipendente.dataModifica">
+          <label class="form-label fw-bold">Ultima Modifica</label>
+          <div class="form-control-plaintext">
+            {{ formatDate(selectedDipendente.dataModifica) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer-content">
+      <button
+        type="button"
+        class="btn btn-secondary me-2"
+        (click)="closeDetailModal()"
+      >
+        Chiudi
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary me-2"
+        (click)="editFromDetail()"
+        title="Modifica dipendente"
+      >
+        <i class="fa-solid fa-pen-to-square me-1"></i>
+        Modifica
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="deleteFromDetail()"
+        [disabled]="!selectedDipendente.attivo"
+        title="Disabilita dipendente"
+      >
+        <i class="fa-solid fa-user-slash me-1"></i>
+        {{ selectedDipendente.attivo ? 'Disabilita' : 'Già Disabilitato' }}
       </button>
     </div>
   </app-modal>

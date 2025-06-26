@@ -56,6 +56,10 @@ export class DipendentiComponent implements OnInit {
   dipendenteForm!: FormGroup;
   editingDipendenteId: number | null = null;
 
+  // Detail modal
+  isDetailModalOpen: boolean = false;
+  selectedDipendente: IDipendenti | null = null;
+
   // Loading states
   isLoading: boolean = false;
   isSubmitting: boolean = false;
@@ -428,5 +432,30 @@ export class DipendentiComponent implements OnInit {
       if (field.errors['maxlength']) return `${fieldName} troppo lungo`;
     }
     return '';
+  }
+
+  // Detail modal methods
+  openDetailModal(dipendente: IDipendenti) {
+    this.selectedDipendente = dipendente;
+    this.isDetailModalOpen = true;
+  }
+
+  closeDetailModal() {
+    this.isDetailModalOpen = false;
+    this.selectedDipendente = null;
+  }
+
+  editFromDetail() {
+    if (this.selectedDipendente) {
+      this.closeDetailModal();
+      this.modifica(this.selectedDipendente.id);
+    }
+  }
+
+  deleteFromDetail() {
+    if (this.selectedDipendente) {
+      this.closeDetailModal();
+      this.elimina(this.selectedDipendente.id);
+    }
   }
 }

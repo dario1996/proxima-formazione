@@ -187,3 +187,81 @@
   background: rgba(255, 255, 255, 0.8);
   z-index: 10;
 }
+
+/* Clickable row styles */
+.clickable-row {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.clickable-row:hover {
+  background-color: #e3f2fd !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-row.table-secondary:hover {
+  background-color: #f8f9fa !important;
+}
+
+/* Avatar placeholder styles */
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar-placeholder i {
+  color: white !important;
+}
+
+/* Detail modal specific styles */
+.modal-body-content .form-control-plaintext {
+  padding: 0.375rem 0;
+  margin-bottom: 0;
+  line-height: 1.5;
+  color: #212529;
+  background-color: transparent;
+  border: solid transparent;
+  border-width: 1px 0;
+  min-height: 1.5rem;
+}
+
+.modal-body-content .form-label.fw-bold {
+  color: #495057;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+/* Email link styling */
+.form-control-plaintext a {
+  color: #0d6efd;
+  text-decoration: none;
+}
+
+.form-control-plaintext a:hover {
+  color: #0b5ed7;
+  text-decoration: underline;
+}
+
+/* Detail modal header styling */
+.modal-body-content h4 {
+  color: #212529;
+  font-weight: 600;
+}
+
+/* Action buttons in detail modal */
+.modal-footer-content .btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.modal-footer-content .btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
