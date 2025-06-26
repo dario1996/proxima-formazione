@@ -4,6 +4,8 @@ import { PiattaformeComponent } from '../../components/piattaforme/piattaforme.c
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
+import { ApiMsg } from '../../../../shared/models/ApiMsg';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-settings',
@@ -21,7 +23,12 @@ export class SettingsComponent implements OnInit {
   piattaforme: IPiattaforma[] = [];
   piattaformeLoaded = false;
 
-  constructor(private piattaformeService: PiattaformeService) {}
+  closeModalSignal = 0;
+
+  constructor(
+    private piattaformeService: PiattaformeService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit() {
     this.onTabClick(this.selectedTab);
@@ -48,24 +55,36 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  onAction(event: { tab: string; type: string; payload?: any }) {
+  onAction(event: { tab: string; type: string; payload?: IPiattaforma }) {
     switch (event.tab) {
       case 'piattaforme':
         switch (event.type) {
           case 'ADD':
-            this.piattaformeService
-              .addPiattaforma(event.payload)
-              .subscribe(() => this.loadPiattaforme());
+            if (event.payload) {
+              this.piattaformeService.addPiattaforma(event.payload).subscribe({
+                next: this.onSuccess,
+                error: this.handleError,
+              });
+            }
             break;
           case 'EDIT':
-            this.piattaformeService
-              .editPiattaforma(event.payload)
-              .subscribe(() => this.loadPiattaforme());
+            if (event.payload) {
+              this.piattaformeService.editPiattaforma(event.payload.id, event.payload).subscribe({
+                next: this.onSuccess,
+                error: this.handleError,
+              });
+              break;
+            }
             break;
           case 'DELETE':
-            this.piattaformeService
-              .deletePiattaforma(event.payload)
-              .subscribe(() => this.loadPiattaforme());
+            if (event.payload) {
+              this.piattaformeService
+                .deletePiattaforma(event.payload.id) // <-- usa solo l'id!
+                .subscribe({
+                  next: this.onSuccess,
+                  error: this.handleError,
+                });
+            }
             break;
           default:
             console.warn('Azione piattaforme non gestita:', event.type);
@@ -76,4 +95,21 @@ export class SettingsComponent implements OnInit {
         console.warn('Tab non gestita:', event.tab);
     }
   }
+
+  onSuccess = (response: ApiMsg) => {
+    this.toastr.success(
+      response.message || 'Operazione completata con successo!',
+      'Successo',
+    );
+    this.loadPiattaforme();
+    this.closeModalSignal++; // cambia valore per notificare il figlio
+  };
+
+  handleError = (error: any) => {
+    this.toastr.error(
+      error?.error?.message || 'Si è verificato un errore!',
+      'Errore',
+    );
+    console.log(error);
+  };
 }

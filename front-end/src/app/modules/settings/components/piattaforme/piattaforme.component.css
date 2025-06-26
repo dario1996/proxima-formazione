@@ -15,6 +15,13 @@
   overflow: hidden;
 }
 
+.table thead th {
+  background-color: #054b9a;
+  /* border-bottom: 2px solid #dee2e6; */
+  font-weight: bo;
+  color: #f8f9fa;
+}
+
 .action-buttons {
   display: flex;
   flex-direction: row;
