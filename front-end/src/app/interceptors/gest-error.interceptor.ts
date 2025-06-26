@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import {
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+} from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 
 import { AuthJwtService } from '../core/services/authJwt.service';
@@ -26,12 +31,21 @@ export class GestErrorInterceptor implements HttpInterceptor {
             ? err.error.message || err.statusText
             : 'Errore Generico. Impossibile Proseguire!';
 
-        if ([403].indexOf(err.status) !== -1) {
-          this.router.navigate(['forbidden']);
-        }
-        if ([401].indexOf(err.status) !== -1 && this.auth.isLogged()) {
+        if ([401].indexOf(err.status) !== -1) {
+          const isTokenExpired =
+            err.error?.error === 'Token expired' ||
+            err.error?.message?.includes('expired') ||
+            err.error?.message?.includes('JWT token has expired');
+
           this.auth.clearAll();
-          this.router.navigate(['login'], { queryParams: { expired: true } });
+
+          if (isTokenExpired) {
+            this.router.navigate(['login'], { queryParams: { expired: true } });
+          } else {
+            this.router.navigate(['login']);
+          }
+        } else if ([403].indexOf(err.status) !== -1) {
+          this.router.navigate(['forbidden']);
         } else if (err.status === 404) {
           error = err.error.message;
         }
