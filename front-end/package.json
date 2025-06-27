@@ -14,9 +14,8 @@
     "serve:en": "ng serve --configuration=en",
     "prettier:check": "npx prettier --check .",
     "prettier:write": "npx prettier --write .",
-    "start-all": "concurrently \"cd ../back-end && mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=h2dev\" \"ng serve\"",
-    "start-dev": "concurrently \"cd ../back-end && mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=h2dev\" \"ng serve --configuration development\"",
-    "start-backend": "cd ../back-end && mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=h2dev"
+    "start-all-h2": "concurrently \"cd ../back-end && mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=h2dev\" \"ng serve\"",
+    "start-all": "concurrently \"cd ../back-end && mvnw.cmd spring-boot:run\" \"ng serve\""
   },
   "private": true,
   "dependencies": {
