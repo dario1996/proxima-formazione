@@ -77,20 +77,45 @@ export class CorsiComponent implements OnInit {
 }
 
 
-
   addCorso(corso: ICorsi) {
-      this.corsiService.createCorso(corso).subscribe({
+      const corsoToSave = {
+        ...this.form.value,
+        piattaforma: {
+          id: parseInt(this.form.value.piattaforma)
+        }
+      };
+
+      this.corsiService.createCorso(corsoToSave).subscribe({
         next: () => {
           this.loadCorsi();
-          this.toastr.success('Corso eliminato con successo');
+          this.toastr.success('Corso aggiunto con successo');
         },
         error: (error) => {
-          console.error('Errore durante l\'eliminazione del corso:', error);
-          this.toastr.error('Errore durante l\'eliminazione del corso');
+          this.toastr.error('Errore durante l\'aggiunta del corso');
         }
       });
       this.closeModal();
   }
+
+  updateCorso(id: number) {
+    const corsoToSave = {
+      ...this.form.value,
+      piattaforma: {
+        id: parseInt(this.form.value.piattaforma)
+      }
+    };
+
+    this.corsiService.updateCorso(id, corsoToSave).subscribe({
+      next: () => {
+        this.loadCorsi();
+        this.toastr.success('Corso modificato con successo');
+      },
+      error: (error) => {
+        this.toastr.error('Errore durante la modifica del corso');
+      }
+    });
+    this.closeModal();
+}
 
 
   openModal(type: string, corso?: ICorsi) {
@@ -100,8 +125,9 @@ export class CorsiComponent implements OnInit {
     this.modalActionType = type;
     this.isOpenModal = true;
     this.setModalTitle();
+    this.onReset();
     if (type === 'EDIT' && corso) {
-      //this.corsoToDelete = corso.id; // Salva il corso selezionato
+      this.corsoToDelete = corso.id;
       this.form.patchValue({
         nome: corso.nome,
         argomento: corso.argomento,
@@ -109,7 +135,7 @@ export class CorsiComponent implements OnInit {
         piattaforma: corso.piattaforma?.id || ''
       });
     } else if (type === 'DELETE' && corso) {
-      this.corsoToDelete = corso.id; // Per DELETE salva solo il riferimento
+      this.corsoToDelete = corso.id;
     }
 
   }
@@ -165,7 +191,7 @@ export class CorsiComponent implements OnInit {
   async performAction() {
     switch (this.modalActionType) {
       case 'EDIT':
-        //this.updateService(negozio.shopId);
+        this.updateCorso(this.corsoToDelete);
         break;
       case 'ADD':
         this.addCorso(this.form.value);
@@ -180,6 +206,11 @@ export class CorsiComponent implements OnInit {
 
   closeModal() {
     this.isOpenModal = false;
+  }
+
+  onReset(){
+    this.form.reset();
+    this.submitted = false;
   }
 
 

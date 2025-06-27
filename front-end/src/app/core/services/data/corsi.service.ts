@@ -22,13 +22,13 @@ export class CorsiService {
 
   createCorso = (corso: ICorsi) : Observable<ApiMsg> =>
     this.httpClient.post<ApiMsg>(
-      `http://${this.server}:${this.port}/api/corsi`,
+      `http://${this.server}:${this.port}/api/corsi/inserisci`,
       corso
     );
 
   updateCorso = (id: number, corso: ICorsi) : Observable<ApiMsg> =>
     this.httpClient.put<ApiMsg>(
-      `http://${this.server}:${this.port}/api/corsi/${id}`,
+      `http://${this.server}:${this.port}/api/corsi/modifica/${id}`,
       corso
     );
 

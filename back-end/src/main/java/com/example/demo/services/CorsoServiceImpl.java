@@ -27,4 +27,9 @@ public class CorsoServiceImpl implements CorsoService {
         corsoRepository.deleteById(id);
     }
 
+    @Override
+    public void InsCorso(Corso corso) {
+        corsoRepository.save(corso);
+    }
+
 }

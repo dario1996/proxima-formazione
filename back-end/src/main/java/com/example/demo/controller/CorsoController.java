@@ -1,23 +1,25 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.CorsoCreateRequest;
+// import com.example.demo.dto.CorsoCreateRequest;
 import com.example.demo.entity.Corso;
-import com.example.demo.entity.Piattaforma;
+// import com.example.demo.entity.Piattaforma;
 import com.example.demo.repository.CorsoRepository;
 import com.example.demo.repository.PiattaformaRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+// import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+// import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
@@ -48,45 +50,16 @@ public class CorsoController {
             @ApiResponse(responseCode = "404", description = "Piattaforma non trovata"),
             @ApiResponse(responseCode = "409", description = "Corso già esistente (codice corso duplicato)")
     })
-    @PostMapping
-    public ResponseEntity<?> createCorso(
-            @Valid @RequestBody @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dati del corso da creare", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CorsoCreateRequest.class), examples = @ExampleObject(name = "Esempio corso", value = """
-                    {
-                      "nome": "Project Management Base",
-                      "piattaformaId": 1,
-                      "stato": "PIANIFICATO",
-                      "dataInizio": "2025-06-01",
-                      "dataFine": "2025-06-15",
-                      "durata": 12.0,
-                      "feedbackRichiesto": true
-                    }
-                    """))) CorsoCreateRequest request) {
 
-        // Verifica esistenza piattaforma
-        Optional<Piattaforma> piattaforma = piattaformaRepository.findById(request.getPiattaformaId());
-        if (!piattaforma.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Piattaforma non trovata con ID: " + request.getPiattaformaId());
-        }
 
-        // Crea nuovo corso
-        Corso corso = new Corso();
-        corso.setNome(request.getNome());
-        corso.setPiattaforma(piattaforma.get());
-        corso.setStato(request.getStatoEnum());
-        corso.setDataInizio(request.getDataInizio());
-        corso.setDataFine(request.getDataFine());
-        corso.setDurata(request.getDurata());
-        corso.setFeedbackRichiesto(request.getFeedbackRichiesto());
-        corso.setCategoria(request.getCategoria());
-        corso.setArgomento(request.getArgomento());
-        corso.setPriorita(request.getPriorita());
-        corso.setUrlCorso(request.getUrlCorso());
-        corso.setCosto(request.getCosto());
-        corso.setCertificazioneRilasciata(request.getCertificazioneRilasciata());
-
-        Corso savedCorso = corsoRepository.save(corso);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCorso);
+    @PostMapping(value = "/inserisci", produces = "application/json")
+    public ResponseEntity<InfoMsg> createCorso(@RequestBody Corso corso) {
+        log.info("Salviamo il corso con codice " + corso.getCodiceCorso());
+ 
+        corsoService.InsCorso(corso);
+ 
+        return new ResponseEntity<InfoMsg>(new InfoMsg(LocalDate.now(),
+                "Inserimento Piattaforma eseguito con successo!"), HttpStatus.CREATED);
     }
 
     /*@Operation(summary = "Recupera l'elenco dei corsi", description = "Restituisce tutti i corsi con possibilità di filtro per piattaforma, stato o nome")
@@ -205,41 +178,27 @@ public class CorsoController {
             @ApiResponse(responseCode = "404", description = "Corso non trovato"),
             @ApiResponse(responseCode = "400", description = "Dati richiesta non validi")
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateCorso(
-            @Parameter(description = "ID del corso da aggiornare", required = true) @PathVariable Long id,
-            @Valid @RequestBody CorsoCreateRequest request) {
-
+    //PUT update platform
+    @PutMapping("/modifica/{id}")
+    public ResponseEntity<InfoMsg> updateCorso(@PathVariable Long id,
+            @RequestBody Corso corsoDetails) {
         Optional<Corso> optionalCorso = corsoRepository.findById(id);
-        if (!optionalCorso.isPresent()) {
+ 
+        if (optionalCorso.isPresent()) {
+            Corso corso = optionalCorso.get();
+            corso.setNome(corsoDetails.getNome());
+            corso.setArgomento(corsoDetails.getArgomento());
+            corso.setDurata(corsoDetails.getDurata());
+            corso.setPiattaforma(corsoDetails.getPiattaforma());
+ 
+            corsoRepository.save(corso);
+            return new ResponseEntity<InfoMsg>(new InfoMsg(LocalDate.now(),
+                "Modifica Corso eseguita con successo!"), HttpStatus.CREATED);
+        } else {
             return ResponseEntity.notFound().build();
         }
-
-        // Verifica esistenza piattaforma
-        Optional<Piattaforma> piattaforma = piattaformaRepository.findById(request.getPiattaformaId());
-        if (!piattaforma.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Piattaforma non trovata con ID: " + request.getPiattaformaId());
-        }
-
-        Corso corso = optionalCorso.get();
-        corso.setNome(request.getNome());
-        corso.setPiattaforma(piattaforma.get());
-        corso.setStato(request.getStatoEnum());
-        corso.setDataInizio(request.getDataInizio());
-        corso.setDataFine(request.getDataFine());
-        corso.setDurata(request.getDurata());
-        corso.setFeedbackRichiesto(request.getFeedbackRichiesto());
-        corso.setCategoria(request.getCategoria());
-        corso.setArgomento(request.getArgomento());
-        corso.setPriorita(request.getPriorita());
-        corso.setUrlCorso(request.getUrlCorso());
-        corso.setCosto(request.getCosto());
-        corso.setCertificazioneRilasciata(request.getCertificazioneRilasciata());
-
-        Corso updatedCorso = corsoRepository.save(corso);
-        return ResponseEntity.ok(updatedCorso);
     }
+ 
 
     /* @Operation(summary = "Elimina un corso", description = "Rimuove un corso dal sistema (solo se non ha assegnazioni attive)")
     @ApiResponses(value = {

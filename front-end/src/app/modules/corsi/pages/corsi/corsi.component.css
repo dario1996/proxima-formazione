@@ -7,15 +7,21 @@
 .table-container {
   flex: 1;
   background: white;
-  border-radius: 14px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   margin-bottom: 20px;
 }
 
 .table {
-  margin-bottom: 0;
-  width: 100%;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+ 
+.table thead th {
+  background-color: #054b9a;
+  /* border-bottom: 2px solid #dee2e6; */
+  font-weight: bo;
+  color: #f8f9fa;
 }
 
 .color-preview {

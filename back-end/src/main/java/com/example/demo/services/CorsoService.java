@@ -8,5 +8,5 @@ public interface CorsoService {
 
     public List<Corso> SelAllCorsi();
     public void deleteCorso(Long id);
-
+    public void InsCorso(Corso corso);
 }
