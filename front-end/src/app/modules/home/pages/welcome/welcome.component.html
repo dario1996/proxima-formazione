@@ -3,8 +3,8 @@
   <div class="sidebar-wrapper" [class.sidebar-mobile-open]="isSidebarOpen">
     <aside class="d-flex flex-column h-100">
       <!-- Logo -->
-      <div class="sidebar-logo text-center py-4">
-        <img src="assets/images/proxima_logo.png" alt="Logo" class="sidebar-logo-img" />
+      <div class=" text-center py-4">
+        <img src="assets/images/proxima_logo_white.png" alt="Logo" />
       </div>
 
       <!-- Menu -->
@@ -25,12 +25,13 @@
           }
         </ul>
       </nav>
-
+      <!-- <hr class="sidebar-divider my-3 w-80 mx-auto" /> -->
+      <hr class="my-3" style="width: 80%; margin: 0 auto; border-top: 3px solid #FFFFFF;">
       <!-- Logout in basso -->
       <div class="mb-3 text-center">
         <app-avatar [isLogged]="BasicAuth.isLogged()" [userName]="BasicAuth.loggedUser()"></app-avatar>
       </div>
-      <hr class="sidebar-divider my-3" />
+      
       <div class="text-center mb-3">
         <button class="btn btn-outline-light logout-btn d-inline-flex justify-content-center align-items-center gap-1"
           (click)="logout()" style="font-weight: bold">

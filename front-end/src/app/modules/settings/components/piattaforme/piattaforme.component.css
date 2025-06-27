@@ -11,14 +11,20 @@
 }
 
 .table {
-  border-radius: 14px;
+  border-radius: 0.375rem;
   overflow: hidden;
+}
+
+.table thead th {
+  background-color: #054b9a;
+  /* border-bottom: 2px solid #dee2e6; */
+  font-weight: bo;
+  color: #f8f9fa;
 }
 
 .action-buttons {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem; /* riduci il gap, oppure usa gap: 0; per nessuno spazio */
   justify-content: center;
   align-items: center;
   white-space: nowrap;

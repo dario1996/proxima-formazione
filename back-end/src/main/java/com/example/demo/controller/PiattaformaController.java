@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Piattaforma;
+import com.example.demo.exceptions.BindingException;
 import com.example.demo.exceptions.NotFoundException;
 import com.example.demo.repository.PiattaformaRepository;
 import com.example.demo.services.PiattaformeService;
@@ -17,8 +18,10 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +44,7 @@ public class PiattaformaController {
     })
     // @GetMapping
     // public List<Piattaforma> getAllPiattaforme() {
-    //     return piattaformaRepository.findAll();
+    // return piattaformaRepository.findAll();
     // }
 
     @SneakyThrows
@@ -62,6 +65,17 @@ public class PiattaformaController {
         return new ResponseEntity<List<Piattaforma>>(piattaforme, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/inserisci", produces = "application/json")
+    @SneakyThrows
+    public ResponseEntity<InfoMsg> createPiattaforma(@RequestBody Piattaforma piattaforma) {
+        log.info("Salviamo la piattaforma con codice " + piattaforma.getId());
+
+        piattaformeService.InsPiattaforma(piattaforma);
+
+        return new ResponseEntity<InfoMsg>(new InfoMsg(LocalDate.now(),
+                "Inserimento Piattaforma eseguito con successo!"), HttpStatus.CREATED);
+    }
+
     // GET platform by ID
     @GetMapping("/{id}")
     public ResponseEntity<Piattaforma> getPiattaformaById(@PathVariable Long id) {
@@ -71,14 +85,14 @@ public class PiattaformaController {
     }
 
     // POST create new platform
-    @PostMapping
-    public Piattaforma createPiattaforma(@RequestBody Piattaforma piattaforma) {
-        return piattaformaRepository.save(piattaforma);
-    }
+    // @PostMapping
+    // public Piattaforma createPiattaforma(@RequestBody Piattaforma piattaforma) {
+    // return piattaformaRepository.save(piattaforma);
+    // }
 
-    // PUT update platform
-    @PutMapping("/{id}")
-    public ResponseEntity<Piattaforma> updatePiattaforma(@PathVariable Long id,
+    //PUT update platform
+    @PutMapping("/modifica/{id}")
+    public ResponseEntity<InfoMsg> updatePiattaforma(@PathVariable Long id,
             @RequestBody Piattaforma piattaformaDetails) {
         Optional<Piattaforma> optionalPiattaforma = piattaformaRepository.findById(id);
 
@@ -89,19 +103,21 @@ public class PiattaformaController {
             piattaforma.setUrlSito(piattaformaDetails.getUrlSito());
             piattaforma.setAttiva(piattaformaDetails.getAttiva());
 
-            Piattaforma updatedPiattaforma = piattaformaRepository.save(piattaforma);
-            return ResponseEntity.ok(updatedPiattaforma);
+            piattaformaRepository.save(piattaforma);
+            return new ResponseEntity<InfoMsg>(new InfoMsg(LocalDate.now(),
+                "Modifica Piattaforma eseguito con successo!"), HttpStatus.CREATED);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     // DELETE platform
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePiattaforma(@PathVariable Long id) {
+    @DeleteMapping("/elimina/{id}")
+    public ResponseEntity<InfoMsg> deletePiattaforma(@PathVariable Long id) {
         if (piattaformaRepository.existsById(id)) {
             piattaformaRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+            return new ResponseEntity<InfoMsg>(new InfoMsg(LocalDate.now(),
+                "Eliminazione Piattaforma eseguita con successo!"), HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }

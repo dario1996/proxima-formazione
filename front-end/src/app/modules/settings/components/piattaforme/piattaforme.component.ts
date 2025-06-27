@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  SimpleChanges,
+} from '@angular/core';
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../../../core/modal/modal.component';
@@ -19,6 +25,7 @@ import {
 })
 export class PiattaformeComponent {
   @Input() piattaforme: IPiattaforma[] = [];
+  @Input() closeModalSignal = 0;
   @Output() action = new EventEmitter<{
     tab: string;
     type: string;
@@ -50,8 +57,17 @@ export class PiattaformeComponent {
         nome: piattaforma.nome,
         descrizione: piattaforma.descrizione,
         urlSito: piattaforma.urlSito,
-        flAttivo: piattaforma.attiva ? 'true' : 'false',
+        attiva: piattaforma.attiva ? 'true' : 'false',
       });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes['closeModalSignal'] &&
+      !changes['closeModalSignal'].firstChange
+    ) {
+      this.closeModal();
     }
   }
 
@@ -81,14 +97,14 @@ export class PiattaformeComponent {
           Validators.maxLength(254),
         ],
       ],
-      flAttivo: ['', [Validators.required]],
+      attiva: ['', [Validators.required]],
     });
   }
 
   setModalTitle() {
     const titles: Record<string, string> = {
-      EDIT: 'Modifica Servizio',
-      ADD: 'Aggiungi Servizio',
+      EDIT: 'Modifica Piattaforma',
+      ADD: 'Aggiungi Piattaforma',
       DELETE: 'Conferma Eliminazione',
     };
     this.modalTitle = titles[this.modalActionType] || '';
@@ -111,10 +127,16 @@ export class PiattaformeComponent {
       this.form.invalid
     )
       return;
-    let payload =
-      this.modalActionType === 'DELETE'
-        ? this.selectedPiattaforma?.id
-        : this.form.value;
+
+    let payload;
+    if (this.modalActionType === 'DELETE') {
+      payload = this.selectedPiattaforma;
+    } else if (this.modalActionType === 'EDIT') {
+      payload = { ...this.form.value, id: this.selectedPiattaforma?.id };
+    } else {
+      payload = this.form.value;
+    }
+
     this.action.emit({
       tab: 'piattaforme',
       type: this.modalActionType,

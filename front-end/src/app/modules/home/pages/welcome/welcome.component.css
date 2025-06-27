@@ -34,7 +34,7 @@
 
 .sidebar-wrapper {
   width: 280px;
-  background: #07255b;
+  background: #054b9a;
   position: fixed;
   top: 0;
   left: 0;
@@ -135,7 +135,7 @@ nav.flex-grow-1 ul.nav {
 }
 
 .sidebar-divider {
-  border-top: 1px solid #2a4170;
+  border-top: 1px solid #07255b;
   margin: 0.5rem 0 1.2rem 0;
   opacity: 0.7;
 }
@@ -187,7 +187,7 @@ nav.flex-grow-1 ul.nav {
 .sidebar-link.active,
 .sidebar-link:focus,
 .sidebar-link:hover {
-  color: #07255b !important;
+  color: #054b9a !important;
 }
 
 .sidebar-link.active i,
@@ -196,7 +196,7 @@ nav.flex-grow-1 ul.nav {
 .sidebar-link.active .sidebar-label,
 .sidebar-link:focus .sidebar-label,
 .sidebar-link:hover .sidebar-label {
-  color: #07255b !important;
+  color: #054b9a !important;
 }
 
 /* Rimuovi queste regole per evitare arrotondamenti */
@@ -362,7 +362,7 @@ nav.flex-grow-1 ul.nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #07255b;
+  background-color: #054b9a;
   border: none;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   z-index: 1050;
@@ -390,7 +390,7 @@ nav.flex-grow-1 ul.nav {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #07255b;
+  background-color: #054b9a;
   border: none;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   transition: transform 0.2s ease;
@@ -475,4 +475,8 @@ nav.flex-grow-1 ul.nav {
   color: #fff !important;
   background: transparent !important;
   box-shadow: none !important;
+}
+
+.w-80 {
+  width: 80% !important;
 }

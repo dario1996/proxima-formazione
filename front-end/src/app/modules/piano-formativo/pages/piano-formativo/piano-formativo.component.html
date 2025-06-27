@@ -1,0 +1,445 @@
+<div class="container-fluid">
+  <app-page-title [title]="title" [icon]="icon"></app-page-title>
+
+  <!-- Loading spinner -->
+  <div *ngIf="isLoading" class="text-center my-4">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Caricamento...</span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading">
+    <!-- Pulsante Aggiungi in alto -->
+    <div class="d-flex justify-content-end mb-3">
+      <button class="btn btn-success" (click)="openAssignModal()" title="Nuova assegnazione">
+        <i class="fa-solid fa-plus me-2"></i>
+        Assegna Corso
+      </button>
+    </div>
+
+    <!-- Statistiche -->
+    <div class="stats-row mb-3">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="stat-card bg-primary">
+            <div class="stat-number">{{ filteredAssegnazioni.length }}</div>
+            <div class="stat-label">Assegnazioni Totali</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card bg-success">
+            <div class="stat-number">
+              {{ completateCount }}
+            </div>
+            <div class="stat-label">Completate</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card bg-warning">
+            <div class="stat-number">
+              {{ inCorsoCount }}
+            </div>
+            <div class="stat-label">In Corso</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card bg-info">
+            <div class="stat-number">
+              {{ assegnateCount }}
+            </div>
+            <div class="stat-label">Assegnate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtri -->
+    <div class="filters-container mb-3">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="search">Cerca</label>
+            <input type="text" id="search" class="form-control" placeholder="Dipendente o corso..."
+              [(ngModel)]="searchTerm" (keyup)="onSearchChange()" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="stato">Stato</label>
+            <select id="stato" class="form-control" [(ngModel)]="selectedStato" (change)="onStatoChange()">
+              <option value="">Tutti</option>
+              <option *ngFor="let stato of stati" [value]="stato">
+                {{ getStatoLabel(stato) }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="dipendente">Dipendente</label>
+            <select id="dipendente" class="form-control" [(ngModel)]="selectedDipendente"
+              (change)="onDipendenteChange()">
+              <option value="">Tutti</option>
+              <option *ngFor="let dipendente of dipendenti" [value]="dipendente.id">
+                {{ getDipendenteNomeCompleto(dipendente) }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="corso">Corso</label>
+            <select id="corso" class="form-control" [(ngModel)]="selectedCorso" (change)="onCorsoChange()">
+              <option value="">Tutti</option>
+              <option *ngFor="let corso of corsi" [value]="corso.id">
+                {{ corso.nome }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <div class="d-flex gap-2">
+              <div class="form-check">
+                <input type="checkbox" id="obbligatorie" class="form-check-input" [(ngModel)]="soloObbligatorie"
+                  (change)="onObbligatorieChange()" />
+                <label class="form-check-label" for="obbligatorie">Obbligatori</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" id="feedback" class="form-check-input" [(ngModel)]="richiedeFeedback"
+                  (change)="onFeedbackChange()" />
+                <label class="form-check-label" for="feedback">Feedback Richiesto</label>
+              </div>
+            </div>
+            <div class="mt-2">
+              <button class="btn btn-secondary btn-sm" (click)="clearFilters()">
+                <i class="fa-solid fa-filter-circle-xmark"></i> Pulisci Filtri
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabella -->
+    <div class="table-container">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Dipendente</th>
+            <th>Corso</th>
+            <th>Data Assegnazione</th>
+            <th>Stato</th>
+            <th>Progresso</th>
+            <th>Obbligatorio</th>
+            <th class="text-center">Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredAssegnazioni.length === 0) {
+          <tr>
+            <td colspan="7" class="text-center text-muted py-4">
+              Nessuna assegnazione trovata con i filtri applicati
+            </td>
+          </tr>
+          }
+          @for (assegnazione of filteredAssegnazioni; track assegnazione.id) {
+          <tr>
+            <td>
+              <div class="d-flex flex-column">
+                <strong>{{
+                  getDipendenteNomeCompleto(assegnazione.dipendente)
+                  }}</strong>
+                <small class="text-muted">{{
+                  assegnazione.dipendente.email
+                  }}</small>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex flex-column">
+                <strong>{{ assegnazione.corso.nome }}</strong>
+                <small class="text-muted">{{
+                  assegnazione.corso.piattaforma.nome
+                  }}</small>
+              </div>
+            </td>
+            <td>{{ formatDate(assegnazione.dataAssegnazione) }}</td>
+            <td>
+              <span class="badge" [class]="getStatoBadgeClass(assegnazione.stato)">
+                {{ getStatoLabel(assegnazione.stato) }}
+              </span>
+            </td>
+            <td>
+              <div class="progress-container">
+                <div class="progress" style="height: 20px">
+                  <div class="progress-bar" [class.bg-success]="
+                        assegnazione.percentualeCompletamento === 100
+                      " [class.bg-warning]="
+                        assegnazione.percentualeCompletamento > 0 &&
+                        assegnazione.percentualeCompletamento < 100
+                      " [class.bg-secondary]="
+                        assegnazione.percentualeCompletamento === 0
+                      " [style.width.%]="assegnazione.percentualeCompletamento" role="progressbar">
+                    {{ assegnazione.percentualeCompletamento }}%
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <i class="fa-solid" [class.fa-check-circle]="assegnazione.obbligatorio"
+                [class.fa-circle]="!assegnazione.obbligatorio" [class.text-danger]="assegnazione.obbligatorio"
+                [class.text-muted]="!assegnazione.obbligatorio" [title]="
+                    assegnazione.obbligatorio ? 'Obbligatorio' : 'Facoltativo'
+                  ">
+              </i>
+            </td>
+            <td class="align-middle text-center">
+              <div class="action-buttons">
+                <button class="btn btn-primary btn-action me-1" (click)="openStatusModal(assegnazione)"
+                  title="Modifica stato">
+                  <i class="fa-solid fa-edit"></i>
+                </button>
+                <button class="btn btn-danger btn-action" (click)="deleteAssegnazione(assegnazione)"
+                  title="Elimina assegnazione">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal per Nuova Assegnazione -->
+  <app-modal *ngIf="isAssignModalOpen" [isOpen]="isAssignModalOpen" [title]="'Assegna Corso a Dipendente'"
+    (closeModal)="closeAssignModal()">
+    <div class="modal-body-content">
+      <form [formGroup]="assignForm" (ngSubmit)="onAssignSubmit()">
+        <div class="row">
+          <!-- Dipendente -->
+          <div class="col-12 mb-3">
+            <label for="dipendenteSearch" class="form-label">Dipendente *</label>
+            <div class="search-container position-relative">
+              <input id="dipendenteSearch" type="text" class="form-control searchable-dropdown-input"
+                [class.is-invalid]="isFieldInvalid(assignForm, 'dipendenteId')" [(ngModel)]="dipendenteSearchTerm"
+                [ngModelOptions]="{ standalone: true }" (input)="onDipendenteSearchChange()"
+                (focus)="onDipendenteFocus()" (blur)="onDipendenteBlur()" placeholder="Cerca dipendente..."
+                autocomplete="off" />
+              <!-- Hidden input for form validation -->
+              <input type="hidden" formControlName="dipendenteId" />
+              <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+              <button *ngIf="assignSelectedDipendente" type="button"
+                class="btn btn-sm btn-outline-secondary position-absolute" style="
+                  right: 8px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  z-index: 10;
+                " (click)="clearDipendenteSelection()" title="Rimuovi selezione">
+                <i class="fa-solid fa-times"></i>
+              </button>
+
+              <!-- Dropdown with search results -->
+              <div *ngIf="showDipendentiDropdown"
+                class="search-dropdown position-absolute w-100 bg-white border rounded shadow-sm" style="
+                  top: 100%;
+                  left: 0;
+                  z-index: 1000;
+                  max-height: 200px;
+                  overflow-y: auto;
+                ">
+                <div *ngFor="let dipendente of filteredDipendenti"
+                  class="search-dropdown-item p-2 border-bottom cursor-pointer" (click)="selectDipendente(dipendente)"
+                  style="cursor: pointer">
+                  <div class="d-flex flex-column">
+                    <strong>{{ getDipendenteNomeCompleto(dipendente) }}</strong>
+                    <small class="text-muted">{{ dipendente.email }} - {{ dipendente.reparto }}</small>
+                  </div>
+                </div>
+                <div *ngIf="filteredDipendenti.length === 0" class="search-dropdown-item p-2 text-muted text-center">
+                  Nessun dipendente trovato
+                </div>
+              </div>
+            </div>
+            <div class="invalid-feedback" *ngIf="isFieldInvalid(assignForm, 'dipendenteId')">
+              {{ getFieldError(assignForm, 'dipendenteId') }}
+            </div>
+          </div>
+
+          <!-- Corso -->
+          <div class="col-12 mb-3">
+            <label for="corsoSearch" class="form-label">Corso *</label>
+            <div class="search-container position-relative">
+              <input id="corsoSearch" type="text" class="form-control searchable-dropdown-input"
+                [class.is-invalid]="isFieldInvalid(assignForm, 'corsoId')" [(ngModel)]="corsoSearchTerm"
+                [ngModelOptions]="{ standalone: true }" (input)="onCorsoSearchChange()" (focus)="onCorsoFocus()"
+                (blur)="onCorsoBlur()" placeholder="Cerca corso..." autocomplete="off" />
+              <!-- Hidden input for form validation -->
+              <input type="hidden" formControlName="corsoId" />
+              <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+              <button *ngIf="assignSelectedCorso" type="button"
+                class="btn btn-sm btn-outline-secondary position-absolute" style="
+                  right: 8px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  z-index: 10;
+                " (click)="clearCorsoSelection()" title="Rimuovi selezione">
+                <i class="fa-solid fa-times"></i>
+              </button>
+
+              <!-- Dropdown with search results -->
+              <div *ngIf="showCorsiDropdown"
+                class="search-dropdown position-absolute w-100 bg-white border rounded shadow-sm" style="
+                  top: 100%;
+                  left: 0;
+                  z-index: 1000;
+                  max-height: 200px;
+                  overflow-y: auto;
+                ">
+                <div *ngFor="let corso of filteredCorsi" class="search-dropdown-item p-2 border-bottom cursor-pointer"
+                  (click)="selectCorso(corso)" style="cursor: pointer">
+                  <div class="d-flex flex-column">
+                    <strong>{{ corso.nome }}</strong>
+                    <small class="text-muted">
+                      {{ corso.piattaforma.nome }} - {{ corso.categoria }} -
+                      {{ corso.argomento }}
+                    </small>
+                  </div>
+                </div>
+                <div *ngIf="filteredCorsi.length === 0" class="search-dropdown-item p-2 text-muted text-center">
+                  Nessun corso trovato
+                </div>
+              </div>
+            </div>
+            <div class="invalid-feedback" *ngIf="isFieldInvalid(assignForm, 'corsoId')">
+              {{ getFieldError(assignForm, 'corsoId') }}
+            </div>
+          </div>
+
+          <!-- Obbligatorio -->
+          <div class="col-12 mb-3">
+            <div class="form-check">
+              <input type="checkbox" id="obbligatorioCheck" class="form-check-input" formControlName="obbligatorio" />
+              <label class="form-check-label" for="obbligatorioCheck">
+                Corso obbligatorio
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer-content">
+      <button type="button" class="btn btn-secondary me-2" (click)="closeAssignModal()" [disabled]="isSubmitting">
+        Annulla
+      </button>
+      <button type="button" class="btn btn-success" (click)="onAssignSubmit()"
+        [disabled]="isSubmitting || assignForm.invalid">
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        Assegna Corso
+      </button>
+    </div>
+  </app-modal>
+
+  <!-- Modal per Modifica Stato -->
+  <app-modal *ngIf="isStatusModalOpen" [isOpen]="isStatusModalOpen" [title]="'Modifica Stato Assegnazione'"
+    (closeModal)="closeStatusModal()">
+    <div class="modal-body-content">
+      <form [formGroup]="statusForm" (ngSubmit)="onStatusSubmit()">
+        <div class="row">
+          <!-- Stato -->
+          <div class="col-12 mb-3">
+            <label for="statoSelect" class="form-label">Stato *</label>
+            <select id="statoSelect" class="form-control" [class.is-invalid]="isFieldInvalid(statusForm, 'stato')"
+              formControlName="stato">
+              <option value="">Seleziona stato</option>
+              <option *ngFor="let stato of stati" [value]="stato">
+                {{ getStatoLabel(stato) }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isFieldInvalid(statusForm, 'stato')">
+              {{ getFieldError(statusForm, 'stato') }}
+            </div>
+          </div>
+
+          <!-- Percentuale Completamento -->
+          <div class="col-md-6 mb-3">
+            <label for="percentuale" class="form-label">Percentuale Completamento (%)</label>
+            <input type="number" id="percentuale" class="form-control" min="0" max="100"
+              formControlName="percentualeCompletamento" />
+          </div>
+
+          <!-- Ore Completate -->
+          <div class="col-md-6 mb-3">
+            <label for="ore" class="form-label">Ore Completate</label>
+            <input type="number" id="ore" class="form-control" min="0" step="0.5" formControlName="oreCompletate" />
+          </div>
+
+          <!-- Valutazione -->
+          <div class="col-md-6 mb-3">
+            <label for="valutazione" class="form-label">Valutazione (1-5)</label>
+            <select id="valutazione" class="form-control" formControlName="valutazione">
+              <option value="">Non valutato</option>
+              <option value="1">⭐ 1 - Insufficiente</option>
+              <option value="2">⭐⭐ 2 - Scarso</option>
+              <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+              <option value="4">⭐⭐⭐⭐ 4 - Buono</option>
+              <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+            </select>
+          </div>
+
+          <!-- Certificato Ottenuto -->
+          <div class="col-md-6 mb-3">
+            <div class="form-check mt-4">
+              <input type="checkbox" id="certificato" class="form-check-input" formControlName="certificatoOttenuto" />
+              <label class="form-check-label" for="certificato">
+                Certificato ottenuto
+              </label>
+            </div>
+          </div>
+
+          <!-- Note Feedback -->
+          <div class="col-12 mb-3">
+            <label for="noteFeedback" class="form-label">Note Feedback</label>
+            <textarea id="noteFeedback" class="form-control" rows="3" formControlName="noteFeedback"
+              placeholder="Inserisci note sul feedback..."></textarea>
+          </div>
+
+          <!-- Competenze Acquisite -->
+          <div class="col-12 mb-3">
+            <label for="competenze" class="form-label">Competenze Acquisite</label>
+            <textarea id="competenze" class="form-control" rows="3" formControlName="competenzeAcquisite"
+              placeholder="Descrivi le competenze acquisite..."></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer-content">
+      <button type="button" class="btn btn-secondary me-2" (click)="closeStatusModal()" [disabled]="isSubmitting">
+        Annulla
+      </button>
+      <button type="button" class="btn btn-primary" (click)="onStatusSubmit()"
+        [disabled]="isSubmitting || statusForm.invalid">
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        Aggiorna Stato
+      </button>
+    </div>
+  </app-modal>
+
+  <!-- Notification Modal -->
+  <app-notification-modal [isOpen]="notification.isOpen" [title]="notification.title" [message]="notification.message"
+    [details]="notification.details" [type]="notification.type" (closed)="closeNotification()">
+  </app-notification-modal>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal [isOpen]="confirmation.isOpen" [title]="confirmation.title" [message]="confirmation.message"
+    [details]="confirmation.details" [type]="confirmation.type" [isProcessing]="confirmation.isProcessing"
+    confirmText="Conferma" cancelText="Annulla" (confirmed)="onConfirmationConfirmed()"
+    (cancelled)="closeConfirmation()">
+  </app-confirmation-modal>
+</div>

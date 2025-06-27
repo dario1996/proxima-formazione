@@ -48,7 +48,8 @@ public class AssegnazioneController {
     @PostMapping("/dipendenti/{dipendenteId}/corsi/{corsoId}")
     public ResponseEntity<?> assignCorsoToDipendente(
             @Parameter(description = "ID del dipendente a cui assegnare il corso", required = true) @PathVariable Long dipendenteId,
-            @Parameter(description = "ID del corso da assegnare", required = true) @PathVariable Long corsoId) {
+            @Parameter(description = "ID del corso da assegnare", required = true) @PathVariable Long corsoId,
+            @Parameter(description = "Se il corso è obbligatorio per il dipendente") @RequestParam(required = false, defaultValue = "false") boolean obbligatorio) {
 
         // Verifica esistenza dipendente
         Optional<Dipendente> dipendente = dipendenteRepository.findById(dipendenteId);
@@ -76,6 +77,7 @@ public class AssegnazioneController {
         assegnazione.setCorso(corso.get());
         assegnazione.setStato(Assegnazione.StatoAssegnazione.ASSEGNATO);
         assegnazione.setDataAssegnazione(LocalDate.now());
+        assegnazione.setObbligatorio(obbligatorio);
 
         Assegnazione savedAssegnazione = assegnazioneRepository.save(assegnazione);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedAssegnazione);
@@ -204,6 +206,103 @@ public class AssegnazioneController {
         }
 
         return ResponseEntity.ok(assegnazioni);
+    }
+
+    @Operation(summary = "Aggiorna un'assegnazione completa", description = "Aggiorna tutti i dettagli di un'assegnazione inclusi stato, percentuale, ore, valutazione e feedback")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Assegnazione aggiornata con successo"),
+            @ApiResponse(responseCode = "404", description = "Assegnazione non trovata"),
+            @ApiResponse(responseCode = "400", description = "Dati non validi")
+    })
+    @PutMapping("/assegnazioni/{assegnazioneId}")
+    public ResponseEntity<?> updateAssegnazione(
+            @Parameter(description = "ID dell'assegnazione", required = true) @PathVariable Long assegnazioneId,
+            @Parameter(description = "Nuovo stato") @RequestParam(required = false) String stato,
+            @Parameter(description = "Percentuale completamento (0-100)") @RequestParam(required = false) Integer percentualeCompletamento,
+            @Parameter(description = "Ore completate") @RequestParam(required = false) Double oreCompletate,
+            @Parameter(description = "Valutazione (1-5)") @RequestParam(required = false) Integer valutazione,
+            @Parameter(description = "Note feedback") @RequestParam(required = false) String noteFeedback,
+            @Parameter(description = "Competenze acquisite") @RequestParam(required = false) String competenzeAcquisite,
+            @Parameter(description = "Certificato ottenuto") @RequestParam(required = false) Boolean certificatoOttenuto) {
+
+        Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
+        if (!optionalAssegnazione.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Assegnazione assegnazione = optionalAssegnazione.get();
+
+        try {
+            // Aggiorna stato se fornito
+            if (stato != null) {
+                Assegnazione.StatoAssegnazione nuovoStato = Assegnazione.StatoAssegnazione.valueOf(stato.toUpperCase());
+                assegnazione.setStato(nuovoStato);
+
+                // Se completato, imposta data completamento
+                if (nuovoStato == Assegnazione.StatoAssegnazione.COMPLETATO) {
+                    assegnazione.setDataCompletamento(LocalDate.now());
+                    // Se non è stata fornita una percentuale specifica, imposta 100%
+                    if (percentualeCompletamento == null) {
+                        assegnazione.setPercentualeCompletamento(new java.math.BigDecimal("100.00"));
+                    }
+                }
+
+                // Se iniziato, imposta data inizio
+                if (nuovoStato == Assegnazione.StatoAssegnazione.IN_CORSO && assegnazione.getDataInizio() == null) {
+                    assegnazione.setDataInizio(LocalDate.now());
+                }
+            }
+
+            // Aggiorna percentuale se fornita
+            if (percentualeCompletamento != null) {
+                if (percentualeCompletamento < 0 || percentualeCompletamento > 100) {
+                    return ResponseEntity.badRequest().body("Percentuale completamento deve essere tra 0 e 100");
+                }
+                assegnazione.setPercentualeCompletamento(new java.math.BigDecimal(percentualeCompletamento));
+            }
+
+            // Aggiorna ore completate se fornite
+            if (oreCompletate != null) {
+                if (oreCompletate < 0) {
+                    return ResponseEntity.badRequest().body("Ore completate non possono essere negative");
+                }
+                assegnazione.setOreCompletate(new java.math.BigDecimal(oreCompletate));
+            }
+
+            // Aggiorna valutazione se fornita
+            if (valutazione != null) {
+                if (valutazione < 1 || valutazione > 5) {
+                    return ResponseEntity.badRequest().body("Valutazione deve essere tra 1 e 5");
+                }
+                assegnazione.setValutazione(new java.math.BigDecimal(valutazione));
+            }
+
+            // Aggiorna note feedback se fornite
+            if (noteFeedback != null) {
+                assegnazione.setNoteFeedback(noteFeedback);
+            }
+
+            // Aggiorna competenze acquisite se fornite
+            if (competenzeAcquisite != null) {
+                assegnazione.setCompetenzeAcquisite(competenzeAcquisite);
+            }
+
+            // Aggiorna certificato ottenuto se fornito
+            if (certificatoOttenuto != null) {
+                assegnazione.setCertificatoOttenuto(certificatoOttenuto);
+
+                // Se ha ottenuto il certificato, segna che ha fornito feedback
+                if (certificatoOttenuto) {
+                    assegnazione.setFeedbackFornito(true);
+                }
+            }
+
+            Assegnazione updatedAssegnazione = assegnazioneRepository.save(assegnazione);
+            return ResponseEntity.ok(updatedAssegnazione);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Stato non valido: " + stato);
+        }
     }
 
     @Operation(summary = "Elimina un'assegnazione", description = "Rimuove un'assegnazione corso-dipendente dal sistema")

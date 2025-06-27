@@ -1,6 +1,5 @@
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Component, OnInit, HostListener } from '@angular/core';
-import { SalutiDataService } from '../../../../core/services/data/saluti-data.service';
 
 import { NotificationComponent } from '../../../../core/notification/notification.component';
 import { AvatarComponent } from '../../../../core/avatar/avatar.component';
@@ -49,6 +48,17 @@ export class WelcomeComponent implements OnInit {
       ],
     },
     {
+      title: 'Piano Formativo',
+      icon: 'fa-solid fa-graduation-cap fa-xl',
+      links: [
+        {
+          label: 'Piano Formativo',
+          url: 'piano-formativo',
+          icon: 'fa-solid fa-graduation-cap fa-lg',
+        },
+      ],
+    },
+    {
       title: 'Settings',
       icon: 'fa-solid fa-gears fa-xl',
       links: [
@@ -66,16 +76,12 @@ export class WelcomeComponent implements OnInit {
 
   utente = '';
 
-  titolo = 'Benvenuti in Gestionale Fortmazione';
-  sottotitolo = 'Visualizza le offerte del giorno';
-
   isSidebarOpen: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
-    private salutiSrv: SalutiDataService,
     private router: Router,
-    public BasicAuth: AuthJwtService
+    public BasicAuth: AuthJwtService,
   ) {}
 
   @HostListener('window:resize', ['$event'])
@@ -100,19 +106,7 @@ export class WelcomeComponent implements OnInit {
     this.utente = this.route.snapshot.params['userid'];
   }
 
-  saluti = '';
   errore = '';
-
-  getSaluti = (): void => {
-    this.salutiSrv.getSaluti(this.utente).subscribe({
-      next: this.handleResponse.bind(this),
-      error: this.handleError.bind(this),
-    });
-  };
-
-  handleResponse(response: object) {
-    this.saluti = response.toString();
-  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError(error: any) {
@@ -129,9 +123,9 @@ export class WelcomeComponent implements OnInit {
   }
 
   logout() {
-  // Sostituisci con il tuo servizio di logout se necessario
-  // Esempio:
-  //this.authService.logout();
-  this.router.navigate(['/login']);
-}
+    // Sostituisci con il tuo servizio di logout se necessario
+    // Esempio:
+    //this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }
