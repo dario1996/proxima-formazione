@@ -1,18 +1,55 @@
 .modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1050 !important;
+  overflow: auto !important;
 }
 
 .modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  z-index: 1040 !important;
 }
 
 .btn-close {
   filter: invert(1);
+}
+
+/* Ensure modal dialog is properly centered */
+.modal-dialog {
+  position: relative !important;
+  width: auto !important;
+  margin: 1rem auto !important;
+  pointer-events: none !important;
+  max-width: 500px !important;
+}
+
+.modal-dialog-centered {
+  display: flex !important;
+  align-items: center !important;
+  min-height: calc(100vh - 2rem) !important;
+}
+
+.modal-content {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  pointer-events: auto !important;
+  background-color: #fff !important;
+  background-clip: padding-box !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-radius: 0.5rem !important;
+  outline: 0 !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }

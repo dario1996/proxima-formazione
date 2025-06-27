@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
     <div
       *ngIf="isOpen"
       class="modal"
-      style="display: block"
+      style="display: block; z-index: 1070;"
       tabindex="-1"
       role="dialog"
     >
@@ -50,7 +50,11 @@ import { CommonModule } from '@angular/common';
         </div>
       </div>
     </div>
-    <div *ngIf="isOpen" class="modal-backdrop fade show"></div>
+    <div
+      *ngIf="isOpen"
+      class="modal-backdrop fade show"
+      style="z-index: 1060;"
+    ></div>
   `,
   styles: [
     `
