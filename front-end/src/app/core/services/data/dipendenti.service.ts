@@ -16,9 +16,14 @@ export class DipendentiService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getListaDipendenti = () =>
+  getListaDipendenti = (soloAttivi: boolean = false) =>
     this.httpClient.get<IDipendenti[]>(
       `http://${this.server}:${this.port}/api/dipendenti`,
+      {
+        params: {
+          soloAttivi: soloAttivi.toString(),
+        },
+      },
     );
 
   getDipendenteById = (id: number) =>
@@ -46,6 +51,17 @@ export class DipendentiService {
   delDipendente = (id: number) =>
     this.httpClient.delete<void>(
       `http://${this.server}:${this.port}/api/dipendenti/${id}`,
+    );
+
+  toggleDipendenteStatus = (id: number) =>
+    this.httpClient.patch<IDipendenti>(
+      `http://${this.server}:${this.port}/api/dipendenti/${id}/toggle-status`,
+      {},
+    );
+
+  permanentDeleteDipendente = (id: number) =>
+    this.httpClient.delete<void>(
+      `http://${this.server}:${this.port}/api/dipendenti/${id}/permanent`,
     );
 
   searchDipendenti = (

@@ -196,4 +196,43 @@ public class DipendenteController {
 
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "Attiva o disattiva un dipendente", description = "Cambia lo stato attivo/inattivo di un dipendente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Stato dipendente cambiato con successo"),
+            @ApiResponse(responseCode = "404", description = "Dipendente non trovato")
+    })
+    @PatchMapping("/{id}/toggle-status")
+    public ResponseEntity<Dipendente> toggleDipendenteStatus(
+            @Parameter(description = "ID del dipendente", required = true) @PathVariable Long id) {
+
+        Optional<Dipendente> optionalDipendente = dipendenteRepository.findById(id);
+        if (!optionalDipendente.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Dipendente dipendente = optionalDipendente.get();
+        dipendente.setAttivo(!dipendente.getAttivo());
+        Dipendente savedDipendente = dipendenteRepository.save(dipendente);
+
+        return ResponseEntity.ok(savedDipendente);
+    }
+
+    @Operation(summary = "Rimuove permanentemente un dipendente", description = "Elimina completamente un dipendente dal sistema (hard delete)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Dipendente rimosso con successo"),
+            @ApiResponse(responseCode = "404", description = "Dipendente non trovato")
+    })
+    @DeleteMapping("/{id}/permanent")
+    public ResponseEntity<Void> permanentDeleteDipendente(
+            @Parameter(description = "ID del dipendente da rimuovere permanentemente", required = true) @PathVariable Long id) {
+
+        Optional<Dipendente> optionalDipendente = dipendenteRepository.findById(id);
+        if (!optionalDipendente.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        dipendenteRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
