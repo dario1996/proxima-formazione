@@ -171,12 +171,30 @@
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
                 <button
-                  class="btn btn-danger btn-action"
-                  (click)="elimina(dipendente.id)"
-                  title="Disabilita dipendente"
-                  [disabled]="!dipendente.attivo"
+                  [class]="
+                    dipendente.attivo
+                      ? 'btn btn-warning btn-action me-1'
+                      : 'btn btn-success btn-action me-1'
+                  "
+                  (click)="toggleStatus(dipendente.id)"
+                  [title]="
+                    dipendente.attivo
+                      ? 'Disabilita dipendente'
+                      : 'Abilita dipendente'
+                  "
                 >
-                  <i class="fa-solid fa-user-slash"></i>
+                  <i
+                    class="fa-solid"
+                    [class.fa-user-slash]="dipendente.attivo"
+                    [class.fa-user-check]="!dipendente.attivo"
+                  ></i>
+                </button>
+                <button
+                  class="btn btn-danger btn-action"
+                  (click)="removePermanent(dipendente.id)"
+                  title="Rimuovi dipendente"
+                >
+                  <i class="fa-solid fa-trash"></i>
                 </button>
               </td>
             </tr>
@@ -514,13 +532,33 @@
       </button>
       <button
         type="button"
-        class="btn btn-danger"
-        (click)="deleteFromDetail()"
-        [disabled]="!selectedDipendente.attivo"
-        title="Disabilita dipendente"
+        [class]="
+          selectedDipendente.attivo
+            ? 'btn btn-warning me-2'
+            : 'btn btn-success me-2'
+        "
+        (click)="toggleStatusFromDetail()"
+        [title]="
+          selectedDipendente.attivo
+            ? 'Disabilita dipendente'
+            : 'Abilita dipendente'
+        "
       >
-        <i class="fa-solid fa-user-slash me-1"></i>
-        {{ selectedDipendente.attivo ? 'Disabilita' : 'Già Disabilitato' }}
+        <i
+          class="fa-solid me-1"
+          [class.fa-user-slash]="selectedDipendente.attivo"
+          [class.fa-user-check]="!selectedDipendente.attivo"
+        ></i>
+        {{ selectedDipendente.attivo ? 'Disabilita' : 'Abilita' }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="removeFromDetail()"
+        title="Rimuovi dipendente permanentemente"
+      >
+        <i class="fa-solid fa-trash me-1"></i>
+        Rimuovi
       </button>
     </div>
   </app-modal>

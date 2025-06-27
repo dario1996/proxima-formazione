@@ -116,8 +116,23 @@ export class DipendentiComponent implements OnInit {
       next: data => {
         console.log('Dipendenti caricati:', data); // Debug log
         this.dipendenti = data;
-        this.filteredDipendenti = data;
+
+        // Add some debug info about active/inactive status
+        console.log(
+          'Active employees in data:',
+          data.filter(d => d.attivo).length,
+        );
+        console.log(
+          'Inactive employees in data:',
+          data.filter(d => !d.attivo).length,
+        );
+        console.log(
+          'Sample of employee status:',
+          data.slice(0, 3).map(d => ({ nome: d.nome, attivo: d.attivo })),
+        );
+
         this.extractFilterOptions();
+        this.applyFilters(); // Apply filters after loading data
         this.isLoading = false;
       },
       error: error => {
@@ -152,6 +167,7 @@ export class DipendentiComponent implements OnInit {
   }
 
   applyFilters() {
+    console.log('Applying filters - soloAttivi:', this.soloAttivi);
     this.filteredDipendenti = this.dipendenti.filter(dipendente => {
       const matchesSearch =
         !this.searchTerm ||
@@ -177,6 +193,20 @@ export class DipendentiComponent implements OnInit {
         matchesSearch && matchesReparto && matchesCommerciale && matchesAttivo
       );
     });
+    console.log(
+      'Filtered result count:',
+      this.filteredDipendenti.length,
+      'Total dipendenti:',
+      this.dipendenti.length,
+    );
+    console.log(
+      'Active employees:',
+      this.dipendenti.filter(d => d.attivo).length,
+    );
+    console.log(
+      'Inactive employees:',
+      this.dipendenti.filter(d => !d.attivo).length,
+    );
   }
 
   onSearchChange() {
@@ -192,6 +222,7 @@ export class DipendentiComponent implements OnInit {
   }
 
   onAttivoChange() {
+    console.log('onAttivoChange called - soloAttivi is now:', this.soloAttivi);
     this.applyFilters();
   }
 
@@ -200,7 +231,7 @@ export class DipendentiComponent implements OnInit {
     this.selectedReparto = '';
     this.selectedCommerciale = '';
     this.soloAttivi = true;
-    this.filteredDipendenti = this.dipendenti;
+    this.applyFilters(); // Apply filters after clearing
   }
 
   // CRUD Operations
@@ -248,6 +279,35 @@ export class DipendentiComponent implements OnInit {
     }
   }
 
+  toggleStatus(id: number) {
+    const dipendente = this.dipendenti.find(d => d.id === id);
+    if (dipendente) {
+      const action = dipendente.attivo ? 'disabilitare' : 'abilitare';
+      const verb = dipendente.attivo ? 'disabilitato' : 'abilitato';
+
+      this.showConfirmation(
+        `Conferma ${action === 'disabilitare' ? 'Disabilitazione' : 'Abilitazione'}`,
+        `Sei sicuro di voler ${action} il dipendente ${dipendente.nome} ${dipendente.cognome}?`,
+        `Il dipendente verrà ${verb} nel sistema.`,
+        'warning',
+        () => this.performToggleStatus(id),
+      );
+    }
+  }
+
+  removePermanent(id: number) {
+    const dipendente = this.dipendenti.find(d => d.id === id);
+    if (dipendente) {
+      this.showConfirmation(
+        'Conferma Rimozione Permanente',
+        `Sei sicuro di voler rimuovere permanentemente il dipendente ${dipendente.nome} ${dipendente.cognome}?`,
+        'Questa azione è irreversibile e rimuoverà completamente il dipendente dal sistema.',
+        'danger',
+        () => this.performPermanentDelete(id),
+      );
+    }
+  }
+
   private performDelete(id: number) {
     this.confirmation.isProcessing = true;
     this.dipendentiService.delDipendente(id).subscribe({
@@ -270,6 +330,71 @@ export class DipendentiComponent implements OnInit {
           'Errore',
           'Errore nella disabilitazione del dipendente',
           'Si è verificato un errore durante la disabilitazione. Riprova più tardi.',
+          'error',
+        );
+      },
+    });
+  }
+
+  private performToggleStatus(id: number) {
+    this.confirmation.isProcessing = true;
+    this.dipendentiService.toggleDipendenteStatus(id).subscribe({
+      next: updatedDipendente => {
+        this.confirmation.isProcessing = false;
+        this.closeConfirmation();
+
+        // Aggiorna l'oggetto selezionato nel modal
+        this.selectedDipendente = updatedDipendente;
+
+        const status = updatedDipendente.attivo ? 'abilitato' : 'disabilitato';
+        this.showNotification(
+          'Successo',
+          `Dipendente ${status} con successo`,
+          `Il dipendente è stato ${status} nel sistema.`,
+          'success',
+        );
+        this.loadDipendenti();
+      },
+      error: error => {
+        console.error('Errore nel cambio stato del dipendente:', error);
+        this.confirmation.isProcessing = false;
+        this.closeConfirmation();
+        this.showNotification(
+          'Errore',
+          'Errore nel cambio stato del dipendente',
+          'Si è verificato un errore durante il cambio stato. Riprova più tardi.',
+          'error',
+        );
+      },
+    });
+  }
+
+  private performPermanentDelete(id: number) {
+    this.confirmation.isProcessing = true;
+    this.dipendentiService.permanentDeleteDipendente(id).subscribe({
+      next: () => {
+        this.confirmation.isProcessing = false;
+        this.closeConfirmation();
+        this.closeDetailModal();
+        this.showNotification(
+          'Successo',
+          'Dipendente rimosso con successo',
+          'Il dipendente è stato rimosso permanentemente dal sistema.',
+          'success',
+        );
+        this.loadDipendenti();
+      },
+      error: error => {
+        console.error(
+          'Errore nella rimozione permanente del dipendente:',
+          error,
+        );
+        this.confirmation.isProcessing = false;
+        this.closeConfirmation();
+        this.showNotification(
+          'Errore',
+          'Errore nella rimozione del dipendente',
+          'Si è verificato un errore durante la rimozione. Riprova più tardi.',
           'error',
         );
       },
@@ -449,6 +574,37 @@ export class DipendentiComponent implements OnInit {
     if (this.selectedDipendente) {
       this.closeDetailModal();
       this.modifica(this.selectedDipendente.id);
+    }
+  }
+
+  toggleStatusFromDetail() {
+    if (this.selectedDipendente) {
+      const action = this.selectedDipendente.attivo
+        ? 'disabilitare'
+        : 'abilitare';
+      const verb = this.selectedDipendente.attivo
+        ? 'disabilitato'
+        : 'abilitato';
+
+      this.showConfirmation(
+        `Conferma ${action === 'disabilitare' ? 'Disabilitazione' : 'Abilitazione'}`,
+        `Sei sicuro di voler ${action} il dipendente ${this.selectedDipendente.nome} ${this.selectedDipendente.cognome}?`,
+        `Il dipendente verrà ${verb} nel sistema.`,
+        'warning',
+        () => this.performToggleStatus(this.selectedDipendente!.id),
+      );
+    }
+  }
+
+  removeFromDetail() {
+    if (this.selectedDipendente) {
+      this.showConfirmation(
+        'Conferma Rimozione Permanente',
+        `Sei sicuro di voler rimuovere permanentemente il dipendente ${this.selectedDipendente.nome} ${this.selectedDipendente.cognome}?`,
+        'Questa azione è irreversibile e rimuoverà completamente il dipendente dal sistema.',
+        'danger',
+        () => this.performPermanentDelete(this.selectedDipendente!.id),
+      );
     }
   }
 
