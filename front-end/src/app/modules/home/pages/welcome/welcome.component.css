@@ -1,482 +1,246 @@
-.accordion-button:focus {
-  box-shadow: none !important; /* Rimuove l'ombra */
-}
-
-.no-arrow::after {
-  display: none !important;
-}
-/* Cambia il colore della freccia degli accordion */
-.accordion-button::after {
-  color: white;
-
-  filter: invert(1);
-}
-.accordion-collapse {
-  transition: height 0.3s ease; /* Tempo di animazione */
-}
-.accordion {
-  border-width: 0 !important; /* Rimuove il bordo */
-}
-.accordion-body.selected {
-  background-color: rgb(
-    173 215 246
-  ) !important; /* Colore di sfondo per l'elemento selezionato */
-  color: white; /* Colore del testo per l'elemento selezionato */
-}
-
-.app-container {
+/* ================== APP LAYOUT =================== */
+.app-layout {
   display: flex;
   min-height: 100vh;
-  position: relative;
-  overflow-x: hidden; /* Previene lo scroll orizzontale */
-  width: 100%;
+  background: var(--color-muted);
 }
 
-.sidebar-wrapper {
-  width: 280px;
-  background: #054b9a;
-  position: fixed;
-  top: 0;
-  left: 0;
+/* ================== SIDEBAR =================== */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-background);
+  border-right: 1px solid var(--color-border);
   height: 100vh;
-  z-index: 1040;
-}
-
-.main-wrapper {
-  flex: 1;
-  margin-left: 280px;
-  background-color: #f8f9fa;
-  min-height: 100vh;
-  padding: 20px;
-  width: calc(100% - 280px); /* Assicura che non superi la larghezza disponibile */
-  overflow-x: hidden;
-}
-
-@media (max-width: 991.98px) {
-  .sidebar-wrapper {
-    left: -280px;
-    transition: left 0.3s ease-in-out;
-  }
-
-  .sidebar-wrapper.sidebar-mobile-open {
-    left: 0;
-  }
-
-  .main-wrapper {
-    margin-left: 0;
-    width: 100%;
-    padding: 15px; /* Riduce il padding su mobile */
-  }
-}
-
-/* Logo styles */
-.sidebar-logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 32px 0 24px 0;
-  width: 100%;
-}
-
-.sidebar-logo-img {
-  background: #fff;
-  padding: 12px 20px;
-  border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 0 0 4px #e6eef8;
-  border: 2px solid #e6eef8;
-  margin: 0 auto;
-  max-width: 200px;
-  min-width: 120px;
-  height: auto;
-}
-
-/* Menu items base styles */
-.nav-item {
-  width: 100%;
-}
-
-.sidebar-link {
-  color: #fff !important;
-  background: transparent !important;
-  transition: background 0.2s, color 0.2s;
-  font-size: 1.08rem;
-  position: relative;
-  width: 100%;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start !important;
-  padding-left: 3.5rem !important;
-}
-
-/* Menu item content */
-.sidebar-link .d-flex {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: auto;
-}
-
-.sidebar-link i {
-  width: 24px;
-  text-align: center;
-  z-index: 2;
-}
-
-.sidebar-label {
-  margin: 0;
-  text-align: left;
-  z-index: 2;
-}
-
-/* Navigation and dividers */
-nav.flex-grow-1 ul.nav {
-  margin-top: 4.5rem;
-}
-
-.sidebar-divider {
-  border-top: 1px solid #07255b;
-  margin: 0.5rem 0 1.2rem 0;
-  opacity: 0.7;
-}
-
-/* Rimuovo gli stili di allineamento precedenti */
-.sidebar-link {
-  width: 100%;
-}
-
-/* Stili per l'icona e il testo */
-.sidebar-link i,
-.sidebar-link .sidebar-label {
-  position: relative;
-  z-index: 2;
-  transition: color 0.2s ease;
-}
-
-/* Contenitore flex per icona e testo */
-.sidebar-link .d-flex {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: auto;
-}
-
-/* Rimuovo margini extra dalle icone */
-.sidebar-link i {
-  margin: 0;
-  width: 24px;
-  text-align: center;
-}
-
-/* Effetto hover/active mantenendo il testo fermo */
-.sidebar-link.active::before,
-.sidebar-link:focus::before,
-.sidebar-link:hover::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  background: #f8f9fa;
-  z-index: 1;
-  transition: background 0.2s;
-}
-
-/* Colore del testo in hover/active */
-.sidebar-link.active,
-.sidebar-link:focus,
-.sidebar-link:hover {
-  color: #054b9a !important;
-}
-
-.sidebar-link.active i,
-.sidebar-link:focus i,
-.sidebar-link:hover i,
-.sidebar-link.active .sidebar-label,
-.sidebar-link:focus .sidebar-label,
-.sidebar-link:hover .sidebar-label {
-  color: #054b9a !important;
-}
-
-/* Rimuovi queste regole per evitare arrotondamenti */
-.sidebar-link.active,
-.sidebar-link:focus,
-.sidebar-link:hover {
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-}
-
-/* Ombra blu dietro la voce attiva per mascherare il bordo */
-.sidebar-custom {
-  position: relative;
-  z-index: 1;
-}
-
-.btn-outline-light.sidebar-link {
-  border: none !important;
-  box-shadow: none !important;
-  padding-left: 0 !important;
-  justify-content: center !important;
-}
-
-/* Disabilita l'effetto focus/hover/active solo per il logout */
-.btn-outline-light.sidebar-link:focus,
-.btn-outline-light.sidebar-link:hover,
-.btn-outline-light.sidebar-link.active {
-  background: transparent !important;
-  color: #fff !important;
-  font-weight: 600;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Se vuoi che l'icona resti bianca anche su hover/focus */
-.btn-outline-light.sidebar-link:focus i,
-.btn-outline-light.sidebar-link:hover i,
-.btn-outline-light.sidebar-link.active i {
-  color: #fff !important;
-}
-
-/* Escludi il logout dall'effetto pill bianco */
-.btn-outline-light.sidebar-link.active::before,
-.btn-outline-light.sidebar-link:focus::before,
-.btn-outline-light.sidebar-link:hover::before {
-  display: none !important;
-  content: none !important;
-}
-
-.notification-floating {
-  position: fixed;
-  right: 2.5rem;
-  bottom: 2.5rem;
-  z-index: 9999;
-}
-
-.logout-btn {
-  border: none !important;
-  transition: none !important;
-}
-
-.logout-btn:hover,
-.logout-btn:focus,
-.logout-btn:active {
-  background: transparent !important;
-  color: #fff !important;
-  border-color: #fff !important;
-  box-shadow: none !important;
-}
-
-.logout-btn i {
-  color: #fff !important;
-}
-
-/* Stili per il menu mobile */
-@media (max-width: 991.98px) {
-  .sidebar-custom {
-    position: fixed;
-    top: 0;
-    left: -280px; /* Usa la stessa larghezza fissa */
-    width: 280px;
-    height: 100vh;
-    z-index: 1040;
-    transition: left 0.3s ease-in-out;
-  }
-
-  .col-lg-2 {
-    width: 280px !important; /* Forza la larghezza anche su mobile */
-    min-width: 280px !important;
-  }
-
-  .sidebar-custom.sidebar-mobile-open {
-    left: 0;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  }
-
-  .main-content {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0.5rem;
-    background: transparent;
-    box-shadow: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1030;
-    height: 48px;
-  }
-
-  .page-header-title {
-    font-size: 1.25rem;
-    margin: 0;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 1rem;
-  }
-
-  .menu-toggle {
-    position: relative;
-    top: auto;
-    left: auto;
-    margin: 0;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-  }
-
-  /*.menu-toggle i {
-    font-size: 1.2rem;
-  }*/
-
-  /* Aggiusta il padding del contenuto principale */
-  .main-content {
-    padding-top: 48px;
-  }
-
-  /* Sposta la sidebar sotto la barra */
-  /*.sidebar-custom {
-    top: 48px;
-    height: calc(100vh - 48px);
-  }*/
-}
-
-/* Stili comuni per i pulsanti mobili (menu e notifiche) */
-.mobile-button {
-  position: fixed;
-  width: 48px !important; /* Forza la stessa dimensione */
-  height: 48px !important;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #054b9a;
-  border: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 1050;
-  transition: transform 0.2s ease;
-}
-
-.mobile-button:hover {
-  transform: scale(1.05);
-}
-
-.mobile-button i {
-  font-size: 24px;
-}
-
-/* Menu toggle button */
-.menu-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1050;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background-color: #054b9a;
-  border: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  transition: transform 0.2s ease;
-}
-
-.menu-toggle i {
-  font-size: 1.25rem;
-}
-
-.menu-toggle:hover {
-  transform: scale(1.05);
-}
-
-@media (max-width: 991.98px) {
-  .menu-toggle {
-    display: flex;
-  }
-}
-
-.sidebar-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1039;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-}
-
-.sidebar-overlay.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Aggiusta il contenuto principale */
-.main-content {
-  margin-left: 0;
-  width: calc(100% - 280px); /* Sottrae la larghezza della sidebar */
-}
-
-@media (max-width: 991.98px) {
-  .main-content {
-    width: 100%;
-    margin-left: 0;
-  }
-}
-
-.container-fluid {
-  min-height: 100vh;
-  padding: 0;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
 }
 
-.row {
+.sidebar-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--header-height);
+}
+
+.sidebar-logo {
+  height: 32px;
+  width: auto;
+}
+
+.sidebar-nav {
+  padding: var(--spacing-md);
   flex: 1;
+  overflow-y: auto;
+}
+
+.sidebar-footer {
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  margin-bottom: var(--spacing-sm);
+}
+
+.logout-btn {
+  width: 100%;
+  justify-content: flex-start;
+  color: var(--color-muted-foreground);
+  background: transparent;
+  transition: all 0.15s ease;
+}
+
+.logout-btn:hover {
+  background: var(--color-foreground);
+  color: var(--color-background);
+}
+
+.logout-btn:hover .nav-icon {
+  color: var(--color-background);
+}
+
+/* Override avatar component styles for sidebar */
+::ng-deep .sidebar-user .avatar-sidebar {
+  align-items: center !important;
+}
+
+::ng-deep .sidebar-user .avatar-sidebar .user-name-sidebar {
+  color: var(--color-foreground) !important;
+  font-size: var(--font-size-sm) !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  margin-top: var(--spacing-xs) !important;
+}
+
+/* Additional specificity for username color */
+::ng-deep .sidebar-footer .sidebar-user .avatar-sidebar span.user-name-sidebar {
+  color: hsl(0 0% 20%) !important;
+}
+
+/* ================== NAVIGATION =================== */
+.nav-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
   margin: 0;
 }
 
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-muted-foreground);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  gap: var(--spacing-sm);
+}
+
+.nav-link:hover {
+  background: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+.nav-link.active {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ================== MAIN CONTENT =================== */
 .main-content {
   flex: 1;
-  padding: 20px;
-  background-color: #f8f9fa;
+  margin-left: var(--sidebar-width);
+  background: var(--color-muted);
   min-height: 100vh;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-@media (min-width: 992px) {
+.main-header {
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 var(--spacing-lg);
+  min-height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main-body {
+  flex: 1;
+  padding: var(--spacing-lg);
+}
+
+/* ================== MOBILE MENU =================== */
+.mobile-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.mobile-menu-toggle:hover {
+  background: var(--color-accent);
+}
+
+/* ================== RESPONSIVE =================== */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
   .main-content {
-    margin-left: 280px; /* Larghezza della sidebar */
-    width: calc(100% - 280px);
+    margin-left: 0;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
   }
 }
 
-.sidebar-link.active,
-.sidebar-link:hover,
-.sidebar-link:focus {
-  font-weight: bold !important;
-  color: #fff !important;
-  background: transparent !important;
-  box-shadow: none !important;
+@media (min-width: 769px) {
+  .sidebar-overlay {
+    display: none;
+  }
 }
 
-.w-80 {
-  width: 80% !important;
+/* ================== NOTIFICATIONS =================== */
+.notification-floating {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 9999;
+}
+
+/* ================== UTILITY =================== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

@@ -1,26 +1,41 @@
 import { Component, OnInit } from '@angular/core';
-import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { ICorsi } from '../../../../shared/models/Corsi';
 import { CorsiService } from '../../../../core/services/data/corsi.service';
 import { ToastrService } from 'ngx-toastr';
 import { ToastrModule } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../../../core/modal/modal.component';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  DataTableComponent,
+  TableColumn,
+  TableAction,
+  TableConfig,
+} from '../../../../shared/components/data-table/data-table.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
 
 @Component({
   selector: 'app-corsi',
-  imports: [PageTitleComponent, ToastrModule, CommonModule, ModalComponent, FormsModule, ReactiveFormsModule],
+  imports: [
+    ToastrModule,
+    CommonModule,
+    ModalComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    DataTableComponent,
+  ],
   templateUrl: './corsi.component.html',
   styleUrls: ['./corsi.component.css'],
-  standalone: true
+  standalone: true,
 })
-
 export class CorsiComponent implements OnInit {
-  title: string = 'Corsi';
-  icon: string = 'fa-solid fa-book';
   corsi: ICorsi[] = [];
   piattaforme: IPiattaforma[] = [];
   modalActionType: string = '';
@@ -30,27 +45,82 @@ export class CorsiComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
 
+  // Data table configuration
+  columns: TableColumn[] = [
+    {
+      key: 'nome',
+      label: 'Nome',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'argomento',
+      label: 'Macro argomento',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'durata',
+      label: 'Durata',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'piattaforma.nome',
+      label: 'Piattaforma',
+      sortable: true,
+      type: 'text',
+    },
+  ];
+
+  actions: TableAction[] = [
+    {
+      label: 'Modifica',
+      icon: 'edit',
+      type: 'secondary',
+      handler: (corso: ICorsi) => this.openModal('EDIT', corso),
+      visible: () => true,
+    },
+    {
+      label: 'Elimina',
+      icon: 'delete',
+      type: 'danger',
+      handler: (corso: ICorsi) => this.openModal('DELETE', corso),
+      visible: () => true,
+    },
+  ];
+
+  tableConfig: TableConfig = {
+    loading: false,
+    selectable: false,
+    emptyMessage: 'Nessun corso disponibile',
+  };
 
   constructor(
     private corsiService: CorsiService,
     private piattaformeService: PiattaformeService,
     private toastr: ToastrService,
-    private formBuilder: FormBuilder
-  ) {
-
-  }
+    private formBuilder: FormBuilder,
+  ) {}
 
   ngOnInit(): void {
     this.loadCorsi();
     this.initializeForm();
   }
 
-
   private loadCorsi() {
+    this.tableConfig.loading = true;
     this.corsiService.getListaCorsi().subscribe({
       next: data => {
+        console.log('Corsi data received:', data);
         this.corsi = data;
-      }
+        this.tableConfig.loading = false;
+      },
+      error: error => {
+        console.error('Error loading corsi:', error);
+        this.tableConfig.loading = false;
+        this.toastr.error('Errore nel caricamento dei corsi');
+      },
     });
   }
 
@@ -58,7 +128,7 @@ export class CorsiComponent implements OnInit {
     this.piattaformeService.getListaPiattaforme().subscribe({
       next: data => {
         this.piattaforme = data;
-      }
+      },
     });
   }
 
@@ -68,41 +138,40 @@ export class CorsiComponent implements OnInit {
         this.loadCorsi();
         this.toastr.success('Corso eliminato con successo');
       },
-      error: (error) => {
-        console.error('Errore durante l\'eliminazione del corso:', error);
-        this.toastr.error('Errore durante l\'eliminazione del corso');
-      }
+      error: error => {
+        console.error("Errore durante l'eliminazione del corso:", error);
+        this.toastr.error("Errore durante l'eliminazione del corso");
+      },
     });
     this.closeModal();
-}
-
+  }
 
   addCorso(corso: ICorsi) {
-      const corsoToSave = {
-        ...this.form.value,
-        piattaforma: {
-          id: parseInt(this.form.value.piattaforma)
-        }
-      };
+    const corsoToSave = {
+      ...this.form.value,
+      piattaforma: {
+        id: parseInt(this.form.value.piattaforma),
+      },
+    };
 
-      this.corsiService.createCorso(corsoToSave).subscribe({
-        next: () => {
-          this.loadCorsi();
-          this.toastr.success('Corso aggiunto con successo');
-        },
-        error: (error) => {
-          this.toastr.error('Errore durante l\'aggiunta del corso');
-        }
-      });
-      this.closeModal();
+    this.corsiService.createCorso(corsoToSave).subscribe({
+      next: () => {
+        this.loadCorsi();
+        this.toastr.success('Corso aggiunto con successo');
+      },
+      error: error => {
+        this.toastr.error("Errore durante l'aggiunta del corso");
+      },
+    });
+    this.closeModal();
   }
 
   updateCorso(id: number) {
     const corsoToSave = {
       ...this.form.value,
       piattaforma: {
-        id: parseInt(this.form.value.piattaforma)
-      }
+        id: parseInt(this.form.value.piattaforma),
+      },
     };
 
     this.corsiService.updateCorso(id, corsoToSave).subscribe({
@@ -110,13 +179,12 @@ export class CorsiComponent implements OnInit {
         this.loadCorsi();
         this.toastr.success('Corso modificato con successo');
       },
-      error: (error) => {
+      error: error => {
         this.toastr.error('Errore durante la modifica del corso');
-      }
+      },
     });
     this.closeModal();
-}
-
+  }
 
   openModal(type: string, corso?: ICorsi) {
     if (type === 'ADD' || type === 'EDIT') {
@@ -132,20 +200,18 @@ export class CorsiComponent implements OnInit {
         nome: corso.nome,
         argomento: corso.argomento,
         durata: corso.durata,
-        piattaforma: corso.piattaforma?.id || ''
+        piattaforma: corso.piattaforma?.id || '',
       });
     } else if (type === 'DELETE' && corso) {
       this.corsoToDelete = corso.id;
     }
-
   }
 
-  
   setModalTitle() {
     const titles: Record<string, string> = {
       EDIT: 'Modifica Corso',
       ADD: 'Aggiungi Corso',
-      DELETE: 'Elimina Corso'
+      DELETE: 'Elimina Corso',
     };
     this.modalTitle = titles[this.modalActionType] || '';
   }
@@ -208,11 +274,8 @@ export class CorsiComponent implements OnInit {
     this.isOpenModal = false;
   }
 
-  onReset(){
+  onReset() {
     this.form.reset();
     this.submitted = false;
   }
-
-
-
-} 
+}
