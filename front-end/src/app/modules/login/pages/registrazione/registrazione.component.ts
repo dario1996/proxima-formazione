@@ -13,7 +13,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { IUsers } from '../../../../shared/models/Users';
-import { ExternalHeaderComponent } from '../../../../core/external-header/external-header.component';
 import { UserService } from '../../../../core/services/data/user.service';
 import { ApiMsg } from '../../../../shared/models/ApiMsg';
 import { RouterModule } from '@angular/router';
@@ -26,7 +25,6 @@ import { LoadingService } from '../../../../core/services/loading.service';
   templateUrl: './registrazione.component.html',
   styleUrl: './registrazione.component.css',
   imports: [
-    ExternalHeaderComponent,
     SpinnerComponent,
     ReactiveFormsModule,
     CommonModule,

@@ -119,7 +119,7 @@ body {
   background: hsl(222 84% 4%);
 }
 
-.btn-secondary {
+/* .btn-secondary {
   background: var(--color-secondary);
   color: var(--color-secondary-foreground);
   border: 1px solid var(--color-border);
@@ -127,7 +127,7 @@ body {
 
 .btn-secondary:hover:not(:disabled) {
   background: hsl(0 0% 91%);
-}
+} */
 
 .btn-ghost {
   background: transparent;

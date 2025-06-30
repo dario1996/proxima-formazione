@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-page-title',
@@ -8,10 +8,8 @@ import { Component, Input } from '@angular/core';
   styleUrl: './page-title.component.css'
 })
 export class PageTitleComponent {
+  @Input() title: string = '';
+  @Input() subtitle: string = '';
 
-  @Input() 
-  title: string = '';
-
-  @Input()
-  icon: string = '';
+  @Output() nuovoCorso = new EventEmitter<void>();
 }

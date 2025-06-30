@@ -25,7 +25,6 @@ import { ConfirmationModalComponent } from '../../../../core/modal/confirmation-
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ModalComponent,
     NotificationModalComponent,
     ConfirmationModalComponent,
   ],

@@ -59,21 +59,21 @@
 .modal-header {
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
-  padding: 24px 24px 0 24px !important;
+  justify-content: flex-start !important;
+  /* padding: 24px 24px 0 24px !important; */
   border-bottom: none !important;
-  background: transparent !important;
+  background: #f8f9fa !important;
 }
 
 .modal-title {
+  margin: 0 !important;
   font-size: 18px !important;
   font-weight: 600 !important;
-  color: #09090b !important;
-  margin: 0 !important;
   line-height: 1.5 !important;
 }
 
 .btn-close {
+  margin-left: auto !important;
   background: none !important;
   border: none !important;
   font-size: 20px !important;
