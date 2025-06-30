@@ -11,8 +11,9 @@
 
     <nav class="sidebar-nav">
       <ul class="nav-menu">
-        @for (menuItem of menuItems; track menuItem; let index = $index) {
-          <li class="nav-item">
+        @for (menuItem of menuItems; track menuItem; let i = $index) {
+          <li class="nav-item menu-item"
+          [style.transitionDelay]="isSidebarOpen ? (i * 100) + 'ms' : '0ms'">
             <a
               class="nav-link"
               [routerLink]="menuItem.links[0].url"
@@ -101,11 +102,20 @@
     </div>
   </aside>
 
+    <!-- toggle menu in responsive mode -->
+  <button
+    class="sidebar-toggle-btn"
+    type="button"
+    (click)="isSidebarOpen = !isSidebarOpen">
+    <span class="fa-solid" [ngClass]="isSidebarOpen ? 'fa-xmark' : 'fa-bars'">
+    </span>
+  </button>
+
   <!-- Overlay for mobile -->
   <div
     class="sidebar-overlay"
     [class.show]="isSidebarOpen"
-    (click)="closeSidebarOnMobile()"
+    (click)="isSidebarOpen = false"
   ></div>
 
   <!-- Main content -->
@@ -116,5 +126,7 @@
   </main>
 
   <!-- Notifications -->
-  <app-notification class="notification-floating"></app-notification>
+  <app-notification class="bell-button"></app-notification>
+
+
 </div>
