@@ -32,7 +32,6 @@ import { forkJoin } from 'rxjs';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ModalComponent,
     NotificationModalComponent,
     ConfirmationModalComponent,
   ],

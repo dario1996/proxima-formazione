@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ExternalHeaderComponent } from '../../../../core/external-header/external-header.component';
 import { AuthJwtService } from '../../../../core/services/authJwt.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-error',
   standalone: true,
-  imports: [ExternalHeaderComponent, TranslateModule],
+  imports: [TranslateModule],
   templateUrl: './error.component.html',
   styleUrl: './error.component.css',
 })

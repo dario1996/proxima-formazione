@@ -4,6 +4,7 @@ import { CommonModule, NgClass } from '@angular/common';
 import { NotificationComponent } from '../../../../core/notification/notification.component';
 import { AvatarComponent } from '../../../../core/avatar/avatar.component';
 import { AuthJwtService } from '../../../../core/services/authJwt.service';
+import { ModalComponent } from '../../../../core/modal/modal.component';
 
 @Component({
   selector: 'app-welcome',

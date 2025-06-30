@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExternalHeaderComponent } from './external-header.component';
+import { TabellaGenericaComponent } from './tabella-generica.component';
 
-describe('ExternalHeaderComponent', () => {
-  let component: ExternalHeaderComponent;
-  let fixture: ComponentFixture<ExternalHeaderComponent>;
+describe('TabellaGenericaComponent', () => {
+  let component: TabellaGenericaComponent;
+  let fixture: ComponentFixture<TabellaGenericaComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ExternalHeaderComponent]
+      imports: [TabellaGenericaComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(ExternalHeaderComponent);
+
+    fixture = TestBed.createComponent(TabellaGenericaComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
