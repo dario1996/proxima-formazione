@@ -7,7 +7,7 @@
 
 /* ================== SIDEBAR =================== */
 .sidebar {
-  width: 260px;
+  width: 280px;
   background: var(--color-background);
   border-right: 1px solid var(--color-border);
   height: 100vh;
@@ -204,7 +204,7 @@
 
   .sidebar.sidebar-open ~ .sidebar-toggle-btn {
     /* Sposta il pulsante vicino al bordo della sidebar aperta */
-    left: 268px; /* stessa larghezza della sidebar + 8px (margine sinistro)*/
+    left: 238px; /* stessa larghezza della sidebar + 8px (margine sinistro)*/
   }
 
   .sidebar {
