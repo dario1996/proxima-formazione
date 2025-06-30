@@ -312,6 +312,20 @@ body {
 }
 
 /* ================== LAYOUT =================== */
+.page-container {
+  min-height: 100vh;
+  background: white;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.page-header {
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 24px;
+}
+
 .app-layout {
   display: flex;
   min-height: 100vh;

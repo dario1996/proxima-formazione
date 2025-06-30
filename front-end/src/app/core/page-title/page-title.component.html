@@ -5,9 +5,10 @@
             {{ subtitle }}
         </p>
     </div>
-    <!-- (click)="openModal('ADD')" -->
-    <button class="btn btn-sm btn-primary text-center"
-            (click)="nuovoCorso.emit()">
+    <button
+        *ngIf="showButton"
+        class="btn btn-sm btn-primary text-center"
+        (click)="nuovoCorso.emit()">
         <i class="fas fa-plus btn-icon"></i>
         Nuovo Corso
     </button>
