@@ -1,18 +1,21 @@
+/* GESTIONE ASPETTO TABLE*/
 .table-container.loading {
   opacity: 0.6;
   pointer-events: none;
 }
 .table {
-  width: 100%;
+  width: fixed;
   border-spacing: 0;
-  font-size: 15px;
-  /* border: 1px solid #e2e8f0; */
-  /* border-radius: 8px; */
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 .table-header th {
-  background: #dddddd;
-  font-weight: 600;
-  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #eeeeee;
+  /* border-bottom: 1px solid #e2e8f0; */
+  min-width: 53px;
 }
 .actions-cell {
   text-align: center;
@@ -46,34 +49,71 @@
   outline: none;
 }
 
-/* PAGINATION MODERN STYLE */
+/* INIZIO - contenitore per la gestione dello scrolling del contenuto tabella */
+.table-scroll-container {
+  max-height: 70vh;      /* o un valore fisso, es: 500px */
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 9px;
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.04); */
+  /* opzionale: per evitare che la paginazione venga tagliata */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ededed;
+}
+
+.table-scroll-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-scroll-container .pagination {
+  flex-shrink: 0;
+  /* background: #fff; */
+  padding: 8px 0;
+  position: sticky;
+  bottom: 0;
+}
+/* FINE */
+
+/* effetto su singola riga della tabella */
+.table-body tr:hover > td {
+  min-height: 53px;
+  background: #000000 !important; /* colore dello sfondo della riga con mouse hover */
+  z-index: 1;
+  position: relative;
+  color: #fff;
+  /* transition: box-shadow 0.2s, background 0.2s; */
+}
+
+.table-body tr:nth-child(even) > td {
+  background: #efefef59;
+}
+
+/* PAGINATION STYLE */
 .table-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* gap: 12px; */
-  /* padding: 12px 16px; */
-  /* background: #f8fafc; */
   /* border-top: 1px solid #e2e8f0; */
   position: sticky;
   bottom: 0;
   z-index: 2;
   background: transparent;
   pointer-events: none;
-  padding: 0;
-  min-height: 56px;
+  padding-bottom: 10px;
 }
 
 .table-pagination-inner {
   display: flex;
   align-items: center;
-  /* gap: 12px; */
-  background: #f8fafc;    /* Sfondo solo per il blocco centrale */
-  padding: 5px 20px;
+  background: #f8fafc;
   pointer-events: auto;  /* Riabilita click solo sul blocco centrale */
   border: 1px solid;
   border-radius: 8px;
   border-color: #e2e8f0;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .pagination {
@@ -133,7 +173,7 @@
   margin-left: 16px;
 }
 
-.table.table-hover .table-body tr {
+.table-body tr {
   min-height: 53px;
   height: 53px;
 }

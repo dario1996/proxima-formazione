@@ -1,4 +1,5 @@
-<table class="table table-hover">
+<div class="table-scroll-container">
+<table class="table">
     <thead class="table-header">
         <tr>
             <th *ngFor="let col of columns" [style.width]="col.width">{{ col.label }}</th>
@@ -72,3 +73,4 @@
     </span>
     </div>
 </nav>
+</div>

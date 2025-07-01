@@ -134,30 +134,6 @@ app-data-table {
   background: #b91c1c;
 }
 
-.table-scroll-container {
-  max-height: 70vh;      /* o un valore fisso, es: 500px */
-  overflow-y: auto;
-  background: #fff;
-  /* border-radius: 12px; */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  /* opzionale: per evitare che la paginazione venga tagliata */
-  display: flex;
-  flex-direction: column;
-}
-
-.table-scroll-container table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table-scroll-container .pagination {
-  flex-shrink: 0;
-  background: #fff;
-  padding: 8px 0;
-  position: sticky;
-  bottom: 0;
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
   .page-container {
