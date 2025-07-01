@@ -8,7 +8,9 @@
   </div>
 
   <div class="page-content">
+    <div class="table-scroll-container">
     <app-tabella-generica [data]="corsi" [columns]="columns" [azioni]="actions" (action)="gestioneAzione($event)">
     </app-tabella-generica>
+    </div>
   </div>
 </div>

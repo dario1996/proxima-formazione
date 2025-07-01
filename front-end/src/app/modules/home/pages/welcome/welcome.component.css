@@ -180,7 +180,7 @@
 
 .main-body {
   flex: 1;
-  padding: var(--spacing-lg);
+  padding: 10px var(--spacing-lg);
 }
 
 /* ================== RESPONSIVE =================== */

@@ -31,11 +31,16 @@
                 </div>
             </td>
         </tr>
+          <!-- Righe vuote per riempire fino a pageSize -->
+        <tr class="empty-rows" *ngFor="let empty of [].constructor(pageSize - paginatedData.length)">
+            <td [attr.colspan]="columns.length + (azioni.length ? 1 : 0)">&nbsp;</td>
+        </tr>
     </tbody>
 </table>
 
 <!-- PAGINATION -->
 <nav *ngIf="totalPages > 1" class="table-pagination">
+    <div class="table-pagination-inner">
     <!-- <ul class="pagination mb-0">
       <li class="page-item" [class.disabled]="currentPage === 1">
         <button class="page-link" (click)="goTo(currentPage - 1)">«</button>
@@ -64,5 +69,6 @@
     <!-- ({{ totalItems }} record) -->
     <span class="pagination-info d-none d-md-inline">
             Pagina {{ currentPage }} di {{ totalPages }} 
-        </span>
+    </span>
+    </div>
 </nav>

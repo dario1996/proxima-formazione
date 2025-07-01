@@ -6,11 +6,11 @@
   width: 100%;
   border-spacing: 0;
   font-size: 15px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  /* border: 1px solid #e2e8f0; */
+  /* border-radius: 8px; */
 }
 .table-header th {
-  background: #f8fafc;
+  background: #dddddd;
   font-weight: 600;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -45,18 +45,105 @@
   box-shadow: none;
   outline: none;
 }
+
+/* PAGINATION MODERN STYLE */
 .table-pagination {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 12px 16px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  /* gap: 12px; */
+  /* padding: 12px 16px; */
+  /* background: #f8fafc; */
+  /* border-top: 1px solid #e2e8f0; */
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: transparent;
+  pointer-events: none;
+  padding: 0;
+  min-height: 56px;
 }
+
+.table-pagination-inner {
+  display: flex;
+  align-items: center;
+  /* gap: 12px; */
+  background: #f8fafc;    /* Sfondo solo per il blocco centrale */
+  padding: 5px 20px;
+  pointer-events: auto;  /* Riabilita click solo sul blocco centrale */
+  border: 1px solid;
+  border-radius: 8px;
+  border-color: #e2e8f0;
+}
+
+.pagination {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.page-item {
+  margin: 0 2px;
+}
+
+.page-link {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border: none;
+  background: transparent;
+  color: #969696;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-link:hover:not(:disabled):not(.active) {
+  background: #e2e8f0;
+  color: #3b3b3b;
+}
+
+.page-item.active .page-link,
+.page-link.active {
+  background: #000000;
+  color: #fff;
+  font-weight: 700;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+
+.page-item.disabled .page-link,
+.page-link:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+  background: transparent;
+}
+
 .pagination-info {
   font-size: 13px;
-  color: #64748b;
+  color: #848484;
+  margin-left: 16px;
 }
+
+.table.table-hover .table-body tr {
+  min-height: 53px;
+  height: 53px;
+}
+
+.page-link:focus,
+.page-link:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 @media (max-width: 768px) {
   .table-container { overflow-x: auto; }
   .data-table { min-width: 600px; }

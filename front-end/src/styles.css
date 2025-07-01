@@ -330,11 +330,6 @@ body {
   justify-content: space-between;
 }
 
-.main-body {
-  flex: 1;
-  padding: var(--spacing-lg);
-}
-
 /* ================== ALERTS =================== */
 .alert {
   padding: 12px 16px;
