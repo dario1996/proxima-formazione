@@ -8,7 +8,12 @@
   </div>
 
   <div class="page-content">
-    <app-tabella-generica [data]="corsi" [columns]="columns" [azioni]="actions" (action)="gestioneAzione($event)">
+    <app-tabella-generica 
+      [data]="corsi" 
+      [columns]="columns" 
+      [azioni]="actions"
+      (rowClick)="apriDettaglioCorso($event)"
+      (action)="gestioneAzione($event)">
     </app-tabella-generica>
   </div>
 </div>

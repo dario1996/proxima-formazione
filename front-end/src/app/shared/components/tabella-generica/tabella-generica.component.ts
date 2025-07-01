@@ -15,6 +15,7 @@ export class TabellaGenericaComponent {
   @Input() azioni: IAzioneDef[] = [];
   @Input() pageSize = 10;
   @Output() action = new EventEmitter<{ tipo: string; item: any }>();
+  @Output() rowClick = new EventEmitter<any>();
 
   paginatedData: any[] = [];
   currentPage = 1;
@@ -43,4 +44,9 @@ export class TabellaGenericaComponent {
   onAzione(tipo: string, item: any) {
     this.action.emit({ tipo, item });
   }
+  
+  onRowClick(row: any) {
+    this.rowClick.emit(row);
+  }
+
 }

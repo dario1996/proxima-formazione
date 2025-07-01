@@ -166,8 +166,26 @@ export class CorsiComponent implements OnInit {
           onConferma: () => this.deleteCorso(e.item.id),
         });
         break;
+      case 'view':
+        this.modaleService.apri({
+          titolo: 'Dettagli corso',
+          componente: FormCorsiComponent,
+          dati: {
+            messaggio: 'Dettagli del corso selezionato',
+          }
+        });
+        break
       default:
         console.error('Azione non supportata:', e.tipo);
     }
   }
+
+  apriDettaglioCorso(corso: ICorsi) {
+    this.modaleService.apri({
+      titolo: 'Dettagli corso',
+      componente: FormCorsiComponent,
+      dati: corso
+    });
+  }
+  
 }
