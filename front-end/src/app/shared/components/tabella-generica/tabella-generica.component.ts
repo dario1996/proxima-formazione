@@ -13,7 +13,7 @@ export class TabellaGenericaComponent {
   @Input() data: any[] = [];
   @Input() columns: IColumnDef[] = [];
   @Input() azioni: IAzioneDef[] = [];
-  @Input() pageSize = 5;
+  @Input() pageSize = 10;
   @Output() action = new EventEmitter<{ tipo: string; item: any }>();
 
   paginatedData: any[] = [];

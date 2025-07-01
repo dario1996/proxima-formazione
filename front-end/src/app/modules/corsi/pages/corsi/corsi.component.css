@@ -1,6 +1,6 @@
 /* Radix UI inspired clean layout */
 .page-container {
-  min-height: 100vh;
+  min-height: fixed;
   background: white;
   padding: 24px;
   display: flex;
