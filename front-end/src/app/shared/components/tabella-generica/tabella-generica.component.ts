@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IAzioneDef } from '../../models/ui/azione-def';
 import { IColumnDef } from '../../models/ui/column-def';
 import { CommonModule } from '@angular/common';
+import { ViewChild, ElementRef } from '@angular/core';
+
 
 @Component({
   selector: 'app-tabella-generica',
@@ -13,9 +15,11 @@ export class TabellaGenericaComponent {
   @Input() data: any[] = [];
   @Input() columns: IColumnDef[] = [];
   @Input() azioni: IAzioneDef[] = [];
-  @Input() pageSize = 10;
+  @Input() pageSize = 20;
   @Output() action = new EventEmitter<{ tipo: string; item: any }>();
   @Output() rowClick = new EventEmitter<any>();
+
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
 
   paginatedData: any[] = [];
   currentPage = 1;
@@ -38,6 +42,11 @@ export class TabellaGenericaComponent {
     if (p >= 1 && p <= this.totalPages) {
       this.currentPage = p;
       this.updatePagination();
+
+      // Scroll in cima al contenitore
+      setTimeout(() => {
+        this.scrollContainer?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 0);
     }
   }
 

@@ -7,16 +7,28 @@
   width: fixed;
   border-spacing: 0;
   font-size: 14px;
-  margin-bottom: 10px;
+  margin: 0;
 }
-.table-header th {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #eeeeee;
-  /* border-bottom: 1px solid #e2e8f0; */
-  min-width: 53px;
+.table-header {
+  position: sticky; /* per mantenere l'header visibile durante lo scroll */
+  top: 0;       /* posizione fissa in alto */ 
+  z-index: 3;  /* per sovrapporsi al contenuto sottostante */
+  height: 53px;
+  vertical-align: middle;
+  box-shadow: 0px 10px 80px 0px rgba(0, 0, 0, 0.105); /* ombra header tabella */
 }
+
+
+/* Separatore tra colonne header */
+/* .table-header th:not(:last-child) {
+  border-right: 1px solid #ededed;
+} */
+
+/* Separatore tra colonne corpo tabella */
+.table-body td:not(:last-child) {
+  border-right: 1px solid #ededed;
+}
+
 .actions-cell {
   text-align: center;
   white-space: nowrap;
@@ -53,6 +65,7 @@
 .table-scroll-container {
   max-height: 70vh;      /* o un valore fisso, es: 500px */
   overflow-y: auto;
+  scroll-behavior: smooth;
   background: #fff;
   border-radius: 9px;
   /* box-shadow: 0 2px 8px rgba(0,0,0,0.04); */
@@ -70,13 +83,25 @@
 .table-scroll-container .pagination {
   flex-shrink: 0;
   /* background: #fff; */
-  padding: 8px 0;
+  padding: 8px 8px 8px 8px;
   position: sticky;
+
   bottom: 0;
 }
+
+.table-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  background: #fff; /* o il colore che preferisci */
+  /* opzionale: aggiungi un bordo superiore */
+  box-shadow: 0px -10px 80px 0px rgba(0, 0, 0, 0.105); /* ombra footer tabella */
+}
+
 /* FINE */
 
-/* effetto su singola riga della tabella */
+
+/* INIZIO - effetto su singola riga della tabella */
 .table-body tr:hover > td {
   min-height: 53px;
   background: #000000 !important; /* colore dello sfondo della riga con mouse hover */
@@ -86,8 +111,13 @@
   /* transition: box-shadow 0.2s, background 0.2s; */
 }
 
+/* gestione righe alternate colorate */
 .table-body tr:nth-child(even) > td {
-  background: #efefef59;
+  background: #f6f6f6;
+}
+/* cambia il puntatore quando il mouse è su una riga cliccabile della tabella */
+.row-clickable {
+  cursor: pointer;
 }
 
 /* PAGINATION STYLE */
@@ -95,7 +125,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border-top: 1px solid #e2e8f0; */
   position: sticky;
   bottom: 0;
   z-index: 2;
@@ -104,16 +133,13 @@
   padding-bottom: 10px;
 }
 
+/* footer che contiene la la paginazione */
 .table-pagination-inner {
   display: flex;
   align-items: center;
-  background: #f8fafc;
   pointer-events: auto;  /* Riabilita click solo sul blocco centrale */
-  border: 1px solid;
   border-radius: 8px;
-  border-color: #e2e8f0;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-top: 8px;
 }
 
 .pagination {
