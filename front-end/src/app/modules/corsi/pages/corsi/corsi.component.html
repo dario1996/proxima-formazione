@@ -3,7 +3,8 @@
     <app-page-title
       [title]="'Corsi'"
       [subtitle]="'Gestione dei corsi disponibili'"
-      (nuovoCorso)="gestioneAzione({ tipo: 'add', item: null })"
+      [buttonText]="'Nuovo Corso'"
+      (buttonClick)="gestioneAzione({ tipo: 'add', item: null })"
     ></app-page-title>
   </div>
 

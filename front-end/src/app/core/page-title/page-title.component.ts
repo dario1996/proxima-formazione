@@ -11,7 +11,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export class PageTitleComponent {
   @Input() title: string = '';
   @Input() subtitle: string = '';
-  @Input() showButton: boolean = true; // <--- aggiunto
+  @Input() showButton: boolean = true;
+  @Input() buttonText: string = '';
 
-  @Output() nuovoCorso = new EventEmitter<void>();
+  @Output() buttonClick = new EventEmitter<void>();
 }

@@ -14,7 +14,11 @@
         <tr *ngFor="let row of paginatedData" class="align-middle">
             <td *ngFor="let col of columns">
                 <ng-container [ngSwitch]="col.type">
-                    <span *ngSwitchCase="'badge'" class="badge badge-primary">{{ row[col.key] }}</span>
+                    <span *ngSwitchCase="'badge'" class="badge"
+                          [class.bg-success]="row[col.key] === 'Attivo'"
+                          [class.bg-secondary]="row[col.key] === 'Non attivo'">
+                        {{ row[col.key] }}
+                    </span>
                     <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>
                     <span *ngSwitchDefault>{{ row[col.key] }}</span>
                 </ng-container>
@@ -24,7 +28,8 @@
                     <button *ngFor="let azione of azioni" type="button" class="btn btn-sm" [ngClass]="{
                                     'btn-primary': azione.color === 'primary',
                                     'btn-danger': azione.color === 'danger',
-                                    'btn-secondary': azione.color === 'secondary'
+                                    'btn-secondary': azione.color === 'secondary',
+                                    'btn-warning': azione.color === 'warning'
                                 }" (click)="onAzione(azione.action, row)">
                         <i *ngIf="azione.icon" [class]="azione.icon"></i>
                     </button>
@@ -63,6 +68,6 @@
     </ul>
     <!-- ({{ totalItems }} record) -->
     <span class="pagination-info d-none d-md-inline">
-            Pagina {{ currentPage }} di {{ totalPages }} 
-        </span>
+        Pagina {{ currentPage }} di {{ totalPages }}
+    </span>
 </nav>

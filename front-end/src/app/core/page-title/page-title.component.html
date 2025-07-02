@@ -8,8 +8,8 @@
     <button
         *ngIf="showButton"
         class="btn btn-sm btn-primary text-center"
-        (click)="nuovoCorso.emit()">
+        (click)="buttonClick.emit()">
         <i class="fas fa-plus btn-icon"></i>
-        Nuovo Corso
+        {{ buttonText }}
     </button>
 </div>

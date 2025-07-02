@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
-import { IAzioneDef } from '../../../../shared/models/ui/azione-def';
+import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/ui/azione-def';
 import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import { ModaleService } from '../../../../core/services/modal.service';
 import { FormCorsiComponent } from '../../components/form-corsi/form-corsi.component';
@@ -43,10 +43,16 @@ export class CorsiComponent implements OnInit {
       sortable: true,
       type: 'text',
     },
+    {
+      key: 'isms',
+      label: 'ISMS',
+      sortable: true,
+      type: 'text',
+    },
     { key: 'durata', label: 'Durata', sortable: true, type: 'text' },
     {
       key: 'piattaformaNome',
-      label: 'Piattaforma',
+      label: 'Modalità',
       sortable: true,
       type: 'text',
     },
@@ -56,14 +62,14 @@ export class CorsiComponent implements OnInit {
     {
       label: 'Modifica',
       icon: 'fa fa-pen',
-      action: 'edit',
-      color: 'secondary',
+      action: AzioneType.Edit,
+      color: AzioneColor.Secondary,
     },
     {
       label: 'Elimina',
       icon: 'fa fa-trash',
-      action: 'delete',
-      color: 'danger',
+      action: AzioneType.Delete,
+      color: AzioneColor.Danger,
     },
   ];
 
