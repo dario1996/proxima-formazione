@@ -1,31 +1,27 @@
 /* Radix UI inspired clean layout */
 .page-container {
-  min-height: fixed;
-  background: white;
-  padding: 24px;
+  height: 100%;
+  min-height: 0;
+  background: #02de02;
+  /* padding-left: 32px; */
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  overflow: hidden;
 }
 
 .page-header {
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 24px;
+  /* border-bottom: 1px solid #e2e8f0; */
+  background-color: white;
+  padding: 24px;
 }
 
 .page-content {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-}
-
-/* Data table integration */
-app-data-table {
-  display: block;
-  width: 100%;
-  flex: 1;
-  min-height: 0;
+  padding: 24px;
+  overflow: hidden;
 }
 
 /* Modal form styling */

@@ -18,6 +18,9 @@
   box-shadow: 0px 10px 80px 0px rgba(0, 0, 0, 0.105); /* ombra header tabella */
 }
 
+.contenitore-pagging-bottom {
+  padding-bottom: 24px;
+}
 
 /* Separatore tra colonne header */
 /* .table-header th:not(:last-child) {
@@ -25,9 +28,9 @@
 } */
 
 /* Separatore tra colonne corpo tabella */
-.table-body td:not(:last-child) {
+/* .table-body td:not(:last-child) {
   border-right: 1px solid #ededed;
-}
+} */
 
 .actions-cell {
   text-align: center;
@@ -63,16 +66,16 @@
 
 /* INIZIO - contenitore per la gestione dello scrolling del contenuto tabella */
 .table-scroll-container {
-  max-height: 70vh;      /* o un valore fisso, es: 500px */
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
   overflow-y: auto;
-  scroll-behavior: smooth;
-  background: #fff;
-  border-radius: 9px;
-  /* box-shadow: 0 2px 8px rgba(0,0,0,0.04); */
-  /* opzionale: per evitare che la paginazione venga tagliata */
   display: flex;
   flex-direction: column;
   border: 1px solid #ededed;
+  scroll-behavior: smooth;
+  background: #fff;
+  border-radius: 9px;
 }
 
 .table-scroll-container table {
@@ -85,7 +88,6 @@
   /* background: #fff; */
   padding: 8px 8px 8px 8px;
   position: sticky;
-
   bottom: 0;
 }
 
@@ -94,7 +96,6 @@
   bottom: 0;
   z-index: 3;
   background: #fff; /* o il colore che preferisci */
-  /* opzionale: aggiungi un bordo superiore */
   box-shadow: 0px -10px 80px 0px rgba(0, 0, 0, 0.105); /* ombra footer tabella */
 }
 
@@ -130,7 +131,7 @@
   z-index: 2;
   background: transparent;
   pointer-events: none;
-  padding-bottom: 10px;
+  /* padding-bottom: 10px; */
 }
 
 /* footer che contiene la la paginazione */

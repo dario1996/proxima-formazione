@@ -1,9 +1,8 @@
 /* ================== APP LAYOUT =================== */
-.app-layout {
+/* .app-layout {
   display: flex;
-  min-height: 100vh;
-  background: var(--color-muted);
-}
+  height: 100%;
+} */
 
 /* ================== SIDEBAR =================== */
 .sidebar {
@@ -15,7 +14,7 @@
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   transform: none;
@@ -60,6 +59,11 @@
 
 .sidebar.sidebar-open {
   transform: translateX(0);
+}
+
+/* regola che permette di nascondere il toggle menu del mobile quando si è in desktop */
+.sidebar-toggle-btn {
+    display: none;
 }
 
 .logout-btn {
@@ -159,16 +163,15 @@
 }
 
 /* ================== MAIN CONTENT =================== */
-.main-content {
+/* .main-content {
   flex: 1;
   margin-left: var(--sidebar-width);
   background: var(--color-muted);
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
+} */
 
-.main-header {
+/* .main-header {
   background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
   padding: 0 var(--spacing-lg);
@@ -176,16 +179,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
+} */
 
-.main-body {
-  flex: 1;
-  padding: 10px var(--spacing-lg);
-}
+
+/* regole create per gestire il layout della parte destra universale per ogni pagina */
+/* .main-content, .main-body, .page-container {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+} */
 
 /* ================== RESPONSIVE =================== */
 @media (max-width: 991px) {
-    .sidebar-toggle-btn {
+  .sidebar-toggle-btn {
     display: flex;
     position: fixed;
     top: 8px;
@@ -242,7 +249,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    z-index: 19;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -252,8 +259,6 @@
     opacity: 1;
     visibility: visible;
   }
-
-
 }
 
 /* ================== NOTIFICATIONS =================== */
