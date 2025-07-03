@@ -2,26 +2,33 @@
 .page-container {
   height: 100%;
   min-height: 0;
-  background: #02de02;
-  /* padding-left: 32px; */
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding: 15px;
 }
 
 .page-header {
-  /* border-bottom: 1px solid #e2e8f0; */
+  border-bottom: 1px solid #e2e8f0;
   background-color: white;
   padding: 24px;
 }
 
 .page-content {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: white;
+}
+
+.page-content-inner {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  overflow: hidden;
+  padding: 24px; /* padding solo qui */
 }
 
 /* Modal form styling */
@@ -123,11 +130,12 @@
 .btn-danger {
   background: #dc2626;
   color: #fafafa;
-  border-color: #dc2626;
+  /* border-color: #dc2626; */
 }
 
 .btn-danger:hover {
-  background: #b91c1c;
+  background: #ffffff;
+  color: rgb(255, 0, 0);
 }
 
 /* Responsive design */

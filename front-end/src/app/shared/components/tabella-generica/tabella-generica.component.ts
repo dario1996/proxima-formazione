@@ -44,9 +44,9 @@ export class TabellaGenericaComponent {
       this.updatePagination();
 
       // Scroll in cima al contenitore
-      setTimeout(() => {
-        this.scrollContainer?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 0);
+      // setTimeout(() => {
+      //   this.scrollContainer?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+      // }, 0);
     }
   }
 

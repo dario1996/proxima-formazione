@@ -9,8 +9,9 @@
   width: 280px;
   background: var(--color-background);
   border-right: 1px solid var(--color-border);
-  height: 100vh;
-  position: fixed;
+  height: 100%;
+  min-height: 0;
+  /* position: fixed; */
   top: 0;
   left: 0;
   bottom: 0;
@@ -163,15 +164,15 @@
 }
 
 /* ================== MAIN CONTENT =================== */
-/* .main-content {
+.main-content {
   flex: 1;
   margin-left: var(--sidebar-width);
   background: var(--color-muted);
   display: flex;
   flex-direction: column;
-} */
+}
 
-/* .main-header {
+.main-header {
   background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
   padding: 0 var(--spacing-lg);
@@ -179,7 +180,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-} */
+}
 
 
 /* regole create per gestire il layout della parte destra universale per ogni pagina */

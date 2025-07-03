@@ -15,22 +15,7 @@
   z-index: 3;  /* per sovrapporsi al contenuto sottostante */
   height: 53px;
   vertical-align: middle;
-  box-shadow: 0px 10px 80px 0px rgba(0, 0, 0, 0.105); /* ombra header tabella */
 }
-
-.contenitore-pagging-bottom {
-  padding-bottom: 24px;
-}
-
-/* Separatore tra colonne header */
-/* .table-header th:not(:last-child) {
-  border-right: 1px solid #ededed;
-} */
-
-/* Separatore tra colonne corpo tabella */
-/* .table-body td:not(:last-child) {
-  border-right: 1px solid #ededed;
-} */
 
 .actions-cell {
   text-align: center;
@@ -49,7 +34,7 @@
   height: 36px;
   padding: 0;
   border-radius: 6px;
-  font-size: 18px;
+  font-size: 15px;
 }
 .action-buttons .btn .fa,
 .action-buttons .btn .fas,
@@ -68,19 +53,14 @@
 .table-scroll-container {
   flex: 1 1 auto;
   min-height: 0;
-  height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  border: 1px solid #ededed;
-  scroll-behavior: smooth;
-  background: #fff;
-  border-radius: 9px;
 }
 
-.table-scroll-container table {
-  width: 100%;
+.table {
   border-collapse: collapse;
+  table-layout: fixed; /* per mantenere le colonne di larghezza fissa */
 }
 
 .table-scroll-container .pagination {
@@ -90,15 +70,6 @@
   position: sticky;
   bottom: 0;
 }
-
-.table-footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 3;
-  background: #fff; /* o il colore che preferisci */
-  box-shadow: 0px -10px 80px 0px rgba(0, 0, 0, 0.105); /* ombra footer tabella */
-}
-
 /* FINE */
 
 
@@ -139,15 +110,19 @@
   display: flex;
   align-items: center;
   pointer-events: auto;  /* Riabilita click solo sul blocco centrale */
-  border-radius: 8px;
-  padding-top: 8px;
+}
+
+.table-footer {
+  position: sticky;
+  z-index: 3;
+  background: #fff; /* o il colore che preferisci */
+  padding: 8px
 }
 
 .pagination {
   display: flex;
   gap: 2px;
   margin: 0;
-  padding: 0;
   list-style: none;
 }
 
@@ -158,13 +133,13 @@
 .page-link {
   min-width: 34px;
   height: 34px;
-  padding: 0 10px;
+  /* padding: 0 10px; */
   border: none;
   background: transparent;
   color: #969696;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 50%;
   cursor: pointer;
   outline: none;
   display: flex;
@@ -202,13 +177,34 @@
 
 .table-body tr {
   min-height: 53px;
-  height: 53px;
+  max-height: 53px;
 }
 
 .page-link:focus,
 .page-link:focus-visible {
   outline: none;
   box-shadow: none;
+}
+
+/* Nessun colore alternato, hover o click per le righe vuote */
+.table-body tr.empty-rows > td {
+  background: #fff !important;
+  cursor: default !important;
+  pointer-events: none;
+}
+
+.table-body tr.empty-rows:hover > td {
+  background: #fff !important;
+}
+
+/* Bordo solo per le righe piene */
+.table-body tr:not(.empty-rows) > td {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Nessun bordo per le righe vuote */
+.table-body tr.empty-rows > td {
+  border-bottom: none !important;
 }
 
 @media (max-width: 768px) {

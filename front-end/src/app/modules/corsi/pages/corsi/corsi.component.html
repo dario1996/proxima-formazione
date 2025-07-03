@@ -6,14 +6,16 @@
       (nuovoCorso)="gestioneAzione({ tipo: 'add', item: null })"
     ></app-page-title>
   </div>
-
   <div class="page-content">
-    <app-tabella-generica 
-      [data]="corsi" 
-      [columns]="columns" 
-      [azioni]="actions"
-      (rowClick)="apriDettaglioCorso($event)"
-      (action)="gestioneAzione($event)">
-    </app-tabella-generica>
+    <div class="page-content-inner" #pageContentInner>
+      <app-tabella-generica 
+        [data]="corsi" 
+        [columns]="columns" 
+        [azioni]="actions"
+        [pageSize]="pageSize"
+        (rowClick)="apriDettaglioCorso($event)"
+        (action)="gestioneAzione($event)">
+      </app-tabella-generica>
+    </div>
   </div>
 </div>
