@@ -1,47 +1,35 @@
-# Hidden H2 Development Configuration
+# WSL MySQL Development Configuration
 # This file should be added to .gitignore for personal use only
-
+# mvn spring-boot:run "-Dspring.profiles.active=dev"
 spring:
   application:
     name: gestionale-formazione
 
-  # H2 Database Configuration
+  # WSL MySQL Database Configuration
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
-        trace: false
-        web-port: 8080
+    url: jdbc:mysql://172.23.207.87:3306/gest-form?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: hello!
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: none # Let Liquibase handle the schema
-    show-sql: true
     properties:
       hibernate:
-        format_sql: true
-        use_sql_comments: true
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
 
   sql:
     init:
       mode: always
-      platform: h2
+      platform: mysql
 
-  # Liquibase Configuration for H2
+  # Liquibase Configuration for MySQL
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
-    default-schema: PUBLIC
-    contexts: h2 # Optional: use specific context for H2
+    default-schema: gest-form
 
 # Security Configuration (same as main config)
 sicurezza:
