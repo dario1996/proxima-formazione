@@ -6,6 +6,9 @@ import { PiattaformeService } from '../../../../core/services/data/piattaforme.s
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
 import { ApiMsg } from '../../../../shared/models/ApiMsg';
 import { ToastrService } from 'ngx-toastr';
+import { ModaleService } from '../../../../core/services/modal.service';
+import { FormPiattaformeComponent } from '../../components/form-piattaforme/form-piattaforme.component';
+import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 
 @Component({
   selector: 'app-settings',
@@ -13,12 +16,12 @@ import { ToastrService } from 'ngx-toastr';
   imports: [CommonModule, PiattaformeComponent, PageTitleComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
-  providers: [PiattaformeService],
 })
 export class SettingsComponent implements OnInit {
-  title: string = 'Settings';
-  icon: string = 'fa-solid fa-gears';
-  selectedTab = 'piattaforme'; // puoi cambiare la tab di default qui
+  // title: string = 'Settings';
+  // icon: string = 'fa-solid fa-gears';
+  selectedTab = 'piattaforme';
+  buttonText: string = '';
 
   piattaforme: IPiattaforma[] = [];
   piattaformeLoaded = false;
@@ -27,6 +30,7 @@ export class SettingsComponent implements OnInit {
 
   constructor(
     private piattaformeService: PiattaformeService,
+    private modaleService: ModaleService,
     private toastr: ToastrService,
   ) {}
 
@@ -36,17 +40,32 @@ export class SettingsComponent implements OnInit {
 
   onTabClick(tab: string) {
     this.selectedTab = tab;
-    if (tab === 'piattaforme') {
-      this.loadPiattaforme();
+    switch (tab) {
+      case 'piattaforme':
+        this.buttonText = 'Nuova piattaforma';
+        this.loadPiattaforme();
+        break;
+      case 'stato_corsi':
+        this.buttonText = 'Nuovo stato corso';
+        break;
+      case 'link1':
+        this.buttonText = 'Nuova sede';
+        break;
+      case 'link2':
+        this.buttonText = 'Nuovo ruolo dipendente';
+        break;
+      default:
+        this.buttonText = '';
     }
-    // qui puoi aggiungere altre logiche per altre tab se servono
   }
 
   private loadPiattaforme() {
     this.piattaformeService.getListaPiattaforme().subscribe({
       next: data => {
-        this.piattaforme = data;
-        this.piattaformeLoaded = true;
+        this.piattaforme = data.map((p: any) => ({
+          ...p,
+          attiva: p.attiva ? 'Attivo' : 'Non attivo', // <-- qui la trasformazione
+        }));
       },
       error: err => {
         this.piattaforme = [];
@@ -55,36 +74,85 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  addPiattaforma(piattaformaData: IPiattaforma) {
+    this.piattaformeService.addPiattaforma(piattaformaData).subscribe({
+      next: this.onSuccess,
+      error: this.handleError,
+    });
+  }
+
+  updatePiattaforma(id: number, piattaformaData: IPiattaforma) {
+    this.piattaformeService.editPiattaforma(id, piattaformaData).subscribe({
+      next: this.onSuccess,
+      error: this.handleError,
+    });
+  }
+
+  deletePiattaforma(id: number) {
+    this.piattaformeService.deletePiattaforma(id).subscribe({
+      next: this.onSuccess,
+      error: this.handleError,
+    });
+  }
+
   onAction(event: { tab: string; type: string; payload?: IPiattaforma }) {
     switch (event.tab) {
       case 'piattaforme':
         switch (event.type) {
-          case 'ADD':
-            if (event.payload) {
-              this.piattaformeService.addPiattaforma(event.payload).subscribe({
-                next: this.onSuccess,
-                error: this.handleError,
-              });
-            }
+          case 'add':
+            // if (event.payload) {
+            // }
+            // this.piattaformeService.addPiattaforma(event.payload).subscribe({
+            //   next: this.onSuccess,
+            //   error: this.handleError,
+            // });
+
+            this.modaleService.apri({
+              titolo: 'Aggiungi Piattaforma',
+              componente: FormPiattaformeComponent,
+              dati: {}, // campi vuoti
+              onConferma: (formValue: any) => this.addPiattaforma(formValue),
+            });
             break;
-          case 'EDIT':
-            if (event.payload) {
-              this.piattaformeService.editPiattaforma(event.payload.id, event.payload).subscribe({
-                next: this.onSuccess,
-                error: this.handleError,
-              });
-              break;
-            }
+          case 'edit':
+            // if (event.payload) {
+            //   this.piattaformeService
+            //     .editPiattaforma(event.payload.id, event.payload)
+            //     .subscribe({
+            //       next: this.onSuccess,
+            //       error: this.handleError,
+            //     });
+            //   break;
+            // }
+            this.modaleService.apri({
+              titolo: 'Modifica Piattaforma',
+              componente: FormPiattaformeComponent,
+              dati: event.payload,
+              onConferma: (formValue: any) => {
+                if (event.payload?.id !== undefined) {
+                  this.updatePiattaforma(event.payload.id, formValue);
+                } else {
+                  this.toastr.error('ID piattaforma non valido', 'Errore');
+                }
+              },
+            });
             break;
-          case 'DELETE':
-            if (event.payload) {
-              this.piattaformeService
-                .deletePiattaforma(event.payload.id) // <-- usa solo l'id!
-                .subscribe({
-                  next: this.onSuccess,
-                  error: this.handleError,
-                });
-            }
+          case 'delete':
+            this.modaleService.apri({
+              titolo: 'Conferma eliminazione',
+              componente: DeleteConfirmComponent,
+              dati: {
+                messaggio:
+                  'Vuoi davvero eliminare la piattaforma "' + event.payload?.nome + '"?',
+              },
+              onConferma: () => {
+                if (event.payload?.id !== undefined) {
+                  this.deletePiattaforma(event.payload.id);
+                } else {
+                  this.toastr.error('ID piattaforma non valido', 'Errore');
+                }
+              },
+            });
             break;
           default:
             console.warn('Azione piattaforme non gestita:', event.type);

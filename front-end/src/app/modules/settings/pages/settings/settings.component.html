@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<!-- <div class="container-fluid">
     <app-page-title [title]="'Impostazioni'" [subtitle]="'Gestione delle impostazioni del sistema'"></app-page-title>
     <ul class="nav nav-tabs mt-3">
         <li class="nav-item">
@@ -52,5 +52,74 @@
             <p>Contenuto della tab Ruoli dipendenti</p>
         </div>
         }
+    </div>
+</div> -->
+
+<div class="page-container">
+    <div class="page-header">
+        <!-- (buttonClick)="gestioneAzione({ tipo: 'add', item: null })" -->
+        <app-page-title
+            [title]="'Settings'"
+            [subtitle]="'Gestione delle impostazioni del sistema'"
+            [buttonText]="buttonText"
+            [showButton]="!!buttonText"
+            (buttonClick)="onAction({ type: 'add', tab: selectedTab })"
+            >
+        </app-page-title>
+    </div>
+    <div class="page-content">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button class="nav-link"
+                    [ngClass]="{active: selectedTab === 'piattaforme', 'tab-disabled-look': selectedTab !== 'piattaforme'}"
+                    (click)="onTabClick('piattaforme')">
+                    Piattaforme
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link"
+                    [ngClass]="{active: selectedTab === 'stato_corsi', 'tab-disabled-look': selectedTab !== 'stato_corsi'}"
+                    (click)="onTabClick('stato_corsi')">
+                    Stato corsi
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link"
+                    [ngClass]="{active: selectedTab === 'link1', 'tab-disabled-look': selectedTab !== 'link1'}"
+                    (click)="onTabClick('link1')">
+                    Sedi
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link"
+                    [ngClass]="{active: selectedTab === 'link2', 'tab-disabled-look': selectedTab !== 'link2'}"
+                    (click)="onTabClick('link2')">
+                    Ruoli dipendenti
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-4">
+            @if (selectedTab === 'piattaforme') {
+            <div>
+                <app-piattaforme [piattaforme]="piattaforme" (action)="onAction($event)"></app-piattaforme>
+            </div>
+            }
+            @if (selectedTab === 'stato_corsi') {
+            <div>
+                <p>Contenuto della tab Stato corsi</p>
+            </div>
+            }
+            @if (selectedTab === 'link1') {
+            <div>
+                <p>Contenuto della tab Sedi</p>
+            </div>
+            }
+            @if (selectedTab === 'link2') {
+            <div>
+                <p>Contenuto della tab Ruoli dipendenti</p>
+            </div>
+            }
+        </div>
     </div>
 </div>

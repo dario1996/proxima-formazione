@@ -7,152 +7,78 @@ import {
 } from '@angular/core';
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
 import { CommonModule } from '@angular/common';
-import { ModalComponent } from '../../../../core/modal/modal.component';
+import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
+import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  IAzioneDef,
+  AzioneType,
+  AzioneColor,
+} from '../../../../shared/models/ui/azione-def';
 
 @Component({
   selector: 'app-piattaforme',
   standalone: true,
-  imports: [CommonModule, ModalComponent, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    TabellaGenericaComponent,
+  ],
   templateUrl: './piattaforme.component.html',
   styleUrl: './piattaforme.component.css',
 })
 export class PiattaformeComponent {
   @Input() piattaforme: IPiattaforma[] = [];
-  @Input() closeModalSignal = 0;
   @Output() action = new EventEmitter<{
     tab: string;
     type: string;
     payload?: any;
   }>();
 
-  // Modale
-  isOpenModal = false;
-  modalTitle = '';
-  modalActionType = '';
-  selectedPiattaforma?: IPiattaforma;
+  columns: IColumnDef[] = [
+    { key: 'nome', label: 'Nome', sortable: true, type: 'text' },
+    {
+      key: 'descrizione',
+      label: 'Descrizione',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'urlSito',
+      label: 'URL Sito',
+      sortable: true,
+      type: 'text',
+    },
+    { key: 'attiva', label: 'Stato', sortable: true, type: 'badge' },
+  ];
 
-  // Form
-  form!: FormGroup;
-  submitted = false;
+  actions: IAzioneDef[] = [
+    {
+      label: 'Modifica',
+      icon: 'fa fa-pen',
+      action: AzioneType.Edit,
+      color: AzioneColor.Secondary,
+    },
+    {
+      label: 'Elimina',
+      icon: 'fa fa-trash',
+      action: AzioneType.Delete,
+      color: AzioneColor.Danger,
+    },
+  ];
 
-  constructor(private formBuilder: FormBuilder) {}
-
-  openModal(type: string, piattaforma?: IPiattaforma) {
-    this.initializeForm();
-    this.modalActionType = type;
-    this.selectedPiattaforma = piattaforma;
-    this.isOpenModal = true;
-    this.setModalTitle();
-
-    // Autocompila i campi se in modalità EDIT e piattaforma presente
-    if (type === 'EDIT' && piattaforma) {
-      this.form.patchValue({
-        nome: piattaforma.nome,
-        descrizione: piattaforma.descrizione,
-        urlSito: piattaforma.urlSito,
-        attiva: piattaforma.attiva ? 'true' : 'false',
+  // Gestione azioni dalla tabella generica
+  onTabellaAzione(event: { tipo: string; item: IPiattaforma }) {
+    if (event.tipo === AzioneType.Edit) {
+      this.action.emit({
+        tab: 'piattaforme',
+        type: 'edit',
+        payload: event.item,
+      });
+    } else if (event.tipo === AzioneType.Delete) {
+      this.action.emit({
+        tab: 'piattaforme',
+        type: 'delete',
+        payload: event.item,
       });
     }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes['closeModalSignal'] &&
-      !changes['closeModalSignal'].firstChange
-    ) {
-      this.closeModal();
-    }
-  }
-
-  initializeForm() {
-    this.form = this.formBuilder.group({
-      nome: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(99),
-        ],
-      ],
-      descrizione: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(499),
-        ],
-      ],
-      urlSito: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(254),
-        ],
-      ],
-      attiva: ['', [Validators.required]],
-    });
-  }
-
-  setModalTitle() {
-    const titles: Record<string, string> = {
-      EDIT: 'Modifica Piattaforma',
-      ADD: 'Aggiungi Piattaforma',
-      DELETE: 'Conferma Eliminazione',
-    };
-    this.modalTitle = titles[this.modalActionType] || '';
-  }
-
-  closeModal() {
-    this.isOpenModal = false;
-    this.onReset();
-  }
-
-  onReset() {
-    this.submitted = false;
-    this.form?.reset();
-  }
-
-  onSubmit() {
-    this.submitted = true;
-    if (
-      (this.modalActionType === 'EDIT' || this.modalActionType === 'ADD') &&
-      this.form.invalid
-    )
-      return;
-
-    let payload;
-    if (this.modalActionType === 'DELETE') {
-      payload = this.selectedPiattaforma;
-    } else if (this.modalActionType === 'EDIT') {
-      payload = { ...this.form.value, id: this.selectedPiattaforma?.id };
-    } else {
-      payload = this.form.value;
-    }
-
-    this.action.emit({
-      tab: 'piattaforme',
-      type: this.modalActionType,
-      payload,
-    });
-    this.closeModal();
-  }
-
-  // Questi metodi aprono la modale con il giusto tipo
-  modifica(id: number) {
-    const piattaforma = this.piattaforme.find(p => p.id === id);
-    this.openModal('EDIT', piattaforma);
-  }
-
-  elimina(id: number) {
-    const piattaforma = this.piattaforme.find(p => p.id === id);
-    this.openModal('DELETE', piattaforma);
   }
 }
