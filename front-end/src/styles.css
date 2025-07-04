@@ -242,14 +242,14 @@ html, body {
   flex-direction: column;
 }
 
-.sidebar-header {
+/* .sidebar-header {
   padding: var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: var(--header-height);
-}
+} */
 
 .sidebar-logo {
   height: 32px;
@@ -307,19 +307,19 @@ html, body {
 }
 
 /* ================== LAYOUT =================== */
-.page-container {
+/* .page-container {
   min-height: 100vh;
   background: white;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 32px;
-}
+} */
 
-.page-header {
+/* .page-header {
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 24px;
-}
+} */
 
 .app-layout {
   height: 100%;
@@ -327,7 +327,7 @@ html, body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: rgb(240, 240, 240);
+  /* background-color: rgb(240, 240, 240); */
 }
 
 .main-content {

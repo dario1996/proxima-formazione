@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ICorsi } from '../../../../shared/models/Corsi';
 import { CorsiService } from '../../../../core/services/data/corsi.service';
 import { ToastrService } from 'ngx-toastr';
@@ -84,14 +84,16 @@ export class CorsiComponent implements AfterViewInit, OnInit {
     private corsiService: CorsiService,
     private modaleService: ModaleService,
     private toastr: ToastrService,
+    private cd: ChangeDetectorRef // <--- aggiungi questo
   ) {}
 
   ngAfterViewInit() {
     this.updatePageSize();
     window.addEventListener('resize', this.updatePageSize.bind(this));
+    this.cd.detectChanges(); // <--- aggiungi questa riga
   }
 
-    updatePageSize() {
+  updatePageSize() {
     if (!this.pageContentInner) return;
     const containerHeight = this.pageContentInner.nativeElement.clientHeight;
     // Se hai header/footer sticky nella tabella, sottrai la loro altezza

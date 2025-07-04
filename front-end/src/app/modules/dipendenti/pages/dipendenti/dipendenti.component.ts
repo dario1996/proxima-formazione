@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import {
   IDipendenti,
@@ -39,6 +39,11 @@ import { FormDipendentiComponent } from '../../components/form-dipendenti/form-d
   styleUrl: './dipendenti.component.css',
 })
 export class DipendentiComponent implements OnInit {
+  @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
+
+  pageSize = 10; // valore di default
+  rowHeight = 60; // px, come da CSS della tabella
+
   dipendenti: IDipendenti[] = [];
   columns: IColumnDef[] = [
     { key: 'nominativo', label: 'Nominativo', sortable: true, type: 'text' },
@@ -75,7 +80,7 @@ export class DipendentiComponent implements OnInit {
     },
     {
       key: 'commerciale',
-      label: 'Account/Responsabile',
+      label: 'Responsabile',
       sortable: true,
       type: 'text',
     },
@@ -112,10 +117,27 @@ export class DipendentiComponent implements OnInit {
     private dipendentiService: DipendentiService,
     private modaleService: ModaleService,
     private toastr: ToastrService,
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.loadDipendenti();
+  }
+
+  ngAfterViewInit() {
+    this.updatePageSize();
+    window.addEventListener('resize', this.updatePageSize.bind(this));
+    this.cd.detectChanges(); // <--- aggiungi questa riga
+  }
+
+  updatePageSize() {
+    if (!this.pageContentInner) return;
+    const containerHeight = this.pageContentInner.nativeElement.clientHeight;
+    // Se hai header/footer sticky nella tabella, sottrai la loro altezza
+    const headerHeight = 53; // px, se hai un header fisso
+    const footerHeight = 60; // px, se hai un footer sticky
+    const available = containerHeight - headerHeight - footerHeight;
+    this.pageSize = Math.max(1, Math.floor(available / this.rowHeight));
   }
 
   private loadDipendenti() {

@@ -32,7 +32,7 @@
                         {{ row[col.key] }}
                     </span>
                     <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>
-                    <span *ngSwitchDefault>{{ row[col.key] }}</span>
+                    <span *ngSwitchDefault>{{ row[col.key] ? row[col.key] : ' - ' }}</span>
                 </ng-container>
             </td>
             <td *ngIf="azioni.length" class="actions-cell" (click)="$event.stopPropagation()">
