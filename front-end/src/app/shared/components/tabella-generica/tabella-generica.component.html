@@ -1,17 +1,29 @@
-<table class="table table-hover">
-    <thead class="table-header">
-        <tr>
-            <th *ngFor="let col of columns" [style.width]="col.width">{{ col.label }}</th>
-            <th *ngIf="azioni.length" class="actions-column text-center">Azioni</th>
-        </tr>
-    </thead>
-    <tbody class="table-body">
-        <!-- <tr *ngIf="!loading && data.length === 0">
-        <td [attr.colspan]="columns.length + (azioni.length ? 1 : 0)" class="empty-cell">
-          Nessun dato disponibile
-        </td>
-      </tr> -->
-        <tr *ngFor="let row of paginatedData" class="align-middle">
+<div class="table-scroll-container">
+    <table class="table">
+        <thead class="table-header">
+            <tr>
+                <th *ngFor="let col of columns" 
+                [style.width]="col.width"
+                (click)="col.key !== 'azioni' && sortBy(col.key)"
+                [class.sortable]="col.key !== 'azioni'"
+                [class.sorted-desc]="sortColumn === col.key && sortDirection === 'desc'"
+                >{{ col.label }}
+                    <span *ngIf="col.key !== 'azioni'">
+                        <i 
+                        class="fa"
+                        [ngClass]="{
+                            'fa-chevron-up': sortColumn === col.key && sortDirection === 'asc',
+                            'fa-chevron-down': sortColumn === col.key && sortDirection === 'desc',
+                            'fa-sort': sortColumn !== col.key
+                        }"
+                        ></i>
+                    </span>
+            </th>
+                <th *ngIf="azioni.length" class="actions-column text-center">Azioni</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+        <tr *ngFor="let row of paginatedData" class="row-clickable align-middle" (click)="rowClick.emit(row)">
             <td *ngFor="let col of columns">
                 <ng-container [ngSwitch]="col.type">
                     <span *ngSwitchCase="'badge'" class="badge"
@@ -23,7 +35,7 @@
                     <span *ngSwitchDefault>{{ row[col.key] }}</span>
                 </ng-container>
             </td>
-            <td *ngIf="azioni.length" class="actions-cell">
+            <td *ngIf="azioni.length" class="actions-cell" (click)="$event.stopPropagation()">
                 <div class="action-buttons">
                     <button *ngFor="let azione of azioni" type="button" class="btn btn-sm" [ngClass]="{
                                     'btn-primary': azione.color === 'primary',
@@ -36,38 +48,33 @@
                 </div>
             </td>
         </tr>
+        <tr class="empty-rows" *ngFor="let empty of [].constructor(pageSize - paginatedData.length)">
+            <td [attr.colspan]="columns.length + (azioni.length ? 1 : 0)">&nbsp;</td>
+        </tr>
     </tbody>
-</table>
+    </table>
+    <div class="table-footer">
+        <nav *ngIf="totalPages > 0" class="table-pagination">
+            <div class="table-pagination-inner">
 
-<!-- PAGINATION -->
-<nav *ngIf="totalPages > 1" class="table-pagination">
-    <!-- <ul class="pagination mb-0">
-      <li class="page-item" [class.disabled]="currentPage === 1">
-        <button class="page-link" (click)="goTo(currentPage - 1)">«</button>
-      </li>
-      <li class="page-item"
-          *ngFor="let p of [].constructor(totalPages); let i = index"
-          [class.active]="currentPage === i + 1">
-        <button class="page-link" (click)="goTo(i + 1)">{{ i + 1 }}</button>
-      </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages">
-        <button class="page-link" (click)="goTo(currentPage + 1)">»</button>
-      </li>
-    </ul> -->
-
-    <ul class="pagination mb-0">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-            <button class="page-link" (click)="goTo(currentPage - 1)">«</button>
-        </li>
-        <li *ngFor="let p of pages" class="page-item" [class.active]="p === currentPage">
-            <button class="page-link" (click)="goTo(p)">{{ p }}</button>
-        </li>
-        <li class="page-item" [class.disabled]="currentPage === totalPages">
-            <button class="page-link" (click)="goTo(currentPage + 1)">»</button>
-        </li>
-    </ul>
-    <!-- ({{ totalItems }} record) -->
-    <span class="pagination-info d-none d-md-inline">
-        Pagina {{ currentPage }} di {{ totalPages }}
-    </span>
-</nav>
+            <ul class="pagination">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="goTo(currentPage - 1)">«</button>
+                </li>
+                <li *ngFor="let p of pages" class="page-item" [class.active]="p === currentPage">
+                    <button class="page-link" (click)="goTo(p)">{{ p }}</button>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button class="page-link" (click)="goTo(currentPage + 1)">»</button>
+                </li>
+            </ul>
+            <span class="pagination-info">
+                Pagina {{ currentPage }} di {{ totalPages }}
+                <span *ngIf="paginatedData.length && data.length">
+                    (Visualizzati {{ ((currentPage - 1) * pageSize) + paginatedData.length }} corsi su {{ data.length }} disponibili)
+                </span>
+            </span>
+            </div>
+        </nav>
+    </div>
+</div>

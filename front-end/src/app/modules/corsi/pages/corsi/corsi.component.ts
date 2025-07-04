@@ -16,6 +16,9 @@ import { ModaleService } from '../../../../core/services/modal.service';
 import { FormCorsiComponent } from '../../components/form-corsi/form-corsi.component';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
+import { ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+
+
 
 @Component({
   selector: 'app-corsi',
@@ -31,7 +34,11 @@ import { PageTitleComponent } from '../../../../core/page-title/page-title.compo
   styleUrls: ['./corsi.component.css'],
   standalone: true,
 })
-export class CorsiComponent implements OnInit {
+export class CorsiComponent implements AfterViewInit, OnInit {
+  @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
+  
+  pageSize = 10; // valore di default
+  rowHeight = 53; // px, come da CSS della tabella
   corsi: ICorsi[] = [];
   piattaforme: IPiattaforma[] = [];
 
@@ -79,6 +86,21 @@ export class CorsiComponent implements OnInit {
     private toastr: ToastrService,
   ) {}
 
+  ngAfterViewInit() {
+    this.updatePageSize();
+    window.addEventListener('resize', this.updatePageSize.bind(this));
+  }
+
+    updatePageSize() {
+    if (!this.pageContentInner) return;
+    const containerHeight = this.pageContentInner.nativeElement.clientHeight;
+    // Se hai header/footer sticky nella tabella, sottrai la loro altezza
+    const headerHeight = 53; // px, se hai un header fisso
+    const footerHeight = 60; // px, se hai un footer sticky
+    const available = containerHeight - headerHeight - footerHeight;
+    this.pageSize = Math.max(1, Math.floor(available / this.rowHeight));
+  }
+
   ngOnInit(): void {
     this.loadCorsi();
   }
@@ -92,7 +114,15 @@ export class CorsiComponent implements OnInit {
         }));
       },
       error: error => {
+        console.log(error);
+        
+        if (error) {
+          this.toastr.warning(error);
+          return;
+        } else {
         this.toastr.error('Errore nel caricamento dei corsi');
+
+        }
       },
     });
   }
@@ -172,8 +202,26 @@ export class CorsiComponent implements OnInit {
           onConferma: () => this.deleteCorso(e.item.id),
         });
         break;
+      case 'view':
+        this.modaleService.apri({
+          titolo: 'Dettagli corso',
+          componente: FormCorsiComponent,
+          dati: {
+            messaggio: 'Dettagli del corso selezionato',
+          }
+        });
+        break
       default:
         console.error('Azione non supportata:', e.tipo);
     }
   }
+
+  apriDettaglioCorso(corso: ICorsi) {
+    this.modaleService.apri({
+      titolo: 'Dettagli corso',
+      componente: FormCorsiComponent,
+      dati: corso
+    });
+  }
+  
 }

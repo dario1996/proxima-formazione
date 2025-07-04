@@ -1,17 +1,15 @@
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Component, OnInit, HostListener } from '@angular/core';
-
-import { NotificationComponent } from '../../../../core/notification/notification.component';
+import { CommonModule, NgClass } from '@angular/common';
 import { AvatarComponent } from '../../../../core/avatar/avatar.component';
 import { AuthJwtService } from '../../../../core/services/authJwt.service';
-import { ModalComponent } from '../../../../core/modal/modal.component';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css',
-  imports: [RouterModule, NotificationComponent, AvatarComponent],
+  imports: [RouterModule, AvatarComponent, NgClass, CommonModule],
 })
 export class WelcomeComponent implements OnInit {
   menuItems = [
@@ -74,7 +72,6 @@ export class WelcomeComponent implements OnInit {
 
   isOpen: boolean[] = [];
   selectedLink: any = null;
-
   utente = '';
 
   isSidebarOpen: boolean = false;

@@ -1,19 +1,44 @@
+/* GESTIONE ASPETTO TABLE*/
 .table-container.loading {
   opacity: 0.6;
   pointer-events: none;
 }
 .table {
-  width: 100%;
+  width: fixed;
   border-spacing: 0;
-  font-size: 15px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  font-size: 14px;
+  margin: 0;
 }
-.table-header th {
-  background: #f8fafc;
-  font-weight: 600;
-  border-bottom: 1px solid #e2e8f0;
+.table-header th{
+  position: sticky; /* per mantenere l'header visibile durante lo scroll */
+  top: 0;       /* posizione fissa in alto */ 
+  z-index: 3;  /* per sovrapporsi al contenuto sottostante */
+  height: auto;
+  vertical-align: middle;
+  background-color: #f6f6f6;
+  color: rgb(0, 0, 0);
 }
+
+/* CSS Ordinamento colonne */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: color 0.2s;
+}
+th.sorted {
+  color: #222;
+  font-weight: bold;
+}
+th.sorted-desc {
+  color: #222;
+}
+th .fa {
+  margin-left: 4px;
+  font-size: 12px;
+}
+/* FINE */
+
 .actions-cell {
   text-align: center;
   white-space: nowrap;
@@ -31,7 +56,7 @@
   height: 36px;
   padding: 0;
   border-radius: 6px;
-  font-size: 18px;
+  font-size: 15px;
 }
 .action-buttons .btn .fa,
 .action-buttons .btn .fas,
@@ -45,18 +70,168 @@
   box-shadow: none;
   outline: none;
 }
+
+/* INIZIO - contenitore per la gestione dello scrolling del contenuto tabella */
+.table-scroll-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0; /* bordo per il contenitore della tabella */
+  border-radius: 8px;
+}
+
+.table {
+  border-collapse: collapse;
+  table-layout: fixed; /* per mantenere le colonne di larghezza fissa */
+}
+
+.table-scroll-container .pagination {
+  flex-shrink: 0;
+  /* background: #fff; */
+  padding: 8px 8px 8px 8px;
+  position: sticky;
+  bottom: 0;
+}
+/* FINE */
+
+
+/* INIZIO - effetto su singola riga della tabella */
+.table-body tr:hover > td {
+  min-height: 40px;
+  height: auto;
+  background: #000000 !important; /* colore dello sfondo della riga con mouse hover */
+  z-index: 1;
+  position: relative;
+  color: #fff;
+  /* transition: box-shadow 0.2s, background 0.2s; */
+}
+
+/* gestione righe alternate colorate */
+.table-body tr:nth-child(even) > td {
+  background: #f6f6f6;
+}
+/* cambia il puntatore quando il mouse è su una riga cliccabile della tabella */
+.row-clickable {
+  cursor: pointer;
+}
+
+/* PAGINATION STYLE */
 .table-pagination {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 12px 16px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: transparent;
+  pointer-events: none;
+  /* padding-bottom: 10px; */
 }
+
+/* footer che contiene la la paginazione */
+.table-pagination-inner {
+  display: flex;
+  align-items: center;
+  pointer-events: auto;  /* Riabilita click solo sul blocco centrale */
+}
+
+.table-footer {
+  position: sticky;
+  z-index: 3;
+  background: #fff; /* o il colore che preferisci */
+  padding: 8px
+}
+
+.pagination {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  list-style: none;
+}
+
+.page-item {
+  margin: 0 2px;
+}
+
+.page-link {
+  min-width: 34px;
+  height: 34px;
+  /* padding: 0 10px; */
+  border: none;
+  background: transparent;
+  color: #969696;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 50%;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-link:hover:not(:disabled):not(.active) {
+  background: #e2e8f0;
+  color: #3b3b3b;
+}
+
+.page-item.active .page-link,
+.page-link.active {
+  background: #000000;
+  color: #fff;
+  font-weight: 700;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+
+.page-item.disabled .page-link,
+.page-link:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+  background: transparent;
+}
+
 .pagination-info {
   font-size: 13px;
-  color: #64748b;
+  color: #848484;
+  margin-left: 16px;
 }
+
+.table-body tr {
+  min-height: 35px;
+  max-height: auto;
+}
+
+.page-link:focus,
+.page-link:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Nessun colore alternato, hover o click per le righe vuote */
+.table-body tr.empty-rows > td {
+  background: #fff !important;
+  cursor: default !important;
+  pointer-events: none;
+}
+
+.table-body tr.empty-rows:hover > td {
+  background: #fff !important;
+}
+
+/* Bordo solo per le righe piene */
+.table-body tr:not(.empty-rows) > td {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Nessun bordo per le righe vuote */
+.table-body tr.empty-rows > td {
+  border-bottom: none !important;
+}
+
 @media (max-width: 768px) {
   .table-container { overflow-x: auto; }
   .data-table { min-width: 600px; }

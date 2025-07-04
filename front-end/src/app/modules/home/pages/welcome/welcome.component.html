@@ -11,8 +11,9 @@
 
     <nav class="sidebar-nav">
       <ul class="nav-menu">
-        @for (menuItem of menuItems; track menuItem; let index = $index) {
-          <li class="nav-item">
+        @for (menuItem of menuItems; track menuItem; let i = $index) {
+          <li class="nav-item menu-item"
+          [style.transitionDelay]="isSidebarOpen ? (i * 100) + 'ms' : '0ms'">
             <a
               class="nav-link"
               [routerLink]="menuItem.links[0].url"
@@ -82,39 +83,50 @@
           [userName]="BasicAuth.loggedUser()"
         ></app-avatar>
       </div>
-      <button class="btn btn-ghost logout-btn" (click)="logout()">
+      <button class="logout-btn">
         <svg
-          class="nav-icon"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-          />
+        class="logout-icon"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        (click)="logout()"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+        />
         </svg>
-        Logout
       </button>
     </div>
   </aside>
+
+    <!-- toggle menu in responsive mode -->
+  <button
+    class="sidebar-toggle-btn"
+    type="button"
+    (click)="isSidebarOpen = !isSidebarOpen">
+    <span class="fa-solid" [ngClass]="isSidebarOpen ? 'fa-xmark' : 'fa-bars'">
+    </span>
+  </button>
 
   <!-- Overlay for mobile -->
   <div
     class="sidebar-overlay"
     [class.show]="isSidebarOpen"
-    (click)="closeSidebarOnMobile()"
+    (click)="isSidebarOpen = false"
   ></div>
 
   <!-- Main content -->
   <main class="main-content">
     <div class="main-body">
+      <!-- Router outlet for dynamic content --> 
       <router-outlet></router-outlet>
     </div>
   </main>
 
-  <!-- Notifications -->
-  <app-notification class="notification-floating"></app-notification>
+  <!-- Notifications OLD -->
+  <!-- <app-notification class="bell-button"></app-notification> -->
+
 </div>
