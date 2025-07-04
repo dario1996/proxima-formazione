@@ -24,16 +24,19 @@
         </thead>
         <tbody class="table-body">
         <tr *ngFor="let row of paginatedData" class="row-clickable align-middle" (click)="rowClick.emit(row)">
-            <td *ngFor="let col of columns">
-                <ng-container [ngSwitch]="col.type">
-                    <span *ngSwitchCase="'badge'" class="badge"
-                          [class.bg-success]="row[col.key] === 'Attivo'"
-                          [class.bg-secondary]="row[col.key] === 'Non attivo'">
-                        {{ row[col.key] }}
-                    </span>
-                    <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>
-                    <span *ngSwitchDefault>{{ row[col.key] ? row[col.key] : ' - ' }}</span>
-                </ng-container>
+            <td *ngFor="let col of columns" [ngClass]="{'col-email': col.key === 'email'}">
+              <ng-container [ngSwitch]="col.type">
+                <span *ngSwitchCase="'badge'" class="badge"
+                      [class.bg-success]="row[col.key] === 'Attivo'"
+                      [class.bg-secondary]="row[col.key] === 'Non attivo'">
+                  {{ row[col.key] }}
+                </span>
+                <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>
+                <span *ngSwitchDefault>
+                  <span *ngIf="col.key === 'email'; else normalText">{{ row[col.key] }}</span>
+                  <ng-template #normalText>{{ row[col.key] ? row[col.key] : ' - ' }}</ng-template>
+                </span>
+              </ng-container>
             </td>
             <td *ngIf="azioni.length" class="actions-cell" (click)="$event.stopPropagation()">
                 <div class="action-buttons">

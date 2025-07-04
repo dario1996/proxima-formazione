@@ -1,4 +1,10 @@
 /* GESTIONE ASPETTO TABLE*/
+.col-email {
+  white-space: normal;
+  word-break: break-word;
+  /* oppure: word-break: break-word; */
+}
+
 .table-container.loading {
   opacity: 0.6;
   pointer-events: none;

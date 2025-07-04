@@ -90,4 +90,9 @@ sortData() {
   this.updatePagination(); // aggiorna la pagina corrente dopo l'ordinamento
 }
 
+// emailWithBreak(email: string): string {
+//   if (!email) return '';
+//   return email.replace('@', '<wbr>@');
+// }
+
 }
