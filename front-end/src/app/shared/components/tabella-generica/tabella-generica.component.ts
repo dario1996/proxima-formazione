@@ -25,6 +25,8 @@ export class TabellaGenericaComponent {
   currentPage = 1;
   totalPages = 1;
   pages: number[] = [];
+  sortColumn: string | null = null;
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   ngOnChanges() {
     this.currentPage = 1;
@@ -57,5 +59,35 @@ export class TabellaGenericaComponent {
   onRowClick(row: any) {
     this.rowClick.emit(row);
   }
+
+  sortBy(column: string) {
+  if (!column || column === 'azioni') return;
+  if (this.sortColumn === column) {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.sortColumn = column;
+    this.sortDirection = 'asc';
+  }
+  this.sortData();
+}
+
+sortData() {
+  if (!this.sortColumn) return;
+  this.data.sort((a, b) => {
+    const aValue = a[this.sortColumn!];
+    const bValue = b[this.sortColumn!];
+    if (aValue == null) return 1;
+    if (bValue == null) return -1;
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return this.sortDirection === 'asc'
+        ? aValue.localeCompare(bValue)
+        : bValue.localeCompare(aValue);
+    }
+    return this.sortDirection === 'asc'
+      ? (aValue > bValue ? 1 : -1)
+      : (aValue < bValue ? 1 : -1);
+  });
+  this.updatePagination(); // aggiorna la pagina corrente dopo l'ordinamento
+}
 
 }

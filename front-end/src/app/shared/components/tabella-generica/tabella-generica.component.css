@@ -17,6 +17,26 @@
   vertical-align: middle;
 }
 
+/* CSS Ordinamento colonne */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: color 0.2s;
+}
+th.sorted {
+  color: #222;
+  font-weight: bold;
+}
+th.sorted-desc {
+  color: #222;
+}
+th .fa {
+  margin-left: 4px;
+  font-size: 12px;
+}
+/* FINE */
+
 .actions-cell {
   text-align: center;
   white-space: nowrap;
@@ -56,6 +76,8 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  border: 1px solid #e0e0e0; /* bordo per il contenitore della tabella */
+  border-radius: 8px;
 }
 
 .table {
