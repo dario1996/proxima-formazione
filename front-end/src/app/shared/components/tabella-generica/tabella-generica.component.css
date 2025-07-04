@@ -9,12 +9,14 @@
   font-size: 14px;
   margin: 0;
 }
-.table-header {
+.table-header th{
   position: sticky; /* per mantenere l'header visibile durante lo scroll */
   top: 0;       /* posizione fissa in alto */ 
   z-index: 3;  /* per sovrapporsi al contenuto sottostante */
   height: auto;
   vertical-align: middle;
+  background-color: #f6f6f6;
+  color: rgb(0, 0, 0);
 }
 
 /* CSS Ordinamento colonne */
