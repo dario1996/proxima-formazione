@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 15px;
+  padding: 13px;
 }
 
 .page-header {
@@ -21,6 +21,7 @@
   flex-direction: column;
   overflow: hidden;
   background-color: white;
+  padding-bottom: 13px;
 }
 
 .page-content-inner {
@@ -28,7 +29,7 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 24px; /* padding solo qui */
+  padding: 13px; /* padding solo qui */
 }
 
 /* Modal form styling */
