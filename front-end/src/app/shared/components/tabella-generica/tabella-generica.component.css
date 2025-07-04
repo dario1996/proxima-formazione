@@ -13,7 +13,7 @@
   position: sticky; /* per mantenere l'header visibile durante lo scroll */
   top: 0;       /* posizione fissa in alto */ 
   z-index: 3;  /* per sovrapporsi al contenuto sottostante */
-  height: 53px;
+  height: auto;
   vertical-align: middle;
 }
 
@@ -97,7 +97,8 @@ th .fa {
 
 /* INIZIO - effetto su singola riga della tabella */
 .table-body tr:hover > td {
-  min-height: 53px;
+  min-height: 40px;
+  height: auto;
   background: #000000 !important; /* colore dello sfondo della riga con mouse hover */
   z-index: 1;
   position: relative;
@@ -198,8 +199,8 @@ th .fa {
 }
 
 .table-body tr {
-  min-height: 53px;
-  max-height: 53px;
+  min-height: 35px;
+  max-height: auto;
 }
 
 .page-link:focus,
