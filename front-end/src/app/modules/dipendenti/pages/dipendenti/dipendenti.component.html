@@ -8,7 +8,12 @@
   <div class="page-content">
     <div class="page-content-inner" #pageContentInner>
       <!-- (rowClick)="apriDettaglioCorso($event)" -->
-      <app-tabella-generica [data]="dipendenti" [columns]="columns" [azioni]="actions" [pageSize]="pageSize"
+      <app-tabella-generica
+        [data]="dipendenti"
+        [columns]="columns"
+        [azioni]="actions"
+        [pageSize]="pageSize"
+        (rowClick)="gestioneAzione({ tipo: 'view', item: $event })"
         (action)="gestioneAzione($event)">
       </app-tabella-generica>
     </div>

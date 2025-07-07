@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { PiattaformeComponent } from '../../components/piattaforme/piattaforme.component';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
@@ -9,15 +8,18 @@ import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
 import { FormPiattaformeComponent } from '../../components/form-piattaforme/form-piattaforme.component';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
+import { RouterModule } from '@angular/router';
+import { PiattaformeComponent } from "../../components/piattaforme/piattaforme.component";
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, PiattaformeComponent, PageTitleComponent],
+  imports: [CommonModule, PageTitleComponent, RouterModule, PiattaformeComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
 })
 export class SettingsComponent implements OnInit {
+  @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
   // title: string = 'Settings';
   // icon: string = 'fa-solid fa-gears';
   selectedTab = 'piattaforme';
@@ -28,6 +30,9 @@ export class SettingsComponent implements OnInit {
 
   closeModalSignal = 0;
 
+  pageSize = 10;
+  rowHeight = 53;
+
   constructor(
     private piattaformeService: PiattaformeService,
     private modaleService: ModaleService,
@@ -36,6 +41,11 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this.onTabClick(this.selectedTab);
+  }
+
+  ngAfterViewInit() {
+    this.updatePageSize();
+    window.addEventListener('resize', this.updatePageSize.bind(this));
   }
 
   onTabClick(tab: string) {
@@ -180,4 +190,13 @@ export class SettingsComponent implements OnInit {
     );
     console.log(error);
   };
+
+  updatePageSize() {
+    if (!this.pageContentInner) return;
+    const containerHeight = this.pageContentInner.nativeElement.clientHeight;
+    const headerHeight = 37.5;
+    const footerHeight = 50;
+    const available = containerHeight - headerHeight - footerHeight;
+    this.pageSize = Math.max(1, Math.floor(available / this.rowHeight));
+  }
 }

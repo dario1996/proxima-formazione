@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import {
   IDipendenti,
@@ -18,12 +24,17 @@ import { NotificationModalComponent } from '../../../../core/modal/notification-
 import { ConfirmationModalComponent } from '../../../../core/modal/confirmation-modal.component';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
 import { IColumnDef } from '../../../../shared/models/ui/column-def';
-import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/ui/azione-def';
+import {
+  AzioneColor,
+  AzioneType,
+  IAzioneDef,
+} from '../../../../shared/models/ui/azione-def';
 import { ModaleService } from '../../../../core/services/modal.service';
 import { ToastrService } from 'ngx-toastr';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { DisableConfirmComponent } from '../../../../core/disable-confirm/disable-confirm.component';
 import { FormDipendentiComponent } from '../../components/form-dipendenti/form-dipendenti.component';
+import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipendenti/dettaglio-dipendenti.component';
 
 @Component({
   selector: 'app-dipendenti',
@@ -53,37 +64,38 @@ export class DipendentiComponent implements OnInit {
       sortable: true,
       type: 'text',
     },
-    { key: 'isms', label: 'ISMS', sortable: true, type: 'text' },
+    
     {
       key: 'ruolo',
       label: 'Ruolo',
       sortable: true,
       type: 'text',
     },
-    {
-      key: 'azienda',
-      label: 'Azienda',
-      sortable: true,
-      type: 'text',
-    },
-    {
-      key: 'sede',
-      label: 'Sede',
-      sortable: true,
-      type: 'text',
-    },
-    {
-      key: 'community',
-      label: 'Community',
-      sortable: true,
-      type: 'text',
-    },
-    {
-      key: 'commerciale',
-      label: 'Responsabile',
-      sortable: true,
-      type: 'text',
-    },
+    // {
+    //   key: 'azienda',
+    //   label: 'Azienda',
+    //   sortable: true,
+    //   type: 'text',
+    // },
+    // {
+    //   key: 'sede',
+    //   label: 'Sede',
+    //   sortable: true,
+    //   type: 'text',
+    // },
+    // {
+    //   key: 'community',
+    //   label: 'Community',
+    //   sortable: true,
+    //   type: 'text',
+    // },
+    // {
+    //   key: 'commerciale',
+    //   label: 'Responsabile',
+    //   sortable: true,
+    //   type: 'text',
+    // },
+    { key: 'isms', label: 'ISMS', sortable: true, type: 'text' },
     {
       key: 'attivo',
       label: 'Stato',
@@ -135,7 +147,7 @@ export class DipendentiComponent implements OnInit {
     const containerHeight = this.pageContentInner.nativeElement.clientHeight;
     // Se hai header/footer sticky nella tabella, sottrai la loro altezza
     const headerHeight = 53; // px, se hai un header fisso
-    const footerHeight = 60; // px, se hai un footer sticky
+    const footerHeight = 50; // px, se hai un footer sticky
     const available = containerHeight - headerHeight - footerHeight;
     this.pageSize = Math.max(1, Math.floor(available / this.rowHeight));
   }
@@ -235,7 +247,12 @@ export class DipendentiComponent implements OnInit {
           titolo: 'Conferma eliminazione',
           componente: DeleteConfirmComponent,
           dati: {
-            messaggio: 'Vuoi davvero eliminare il dipendente "' + e.item.nome + ' ' + e.item.cognome + '"?',
+            messaggio:
+              'Vuoi davvero eliminare il dipendente "' +
+              e.item.nome +
+              ' ' +
+              e.item.cognome +
+              '"?',
           },
           onConferma: () => this.deleteDipendente(e.item.id),
         });
@@ -253,6 +270,13 @@ export class DipendentiComponent implements OnInit {
               '"?',
           },
           onConferma: () => this.toggleDipendenteStatus(e.item.id),
+        });
+        break;
+      case 'view':
+        this.modaleService.apri({
+          titolo: 'Dettagli dipendente',
+          componente: DettaglioDipendentiComponent,
+          dati: e.item,
         });
         break;
       default:

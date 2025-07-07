@@ -147,7 +147,7 @@ th .fa {
   position: sticky;
   z-index: 3;
   background: #fff; /* o il colore che preferisci */
-  padding: 8px
+  /* padding: 8px */
 }
 
 .pagination {

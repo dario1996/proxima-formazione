@@ -4,7 +4,13 @@ import {
   Output,
   EventEmitter,
   SimpleChanges,
+  AfterViewInit,
+  ChangeDetectorRef,
+  ElementRef,
+  ViewChild,
+  OnInit,
 } from '@angular/core';
+import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
 import { CommonModule } from '@angular/common';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
@@ -25,7 +31,8 @@ import {
   templateUrl: './piattaforme.component.html',
   styleUrl: './piattaforme.component.css',
 })
-export class PiattaformeComponent {
+export class PiattaformeComponent implements OnInit {
+  @Input() pageSize = 10;
   @Input() piattaforme: IPiattaforma[] = [];
   @Output() action = new EventEmitter<{
     tab: string;
@@ -64,6 +71,29 @@ export class PiattaformeComponent {
       color: AzioneColor.Danger,
     },
   ];
+
+  constructor(
+    private piattaformeService: PiattaformeService,
+    private cd: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.loadPiattaforme();
+  }
+
+  loadPiattaforme() {
+    this.piattaformeService.getListaPiattaforme().subscribe({
+      next: data => {
+        this.piattaforme = data.map((p: any) => ({
+          ...p,
+          attiva: p.attiva ? 'Attivo' : 'Non attivo',
+        }));
+      },
+      error: err => {
+        this.piattaforme = [];
+      },
+    });
+  }
 
   // Gestione azioni dalla tabella generica
   onTabellaAzione(event: { tipo: string; item: IPiattaforma }) {

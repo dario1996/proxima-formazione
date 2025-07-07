@@ -9,12 +9,12 @@
   </div>
   <div class="page-content">
     <div class="page-content-inner" #pageContentInner>
+      <!-- (rowClick)="apriDettaglioCorso($event)" -->
       <app-tabella-generica 
         [data]="corsi" 
         [columns]="columns" 
         [azioni]="actions"
         [pageSize]="pageSize"
-        (rowClick)="apriDettaglioCorso($event)"
         (action)="gestioneAzione($event)">
       </app-tabella-generica>
     </div>

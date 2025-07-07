@@ -1,0 +1,34 @@
+<div class="dettaglio-dipendente-container">
+  <div class="dettaglio-avatar mb-2">
+    <i class="fa fa-user"></i>
+  </div>
+  <h3 class="dettaglio-nome mb-3">
+    {{ dati?.nominativo || (dati?.nome + ' ' + dati?.cognome) }}
+  </h3>
+  <div class="dettaglio-info">
+    <div class="dettaglio-field">
+      <span class="dettaglio-label">
+        <i class="fa fa-building text-primary me-1"></i> Azienda:
+      </span>
+      <span class="dettaglio-value">{{ dati?.azienda || '–' }}</span>
+    </div>
+    <div class="dettaglio-field">
+      <span class="dettaglio-label">
+        <i class="fa fa-map-marker-alt text-success me-1"></i> Sede:
+      </span>
+      <span class="dettaglio-value">{{ dati?.sede || '–' }}</span>
+    </div>
+    <div class="dettaglio-field">
+      <span class="dettaglio-label">
+        <i class="fa fa-users text-info me-1"></i> Community:
+      </span>
+      <span class="dettaglio-value">{{ dati?.community || '–' }}</span>
+    </div>
+    <div class="dettaglio-field">
+      <span class="dettaglio-label">
+        <i class="fa fa-briefcase text-secondary me-1"></i> Commerciale:
+      </span>
+      <span class="dettaglio-value">{{ dati?.commerciale || '–' }}</span>
+    </div>
+  </div>
+</div>
