@@ -41,6 +41,8 @@ export class GestErrorInterceptor implements HttpInterceptor {
 
           if (isTokenExpired) {
             this.router.navigate(['login'], { queryParams: { expired: true } });
+            localStorage.clear();
+            sessionStorage.clear();
           } else {
             this.router.navigate(['login']);
           }

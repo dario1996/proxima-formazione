@@ -7,9 +7,13 @@
 
   <div class="page-content">
     <div class="page-content-inner" #pageContentInner>
-      <!-- (rowClick)="apriDettaglioCorso($event)" -->
+      <app-filtri-generici
+        [filtri]="filtri"
+        [valori]="valoriFiltri"
+        (valoriChange)="onFiltriChange($event)">
+      </app-filtri-generici>
       <app-tabella-generica
-        [data]="dipendenti"
+        [data]="dipendentiFiltrati"
         [columns]="columns"
         [azioni]="actions"
         [pageSize]="pageSize"

@@ -35,6 +35,8 @@ import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-c
 import { DisableConfirmComponent } from '../../../../core/disable-confirm/disable-confirm.component';
 import { FormDipendentiComponent } from '../../components/form-dipendenti/form-dipendenti.component';
 import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipendenti/dettaglio-dipendenti.component';
+import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
+import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
 
 @Component({
   selector: 'app-dipendenti',
@@ -45,6 +47,7 @@ import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipende
     FormsModule,
     ReactiveFormsModule,
     TabellaGenericaComponent,
+    FiltriGenericiComponent,
   ],
   templateUrl: './dipendenti.component.html',
   styleUrl: './dipendenti.component.css',
@@ -55,7 +58,56 @@ export class DipendentiComponent implements OnInit {
   pageSize = 10; // valore di default
   rowHeight = 60; // px, come da CSS della tabella
 
+  filtri: IFiltroDef[] = [
+    {
+      key: 'nominativo',
+      label: 'Nome',
+      type: 'text',
+      placeholder: 'Cerca nome...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'email',
+      label: 'Email',
+      type: 'text',
+      placeholder: 'Cerca email...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'ruolo',
+      label: 'Ruolo',
+      type: 'text',
+      placeholder: 'Cerca ruolo...',
+      colClass: 'col-12 col-md-4 col-lg-2 mb-2',
+    },
+    {
+      key: 'isms',
+      label: 'ISMS',
+      type: 'select',
+      options: [
+        { value: '', label: 'Tutti' },
+        { value: 'Si', label: 'Si' },
+        { value: 'No', label: 'No' },
+      ],
+      colClass: 'col-6 col-md-3 col-lg-2 mb-2',
+    },
+    {
+      key: 'attivo',
+      label: 'Stato',
+      type: 'select',
+      options: [
+        { value: '', label: 'Tutti' },
+        { value: 'Attivo', label: 'Attivo' },
+        { value: 'Non attivo', label: 'Non attivo' },
+      ],
+      colClass: 'col-6 col-md-3 col-lg-2 mb-2',
+    },
+  ];
+  valoriFiltri: { [key: string]: any } = {};
+
   dipendenti: IDipendenti[] = [];
+  dipendentiFiltrati: IDipendenti[] = [];
+
   columns: IColumnDef[] = [
     { key: 'nominativo', label: 'Nominativo', sortable: true, type: 'text' },
     {
@@ -139,17 +191,35 @@ export class DipendentiComponent implements OnInit {
   ngAfterViewInit() {
     this.updatePageSize();
     window.addEventListener('resize', this.updatePageSize.bind(this));
-    this.cd.detectChanges(); // <--- aggiungi questa riga
+    this.cd.detectChanges();
   }
 
   updatePageSize() {
     if (!this.pageContentInner) return;
-    const containerHeight = this.pageContentInner.nativeElement.clientHeight;
-    // Se hai header/footer sticky nella tabella, sottrai la loro altezza
-    const headerHeight = 53; // px, se hai un header fisso
-    const footerHeight = 50; // px, se hai un footer sticky
-    const available = containerHeight - headerHeight - footerHeight;
+
+    const container = this.pageContentInner.nativeElement;
+
+    // Trova header, footer e filtri della tabella generica
+    const tableHeader = container.querySelector('.table-header') as HTMLElement;
+    const tableFooter = container.querySelector('.table-footer') as HTMLElement;
+    const filtriBox = container.querySelector('.filtri-generici-container') as HTMLElement;
+
+    const headerHeight = tableHeader ? tableHeader.offsetHeight : 0;
+    const footerHeight = tableFooter ? tableFooter.offsetHeight : 0;
+    const filtriHeight = filtriBox ? filtriBox.offsetHeight : 0;
+
+    // Calcola il margin-bottom del box filtri (tra filtri e tabella)
+    // let filtriMarginBottom = 0;
+    // if (filtriBox) {
+    //   const style = window.getComputedStyle(filtriBox);
+    //   filtriMarginBottom = parseFloat(style.marginBottom) || 0;
+    // }
+
+    const containerHeight = container.clientHeight;
+    const available = containerHeight - headerHeight - footerHeight - filtriHeight;
+
     this.pageSize = Math.max(1, Math.floor(available / this.rowHeight));
+    this.cd.detectChanges();
   }
 
   private loadDipendenti() {
@@ -160,10 +230,45 @@ export class DipendentiComponent implements OnInit {
           nominativo: `${d.nome} ${d.cognome}`.trim(),
           attivo: d.attivo ? 'Attivo' : 'Non attivo', // <-- qui la trasformazione
         }));
+        this.applicaFiltri();
       },
       error: error => {
         this.toastr.error('Errore nel caricamento dei dipendenti');
       },
+    });
+  }
+
+  onFiltriChange(valori: { [key: string]: any }) {
+    this.valoriFiltri = valori;
+    this.applicaFiltri();
+  }
+
+  applicaFiltri() {
+    this.dipendentiFiltrati = this.dipendenti.filter(d => {
+      const nominativo = `${d.nome} ${d.cognome}`.trim().toLowerCase();
+
+      if (
+        this.valoriFiltri['nominativo'] &&
+        !nominativo.includes(this.valoriFiltri['nominativo'].toLowerCase())
+      ) {
+        return false;
+      }
+      if (
+        this.valoriFiltri['email'] &&
+        !d.email.toLowerCase().includes(this.valoriFiltri['email'].toLowerCase())
+      ) {
+        return false;
+      }
+      if (
+        this.valoriFiltri['ruolo'] &&
+        !d.ruolo.toLowerCase().includes(this.valoriFiltri['ruolo'].toLowerCase())
+      ) {
+        return false;
+      }
+      if (this.valoriFiltri['attivo'] && d.attivo !== this.valoriFiltri['attivo']) {
+        return false;
+      }
+      return true;
     });
   }
 

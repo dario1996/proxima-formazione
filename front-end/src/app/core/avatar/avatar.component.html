@@ -43,7 +43,7 @@
   </button>
   <span
     *ngIf="isLogged"
-    class="fw-semibold text-uppercase user-name-sidebar mt-2"
-    >{{ userName }}</span
+    class="fw-semibold user-name-sidebar mt-2"
+    >{{ userName?.toUpperCase() }}</span
   >
 </div>
