@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: data-processor
+
+  profiles:
+    active: dev
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: none # Let back-end manage the schema
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+
+  sql:
+    init:
+      mode: always
+      platform: mysql
+
+  # Liquibase Configuration - DISABLED (back-end manages schema)
+  liquibase:
+    enabled: false
+
+# Server Configuration
+server:
+  port: 8083
+
+# Logging Configuration
+logging:
+  level:
+    com.example.dataprocessor: INFO
+    liquibase: INFO
+    org.springframework: INFO
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+# Custom application properties
+app:
+  json:
+    input-folder: ../batch-processor/output
+    processed-folder: processed
+    error-folder: error
+  processing:
+    chunk-size: 100
+    max-retry-attempts: 3
