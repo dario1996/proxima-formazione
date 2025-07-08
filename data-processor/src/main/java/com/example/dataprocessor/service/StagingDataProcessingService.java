@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -246,7 +246,7 @@ public class StagingDataProcessingService {
         // Calculate duration from time viewed (convert seconds to hours)
         if (record.getTimeViewedSeconds() != null && record.getTimeViewedSeconds() > 0) {
             BigDecimal hours = BigDecimal.valueOf(record.getTimeViewedSeconds())
-                    .divide(BigDecimal.valueOf(3600), 2, BigDecimal.ROUND_HALF_UP);
+                    .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_UP);
             corso.setDurata(hours);
             corso.setOre(hours);
         }
@@ -294,7 +294,7 @@ public class StagingDataProcessingService {
         // Set hours completed from time viewed
         if (record.getTimeViewedSeconds() != null && record.getTimeViewedSeconds() > 0) {
             BigDecimal hours = BigDecimal.valueOf(record.getTimeViewedSeconds())
-                    .divide(BigDecimal.valueOf(3600), 2, BigDecimal.ROUND_HALF_UP);
+                    .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_UP);
             assegnazione.setOreCompletate(hours);
         }
 

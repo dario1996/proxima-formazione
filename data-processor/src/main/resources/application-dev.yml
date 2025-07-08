@@ -27,22 +27,13 @@ spring:
   liquibase:
     enabled: false
 
-# Security Configuration (required by back-end dependencies)
-sicurezza:
-  uri: /auth
-  refresh: /refresh
-  header: Authorization
-  prefix: Bearer
-  expiration: 600
-  secret: wNoe5AlDAtrrRJtbPQZ6UtdgvYwF2DKYSlNEVcCD/IzToqX9bXpmRzflYBGDViZDJgV3HTPfDGY5ix1U9hJtfA==
-
 # Enhanced Logging for Development
 logging:
   level:
-    com.example.dataprocessor: DEBUG
-    com.example.demo: INFO
-    org.springframework: INFO
-    org.hibernate.SQL: DEBUG
+    "[com.example.dataprocessor]": DEBUG
+    "[com.example.demo]": INFO
+    "[org.springframework]": INFO
+    "[org.hibernate.SQL]": DEBUG
 
 # Development specific settings
 server:
