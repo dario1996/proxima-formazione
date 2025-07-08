@@ -17,9 +17,20 @@ public interface LearningDataRepository extends JpaRepository<LearningDataRecord
     List<LearningDataRecord> findByProcessed(Boolean processed);
 
     // Find unprocessed records
+    List<LearningDataRecord> findByProcessedFalse();
+
+    // Find processed records
+    List<LearningDataRecord> findByProcessedTrue();
+
+    // Find unprocessed records
     default List<LearningDataRecord> findUnprocessed() {
         return findByProcessed(false);
     }
+
+    // Count by processing status
+    long countByProcessedTrue();
+
+    long countByProcessedFalse();
 
     // Find by source file to check if already processed
     List<LearningDataRecord> findBySourceFile(String sourceFile);

@@ -1,8 +1,9 @@
+# Data Processor Development Configuration
 spring:
   application:
     name: data-processor
 
-  # Connect to main MySQL database (same as back-end)
+  # Database Configuration (shared with back-end dev)
   datasource:
     url: jdbc:mysql://172.23.207.87:3306/gest-form?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: root
@@ -11,11 +12,10 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none # Let Liquibase handle the schema
+      ddl-auto: none # Let back-end manage the schema
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
     show-sql: true
 
   sql:
@@ -27,33 +27,26 @@ spring:
   liquibase:
     enabled: false
 
-# Server Configuration
-server:
-  port: 8083
+# Security Configuration (required by back-end dependencies)
+sicurezza:
+  uri: /auth
+  refresh: /refresh
+  header: Authorization
+  prefix: Bearer
+  expiration: 600
+  secret: wNoe5AlDAtrrRJtbPQZ6UtdgvYwF2DKYSlNEVcCD/IzToqX9bXpmRzflYBGDViZDJgV3HTPfDGY5ix1U9hJtfA==
 
 # Enhanced Logging for Development
 logging:
   level:
-    liquibase: DEBUG
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
     com.example.dataprocessor: DEBUG
-    org.springframework.web: DEBUG
-    web: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    com.example.demo: INFO
+    org.springframework: INFO
+    org.hibernate.SQL: DEBUG
 
-# Management endpoints for monitoring
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,liquibase
+# Development specific settings
+server:
+  port: 8083
 
 # Custom application properties
 app:
@@ -62,7 +55,8 @@ app:
     processed-folder: processed
     error-folder: error
   processing:
-    chunk-size: 100
+    chunk-size: 50 # Smaller chunks for dev testing
     max-retry-attempts: 3
-    enable-scheduler: true
-    scheduler-interval: 30000 # Check every 30 seconds
+    # Staging data processing configuration
+    enabled: true
+    interval: 60000 # 1 minute for dev testing

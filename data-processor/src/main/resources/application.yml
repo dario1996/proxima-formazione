@@ -5,6 +5,13 @@ spring:
   profiles:
     active: dev
 
+  # Database Configuration (shared with back-end)
+  datasource:
+    url: jdbc:mysql://localhost:3306/gestionale_formazione
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   # JPA Configuration
   jpa:
     hibernate:
@@ -41,6 +48,15 @@ management:
       exposure:
         include: health,info,metrics
 
+# Security Configuration (required by back-end dependencies)
+sicurezza:
+  uri: /auth
+  refresh: /refresh
+  header: Authorization
+  prefix: Bearer
+  expiration: 600
+  secret: wNoe5AlDAtrrRJtbPQZ6UtdgvYwF2DKYSlNEVcCD/IzToqX9bXpmRzflYBGDViZDJgV3HTPfDGY5ix1U9hJtfA==
+
 # Custom application properties
 app:
   json:
@@ -50,3 +66,6 @@ app:
   processing:
     chunk-size: 100
     max-retry-attempts: 3
+    # Staging data processing configuration
+    enabled: true
+    interval: 300000 # 5 minutes in milliseconds

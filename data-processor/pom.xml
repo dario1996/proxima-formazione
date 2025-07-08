@@ -95,6 +95,14 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Dependency on back-end module for shared entities and repositories -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>demo</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <classifier>plain</classifier>
+        </dependency>
     </dependencies>
 
     <build>

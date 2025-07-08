@@ -42,4 +42,10 @@ public interface CorsoRepository extends JpaRepository<Corso, Long> {
 
     // Find courses requiring feedback
     List<Corso> findByFeedbackRichiestoTrue();
+
+    // Find by LinkedIn content ID
+    Optional<Corso> findByIdContenutoLinkedin(String idContenutoLinkedin);
+
+    // Find by name and platform
+    Optional<Corso> findByNomeAndPiattaforma(String nome, Piattaforma piattaforma);
 }
