@@ -37,6 +37,7 @@ import { FormDipendentiComponent } from '../../components/form-dipendenti/form-d
 import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipendenti/dettaglio-dipendenti.component';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
+import { calcolaPageSize } from '../../../../shared/utils/Utils';
 
 @Component({
   selector: 'app-dipendenti',
@@ -196,29 +197,8 @@ export class DipendentiComponent implements OnInit {
 
   updatePageSize() {
     if (!this.pageContentInner) return;
-
     const container = this.pageContentInner.nativeElement;
-
-    // Trova header, footer e filtri della tabella generica
-    const tableHeader = container.querySelector('.table-header') as HTMLElement;
-    const tableFooter = container.querySelector('.table-footer') as HTMLElement;
-    const filtriBox = container.querySelector('.filtri-generici-container') as HTMLElement;
-
-    const headerHeight = tableHeader ? tableHeader.offsetHeight : 0;
-    const footerHeight = tableFooter ? tableFooter.offsetHeight : 0;
-    const filtriHeight = filtriBox ? filtriBox.offsetHeight : 0;
-
-    // Calcola il margin-bottom del box filtri (tra filtri e tabella)
-    // let filtriMarginBottom = 0;
-    // if (filtriBox) {
-    //   const style = window.getComputedStyle(filtriBox);
-    //   filtriMarginBottom = parseFloat(style.marginBottom) || 0;
-    // }
-
-    const containerHeight = container.clientHeight;
-    const available = containerHeight - headerHeight - footerHeight - filtriHeight;
-
-    this.pageSize = Math.max(1, Math.floor(available / this.rowHeight));
+    this.pageSize = calcolaPageSize(container);
     this.cd.detectChanges();
   }
 
@@ -231,6 +211,7 @@ export class DipendentiComponent implements OnInit {
           attivo: d.attivo ? 'Attivo' : 'Non attivo', // <-- qui la trasformazione
         }));
         this.applicaFiltri();
+        setTimeout(() => this.updatePageSize());
       },
       error: error => {
         this.toastr.error('Errore nel caricamento dei dipendenti');

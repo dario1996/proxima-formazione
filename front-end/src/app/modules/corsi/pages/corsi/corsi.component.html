@@ -9,9 +9,14 @@
   </div>
   <div class="page-content">
     <div class="page-content-inner" #pageContentInner>
+      <app-filtri-generici
+        [filtri]="filtri"
+        [valori]="valoriFiltri"
+        (valoriChange)="onFiltriChange($event)">
+      </app-filtri-generici>
       <!-- (rowClick)="apriDettaglioCorso($event)" -->
       <app-tabella-generica 
-        [data]="corsi" 
+        [data]="corsiFiltrati" 
         [columns]="columns" 
         [azioni]="actions"
         [pageSize]="pageSize"
