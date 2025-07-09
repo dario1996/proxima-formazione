@@ -22,19 +22,11 @@
   transition: transform 0.3s;
 } */
 
-.sidebar-header {
-  padding: var(--spacing-lg);
-  /* border-bottom: 1px solid var(--color-border); */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--header-height);
-}
 
-.sidebar-logo {
+/* .sidebar-logo {
   height: 32px;
   width: auto;
-}
+} */
 
 .sidebar-nav {
   padding: var(--spacing-md);
@@ -173,7 +165,7 @@
   flex-shrink: 0;
 }
 
-/* ================== MAIN CONTENT =================== */
+/* ================== MAIN HEADER =================== */
 /* .main-content {
   flex: 1;
   margin-left: 50px;

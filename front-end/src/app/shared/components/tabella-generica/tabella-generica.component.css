@@ -195,10 +195,12 @@ th .fa {
 .table-body tr:hover > td {
   min-height: 40px;
   height: auto;
-  background: #dddddd50 !important; /* colore dello sfondo della riga con mouse hover */
+  background: #dfdfdf2e !important; /* colore dello sfondo della riga con mouse hover */
   z-index: 1;
   position: relative;
-  color: #000000;
+  color: #000000 ;
+  padding: 8px 8px 8px 8px;
+
   /* transition: box-shadow 0.2s, background 0.2s; */
 }
 
@@ -361,21 +363,29 @@ th .fa {
 .bg-success {
   background-color: transparent !important;
   color: #418d6a !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
 }
 
 .bg-secondary {
   background-color: transparent !important;
   color: #ff8800 !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
 }
 
 .bg-danger {
   background-color: #dc3545 !important;
   color: #fff !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
 }
 
 .bg-warning {
   background-color: #ffc107 !important;
   color: #000 !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
 }
 
 .bg-info {
@@ -386,4 +396,41 @@ th .fa {
 .bg-primary {
   background-color: #0d6efd !important;
   color: #fff !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+}
+
+/* ================== FIX COLORE ICONA MODIFICA =================== */
+/* Forza il colore nero per l'icona di modifica */
+.action-buttons .btn-primary,
+.action-buttons .btn-primary * {
+  color: #000000 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.action-buttons .btn-primary:hover,
+.action-buttons .btn-primary:hover * {
+  color: #000000 !important;
+  background: rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+}
+
+/* Forza il colore per l'icona FontAwesome */
+.action-buttons .btn-primary .fa,
+.action-buttons .btn-primary .fas,
+.action-buttons .btn-primary .fa-pen,
+.action-buttons .btn-primary i {
+  color: #000000 !important;
+  background: transparent !important;
+}
+
+/* Assicura che tutti gli stati abbiano il colore nero */
+.action-buttons .btn-primary:focus,
+.action-buttons .btn-primary:active,
+.action-buttons .btn-primary:visited {
+  color: #000000 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
