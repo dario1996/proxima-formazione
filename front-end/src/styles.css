@@ -418,6 +418,10 @@ html, body {
   flex-direction: column;
   overflow: hidden;
   transition: none;
+  flex: 1;
+  margin-left: 50px;
+  /* background: var(--color-muted); */
+  flex-direction: column;
 }
 
 /* Quando la sidebar è aperta, il main-content NON cambia */
