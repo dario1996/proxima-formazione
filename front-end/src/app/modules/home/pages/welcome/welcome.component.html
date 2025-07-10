@@ -2,10 +2,17 @@
   <!-- Sidebar -->
   <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
     <div class="sidebar-header">
+      <!-- Icona quando compressa -->
+      <img
+        src="assets/images/proxima_icon.png"
+        alt="Proxima Icon"
+        class="sidebar-logo-icon"
+      />
+      <!-- Immagine logo quando espansa -->
       <img
         src="assets/images/proxima_logo.png"
         alt="Proxima Logo"
-        class="sidebar-logo"
+        class="sidebar-logo-full"
       />
     </div>
 
@@ -107,7 +114,7 @@
     class="sidebar-toggle-btn"
     type="button"
     (click)="isSidebarOpen = !isSidebarOpen">
-    <span class="fa-solid" [ngClass]="isSidebarOpen ? 'fa-xmark' : 'fa-bars'">
+    <span class="fa-solid" [ngClass]="isSidebarOpen ? 'fa-arrow-left' : 'fa-bars'">
     </span>
   </button>
 

@@ -5,14 +5,14 @@
 } */
 
 /* ================== SIDEBAR =================== */
-.sidebar {
+/* .sidebar {
   width: 280px;
   background: var(--color-background);
   border-right: 1px solid var(--color-border);
   height: 100%;
-  min-height: 0;
+  min-height: 0; */
   /* position: fixed; */
-  top: 0;
+  /* top: 0;
   left: 0;
   bottom: 0;
   z-index: 20;
@@ -20,21 +20,13 @@
   flex-direction: column;
   transform: none;
   transition: transform 0.3s;
-}
+} */
 
-.sidebar-header {
-  padding: var(--spacing-lg);
-  /* border-bottom: 1px solid var(--color-border); */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--header-height);
-}
 
-.sidebar-logo {
+/* .sidebar-logo {
   height: 32px;
   width: auto;
-}
+} */
 
 .sidebar-nav {
   padding: var(--spacing-md);
@@ -42,11 +34,21 @@
   overflow-y: auto;
 }
 
-.sidebar-footer {
+/* .sidebar-footer {
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+} */
+
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 16px;
 }
 
 .sidebar-user {
@@ -138,7 +140,7 @@
   display: flex;
   align-items: center;
   padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
+  border-radius: 4px;
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-muted-foreground);
@@ -163,14 +165,14 @@
   flex-shrink: 0;
 }
 
-/* ================== MAIN CONTENT =================== */
-.main-content {
+/* ================== MAIN HEADER =================== */
+/* .main-content {
   flex: 1;
-  margin-left: var(--sidebar-width);
+  margin-left: 50px;
   background: var(--color-muted);
   display: flex;
   flex-direction: column;
-}
+} */
 
 .main-header {
   background: var(--color-background);
@@ -213,11 +215,6 @@
   .sidebar.sidebar-open ~ .sidebar-toggle-btn {
     /* Sposta il pulsante vicino al bordo della sidebar aperta */
     left: 238px; /* stessa larghezza della sidebar + 8px (margine sinistro)*/
-  }
-
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
   }
 
   .sidebar.sidebar-open {
