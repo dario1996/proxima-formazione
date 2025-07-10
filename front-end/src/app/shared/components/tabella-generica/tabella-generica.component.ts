@@ -18,6 +18,7 @@ export class TabellaGenericaComponent {
   @Input() pageSize = 20;
   @Output() action = new EventEmitter<{ tipo: string; item: any }>();
   @Output() rowClick = new EventEmitter<any>();
+  @Output() paginaCambiata = new EventEmitter<number>();
 
   @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
 
@@ -44,11 +45,7 @@ export class TabellaGenericaComponent {
     if (p >= 1 && p <= this.totalPages) {
       this.currentPage = p;
       this.updatePagination();
-
-      // Scroll in cima al contenitore
-      // setTimeout(() => {
-      //   this.scrollContainer?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
-      // }, 0);
+      this.paginaCambiata.emit(this.currentPage); // emetti evento
     }
   }
 

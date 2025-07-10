@@ -18,7 +18,8 @@
         [azioni]="actions"
         [pageSize]="pageSize"
         (rowClick)="gestioneAzione({ tipo: 'view', item: $event })"
-        (action)="gestioneAzione($event)">
+        (action)="gestioneAzione($event)"
+        (paginaCambiata)="updatePageSize()">
       </app-tabella-generica>
     </div>
   </div>

@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -53,7 +54,7 @@ import { calcolaPageSize } from '../../../../shared/utils/Utils';
   templateUrl: './dipendenti.component.html',
   styleUrl: './dipendenti.component.css',
 })
-export class DipendentiComponent implements OnInit {
+export class DipendentiComponent implements OnInit, AfterViewInit {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
 
   pageSize = 10; // valore di default

@@ -511,7 +511,7 @@ html, body {
 }
 
 .main-body {
-  background-color: #ececec;
+  background-color: rgb(235, 235, 235);
   height: 100%;
   min-height: 0;
   flex-direction: column;
