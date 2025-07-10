@@ -12,7 +12,7 @@ import { PageTitleComponent } from '../../../../core/page-title/page-title.compo
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
-import { calcolaPageSize } from '../../../../shared/utils/Utils';
+import { calcolaPageSizeOptimized } from '../../../../shared/utils/Utils';
 import {
   CORSI_COLUMNS,
   CORSI_FILTRI,
@@ -68,7 +68,7 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   updatePageSize() {
     if (!this.pageContentInner) return;
     const container = this.pageContentInner.nativeElement;
-    this.pageSize = calcolaPageSize(container);
+    this.pageSize = calcolaPageSizeOptimized(container);
     this.cd.detectChanges();
   }
 

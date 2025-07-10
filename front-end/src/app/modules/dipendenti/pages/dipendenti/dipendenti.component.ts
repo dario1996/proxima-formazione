@@ -38,7 +38,7 @@ import { FormDipendentiComponent } from '../../components/form-dipendenti/form-d
 import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipendenti/dettaglio-dipendenti.component';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
-import { calcolaPageSize } from '../../../../shared/utils/Utils';
+import { calcolaPageSizeOptimized } from '../../../../shared/utils/Utils';
 
 @Component({
   selector: 'app-dipendenti',
@@ -199,7 +199,7 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
   updatePageSize() {
     if (!this.pageContentInner) return;
     const container = this.pageContentInner.nativeElement;
-    this.pageSize = calcolaPageSize(container);
+    this.pageSize = calcolaPageSizeOptimized(container);
     this.cd.detectChanges();
   }
 
