@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnChanges } from '@angular/core';
 import { ICorsi } from '../../../../shared/models/Corsi';
 import { CorsiService } from '../../../../core/services/data/corsi.service';
 import { ToastrService } from 'ngx-toastr';
@@ -43,7 +43,7 @@ import { calcolaPageSize } from '../../../../shared/utils/Utils';
   styleUrls: ['./corsi.component.css'],
   standalone: true,
 })
-export class CorsiComponent implements AfterViewInit, OnInit {
+export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
 
   pageSize = 10; // valore di default
@@ -145,6 +145,12 @@ export class CorsiComponent implements AfterViewInit, OnInit {
     this.updatePageSize();
     window.addEventListener('resize', this.updatePageSize.bind(this));
     this.cd.detectChanges(); // <--- aggiungi questa riga
+  }
+
+  ngOnChanges() {
+    this.updatePageSize();
+    window.addEventListener('resize', this.updatePageSize.bind(this));
+    this.cd.detectChanges();
   }
 
   updatePageSize() {

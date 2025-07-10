@@ -79,38 +79,23 @@ th .fa {
   transition: transform 0.2s ease !important;
 }
 
-/* Colori specifici per le icone */
-.action-buttons .btn-outline-primary,
-.action-buttons .btn-primary {
-  background: transparent !important;
-  border: none !important;
-  color: #000000 !important; /* Nero per modifica */
-}
-
-.action-buttons .btn-outline-primary i,
-.action-buttons .btn-primary i,
-.action-buttons .btn-outline-primary .fa,
-.action-buttons .btn-primary .fa {
-  color: #000000 !important; /* Forza il nero anche sull'icona */
-}
-
-.action-buttons .btn-outline-danger,
+/* .action-buttons .btn-outline-danger,
 .action-buttons .btn-danger {
   background: transparent !important;
   border: none !important;
-  color: #dc2626 !important; /* Rosso per elimina */
+  color: #dc2626 !important;
 }
 
 .action-buttons .btn-outline-danger i,
 .action-buttons .btn-danger i,
 .action-buttons .btn-outline-danger .fa,
 .action-buttons .btn-danger .fa {
-  color: #dc2626 !important; /* Forza il rosso anche sull'icona */
-}
+  color: #dc2626 !important;
+} */
 
 /* Hover effects - solo ingrandimento */
 .action-buttons .btn:hover {
-  background: transparent !important;
+  /* background: transparent !important; */
   border: none !important;
   opacity: 1 !important;
   box-shadow: none !important;
@@ -151,7 +136,7 @@ th .fa {
 .action-buttons .btn .fa,
 .action-buttons .btn .fas,
 .action-buttons .btn .fa-solid {
-  font-size: 14px !important;
+  font-size: 17px !important;
   margin: 0 !important;
   padding: 0 !important;
   line-height: 1 !important;
@@ -160,7 +145,7 @@ th .fa {
 /* Rimuovi tutti gli stati Bootstrap */
 .action-buttons .btn:not(:disabled):not(.disabled):active,
 .action-buttons .btn:not(:disabled):not(.disabled).active {
-  background: transparent !important;
+  /* background: transparent !important; */
   border: none !important;
   box-shadow: none !important;
 }
@@ -336,14 +321,28 @@ th .fa {
 }
 
 /* Override più aggressivo per le icone */
-.action-buttons .btn-outline-primary *,
+/* .action-buttons .btn-outline-primary *,
 .action-buttons .btn-primary * {
-  color: #000000 !important;
-}
+  color: #1f09ee !important;
+} */
 
 .action-buttons .btn-outline-danger *,
 .action-buttons .btn-danger * {
   color: #dc2626 !important;
+}
+.action-buttons .btn-outline-warning *,
+.action-buttons .btn-warning * {
+  color: #ffc107 !important; /* Bootstrap warning */
+}
+
+.action-buttons .btn-outline-primary *,
+.action-buttons .btn-primary * {
+  color: #0d6efd !important; /* Bootstrap primary */
+}
+
+.action-buttons .btn-outline-secondary *,
+.action-buttons .btn-secondary * {
+  color: #6c757d !important; /* Bootstrap secondary */
 }
 
 /* ================== BADGE PERSONALIZZATI =================== */
@@ -402,7 +401,7 @@ th .fa {
 
 /* ================== FIX COLORE ICONA MODIFICA =================== */
 /* Forza il colore nero per l'icona di modifica */
-.action-buttons .btn-primary,
+/* .action-buttons .btn-primary,
 .action-buttons .btn-primary * {
   color: #000000 !important;
   background: transparent !important;
@@ -414,23 +413,23 @@ th .fa {
   color: #000000 !important;
   background: rgba(0, 0, 0, 0.1) !important;
   border: none !important;
-}
+} */
 
 /* Forza il colore per l'icona FontAwesome */
-.action-buttons .btn-primary .fa,
+/* .action-buttons .btn-primary .fa,
 .action-buttons .btn-primary .fas,
 .action-buttons .btn-primary .fa-pen,
 .action-buttons .btn-primary i {
   color: #000000 !important;
   background: transparent !important;
-}
+} */
 
 /* Assicura che tutti gli stati abbiano il colore nero */
-.action-buttons .btn-primary:focus,
+/* .action-buttons .btn-primary:focus,
 .action-buttons .btn-primary:active,
 .action-buttons .btn-primary:visited {
   color: #000000 !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-}
+} */
