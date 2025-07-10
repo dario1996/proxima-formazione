@@ -243,6 +243,8 @@ html, body {
   z-index: 20;
   display: flex;
   flex-direction: column;
+  border: 1px solid #e3e6ea;
+  background: #ffffff;
 }
 
 /* Espansione su hover (desktop) o quando aperta (mobile) */
@@ -306,17 +308,17 @@ html, body {
   visibility: visible;
 }
 
-/* ✅ FORZA IL CENTRAMENTO QUANDO SIDEBAR È CHIUSA */
+/* FORZA IL CENTRAMENTO QUANDO SIDEBAR È CHIUSA */
 .sidebar:not(.sidebar-open):not(:hover) .sidebar-header {
   justify-content: center;
-  padding: 16px 8px; /* ✅ PADDING RIDOTTO */
+  padding: 16px 8px; /* PADDING RIDOTTO */
 }
 
 .sidebar:not(.sidebar-open):not(:hover) .sidebar-logo-icon {
-  position: static; /* ✅ TORNA AL FLUSSO NORMALE */
+  position: static; /* TORNA AL FLUSSO NORMALE */
   transform: none;
   display: block;
-  margin: 0 auto; /* ✅ CENTRATO CON MARGINI AUTO */
+  margin: 0 auto; /* CENTRATO CON MARGINI AUTO */
 }
 
 /* ================== SIDEBAR NAVIGATION =================== */

@@ -21,8 +21,9 @@
   z-index: 3;  /* per sovrapporsi al contenuto sottostante */
   height: auto;
   vertical-align: middle;
-  background-color: #f6f6f6;
+  /* background-color: #f6f6f6; */
   color: rgb(0, 0, 0);
+  /* text-transform: uppercase; */
 }
 
 /* CSS Ordinamento colonne */
@@ -172,7 +173,7 @@ th .fa {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: white;
   border: 1px solid #e3e6ea;
   border-radius: 4px;
   padding: 0.7rem 1rem 0.5rem 1rem;

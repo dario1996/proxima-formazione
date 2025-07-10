@@ -19,6 +19,7 @@
   font-size: 0.92rem;
   margin-bottom: 0.1rem;
   letter-spacing: 0.03em;
+  font-weight: bold;
 }
 
 /* Titolo sezione filtri */
@@ -28,6 +29,7 @@
   color: #495057;
   letter-spacing: 0.04em;
   margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
 .form-control,
