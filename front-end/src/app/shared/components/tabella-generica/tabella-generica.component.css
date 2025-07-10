@@ -21,8 +21,9 @@
   z-index: 3;  /* per sovrapporsi al contenuto sottostante */
   height: auto;
   vertical-align: middle;
-  background-color: #f6f6f6;
+  /* background-color: #f6f6f6; */
   color: rgb(0, 0, 0);
+  /* text-transform: uppercase; */
 }
 
 /* CSS Ordinamento colonne */
@@ -157,8 +158,15 @@ th .fa {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e0e0e0; /* bordo per il contenitore della tabella */
-  border-radius: 8px;
+  background: white;
+  border: 1px solid #e3e6ea;
+  border-radius: 4px;
+  padding: 0.7rem 1rem 0.5rem 1rem;
+  margin-bottom: 1.1rem;
+  box-shadow: 
+    -2px -2px 8px rgba(255, 255, 255, 0.8),  /* Ombra bianca sopra e sinistra */
+    4px 4px 12px rgba(0, 0, 0, 0.15),        /* Ombra scura in basso e destra */
+    2px 2px 6px rgba(0, 0, 0, 0.08);         /* Ombra sottile per profondità */
 }
 
 .table {
