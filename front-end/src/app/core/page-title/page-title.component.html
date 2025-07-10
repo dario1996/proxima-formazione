@@ -1,4 +1,15 @@
-<div class="sc-section-title d-flex align-items-center mb-4 p-3 rounded shadow-sm">
-    <i [class]="icon + ' fa-2x me-3'"></i>
-    <span class="fs-3 fw-bold">{{title}}</span>
+<div class="page-header-content">
+    <div class="page-title-section">
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="page-description">
+            {{ subtitle }}
+        </p>
+    </div>
+    <button
+        *ngIf="showButton"
+        class="btn btn-sm btn-primary text-center"
+        (click)="buttonClick.emit()">
+        <i class="fas fa-plus btn-icon"></i>
+        {{ buttonText }}
+    </button>
 </div>

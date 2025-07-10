@@ -1,6 +1,8 @@
 /* eslint-disable @angular-eslint/no-input-rename */
 import { Component, OnInit, Input } from '@angular/core';
-import { ModalComponent } from '../modal/modal.component';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 interface Notification {
   id: number;
@@ -15,12 +17,14 @@ interface Notification {
   standalone: true,
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.css',
+  imports: [CommonModule, NgClass]
 })
 export class NotificationComponent implements OnInit {
   @Input('count')
   notCount: number = 0;
 
   isOpenModal = false;
+  isNotificationOpen: boolean = false;
   modalTitle = '';
 
   isPanelOpen: boolean = false;
@@ -66,6 +70,7 @@ export class NotificationComponent implements OnInit {
 
   togglePanel(): void {
     this.isPanelOpen = !this.isPanelOpen;
+    this.isNotificationOpen = this.isPanelOpen;
     if (this.isPanelOpen) {
       // Quando il pannello viene aperto, aggiorniamo lo stato delle notifiche
       this.hasNewNotifications = false;

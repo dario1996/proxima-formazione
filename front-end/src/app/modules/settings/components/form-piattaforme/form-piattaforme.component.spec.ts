@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExternalHeaderComponent } from './external-header.component';
+import { FormPiattaformeComponent } from './form-piattaforme.component';
 
-describe('ExternalHeaderComponent', () => {
-  let component: ExternalHeaderComponent;
-  let fixture: ComponentFixture<ExternalHeaderComponent>;
+describe('FormPiattaformeComponent', () => {
+  let component: FormPiattaformeComponent;
+  let fixture: ComponentFixture<FormPiattaformeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ExternalHeaderComponent]
+      imports: [FormPiattaformeComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(ExternalHeaderComponent);
+
+    fixture = TestBed.createComponent(FormPiattaformeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

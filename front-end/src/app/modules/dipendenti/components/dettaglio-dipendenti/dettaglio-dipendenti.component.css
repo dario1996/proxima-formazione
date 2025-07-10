@@ -1,0 +1,37 @@
+.dettaglio-dipendente-container {
+  /* padding: 1.0rem 1rem 0.5rem 1rem; */
+  max-width: 340px;
+  margin: 0 auto;
+  text-align: center;
+}
+.dettaglio-avatar {
+  font-size: 2.5rem;
+  color: #444;
+}
+.dettaglio-nome {
+  font-weight: 600;
+  font-size: 1.35rem;
+  margin-bottom: 1.2rem;
+}
+.dettaglio-info {
+  margin-top: 1.2rem;
+  text-align: left;
+}
+.dettaglio-field {
+  margin-bottom: 0.7rem;
+}
+.dettaglio-label {
+  font-weight: 500;
+  color: #444;
+  margin-right: 0.4em;
+}
+.dettaglio-label i {
+  min-width: 18px;
+  text-align: center;
+  margin-right: 0.3em;
+}
+.dettaglio-value {
+  font-weight: 400;
+  color: #222;
+  word-break: break-word;
+}
