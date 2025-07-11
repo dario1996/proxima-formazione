@@ -15,15 +15,18 @@
   font-size: 14px;
   margin: 0;
 }
-.table-header th{
-  position: sticky; /* per mantenere l'header visibile durante lo scroll */
-  top: 0;       /* posizione fissa in alto */ 
-  z-index: 3;  /* per sovrapporsi al contenuto sottostante */
-  height: auto;
+.table-header th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #ffffff;
+  border-bottom: 2px solid #e3e6ea;
+  height: 45px; /* RIDOTTO: da auto a 45px per essere più compatto */
   vertical-align: middle;
-  /* background-color: #f6f6f6; */
   color: rgb(0, 0, 0);
-  /* text-transform: uppercase; */
+  padding: 8px; /* RIDOTTO: da 12px a 8px */
+  font-size: 13px; /* AGGIUNTO: Font leggermente più piccolo */
+  font-weight: 600;
 }
 
 /* CSS Ordinamento colonne */
@@ -80,27 +83,11 @@ th .fa {
   transition: transform 0.2s ease !important;
 }
 
-/* .action-buttons .btn-outline-danger,
-.action-buttons .btn-danger {
-  background: transparent !important;
-  border: none !important;
-  color: #dc2626 !important;
-}
-
-.action-buttons .btn-outline-danger i,
-.action-buttons .btn-danger i,
-.action-buttons .btn-outline-danger .fa,
-.action-buttons .btn-danger .fa {
-  color: #dc2626 !important;
-} */
-
 /* Hover effects - solo ingrandimento */
 .action-buttons .btn:hover {
   /* background: transparent !important; */
   border: none !important;
   opacity: 1 !important;
-  box-shadow: none !important;
-  transform: scale(1.2) !important;
 }
 
 .action-buttons .btn-outline-primary:hover,
@@ -155,38 +142,38 @@ th .fa {
 .table-scroll-container {
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
+  max-height: calc(100vh - 322px); /* Altezza dinamica basata sulla viewport */
+  overflow-y: auto; /* Scroll verticale */
+  overflow-x: hidden; /* Nasconde scroll orizzontale se non necessario */
   display: flex;
   flex-direction: column;
   background: white;
-  border: 1px solid #e3e6ea;
   border-radius: 4px;
-  padding: 0.7rem 0.7rem 0.7rem 0.7rem;
-  margin-bottom: 1.1rem;
+  padding: 0px 16px 16px 16px;
+  margin-bottom: 16px;
   box-shadow: 
-    -2px -2px 8px rgba(255, 255, 255, 0.8),  /* Ombra bianca sopra e sinistra */
-    4px 4px 12px rgba(0, 0, 0, 0.15),        /* Ombra scura in basso e destra */
-    2px 2px 6px rgba(0, 0, 0, 0.08);         /* Ombra sottile per profondità */
+    -2px -2px 8px rgba(255, 255, 255, 0.8),
+    4px 4px 12px rgba(0, 0, 0, 0.15),
+    2px 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .table {
   border-collapse: collapse;
-  table-layout: fixed; /* per mantenere le colonne di larghezza fissa */
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 0;
+  height: 100%;
 }
 
 .table-scroll-container .pagination {
-  flex-shrink: 0;
-  /* background: #fff; */
-  padding: 8px 8px 8px 8px;
-  position: sticky;
-  bottom: 0;
+  display: none !important; /* NASCOSTO: La paginazione interna non serve più */
 }
 /* FINE */
 
 
 /* INIZIO - effetto su singola riga della tabella */
 .table-body tr:hover > td {
-  min-height: 40px;
+  min-height: 35px;
   height: auto;
   background: #dfdfdf2e !important; /* colore dello sfondo della riga con mouse hover */
   z-index: 1;
@@ -197,26 +184,33 @@ th .fa {
   /* transition: box-shadow 0.2s, background 0.2s; */
 }
 
-/* gestione righe alternate colorate */
-/* .table-body tr:nth-child(even) > td {
-  background: #f6f6f6;
-} */
 /* cambia il puntatore quando il mouse è su una riga cliccabile della tabella */
 .row-clickable {
   cursor: pointer;
 }
 
+/* ================== SCROLL PERSONALIZZATO =================== */
+.table-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
 /* PAGINATION STYLE */
 .table-pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
-  background: transparent;
-  pointer-events: none;
-  /* padding-bottom: 10px; */
+  display: none !important; /* NASCOSTO: Footer paginazione interno */
 }
 
 /* footer che contiene la la paginazione */
@@ -227,10 +221,7 @@ th .fa {
 }
 
 .table-footer {
-  position: sticky;
-  z-index: 3;
-  background: #fff; /* o il colore che preferisci */
-  /* padding: 8px */
+  display: none !important; /* NASCOSTO: Footer interno della tabella */
 }
 
 .pagination {
@@ -290,7 +281,7 @@ th .fa {
 }
 
 .table-body tr {
-  min-height: 40px;
+  min-height: 35px;
   max-height: auto;
 }
 
@@ -321,11 +312,50 @@ th .fa {
   border-bottom: none !important;
 }
 
+@media (max-width: 1400px) {
+  .table-scroll-container {
+    max-height: calc(100vh - 200px); /* Più spazio su schermi grandi */
+  }
+}
+
+@media (max-width: 1200px) {
+  .table-scroll-container {
+    max-height: calc(100vh - 240px);
+  }
+}
+
 @media (max-width: 768px) {
   .table-container { overflow-x: auto; }
   .data-table { min-width: 600px; }
   /* .table-header th, .table-body td { padding: 8px; font-size: 13px; } */
   .action-buttons { gap: 2px; }
+  .table-scroll-container {
+    max-height: calc(100vh - 260px);
+    overflow-x: auto; /* Permette scroll orizzontale su mobile */
+  }
+  
+  .table {
+    min-width: 600px; /* Larghezza minima per evitare compressione */
+  }
+
+  .table-header th {
+    padding: 6px;
+    font-size: 12px;
+    height: 40px;
+  }
+  
+  .table-body td {
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .table-scroll-container {
+    max-height: calc(100vh - 280px);
+    padding: 0.5rem;
+  }
 }
 
 /* Override più aggressivo per le icone */

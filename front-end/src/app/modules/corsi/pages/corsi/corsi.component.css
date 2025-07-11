@@ -1,27 +1,38 @@
 /* Radix UI inspired clean layout */
 .page-container {
-  height: 100%;
+  height: 100vh; /* CORRETTO: usa tutta l'altezza viewport */
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   padding: 13px;
-}
-
-.page-header {
-  /* border-bottom: 1px solid #e2e8f0; */
-  /* background-color: white; */
-  padding: 13px 13px 13px 13px; /* top right bottom left */
+  position: relative;
+  background: transparent;
 }
 
 .page-content {
-  height: 100%;
+  flex: 1 1 auto; /* CORRETTO: prende tutto lo spazio rimanente */
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* background-color: white; */
-  padding-bottom: 13px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Filtri compatti */
+app-filtri-generici {
+  margin-bottom: 12px; /* RIDOTTO: da 12px a 8px */
+}
+
+/* Tabella prende tutto lo spazio rimanente */
+app-tabella-generica {
+  flex: 1 1 auto; /* CORRETTO: prende tutto lo spazio disponibile */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* AGGIUNTO: altezza piena */
+  margin: 0px 12px 0px 12px;
 }
 
 .page-content-inner {

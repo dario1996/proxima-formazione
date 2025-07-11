@@ -11,8 +11,9 @@ import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-c
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
+// AGGIUNTO: Import del PaginationFooterComponent
+import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
-import { calcolaPageSizeOptimized } from '../../../../shared/utils/Utils';
 import {
   CORSI_COLUMNS,
   CORSI_FILTRI,
@@ -26,6 +27,8 @@ import {
     TabellaGenericaComponent,
     PageTitleComponent,
     FiltriGenericiComponent,
+    // AGGIUNTO: PaginationFooterComponent nell'array imports
+    PaginationFooterComponent,
   ],
   templateUrl: './corsi.component.html',
   styleUrls: ['./corsi.component.css'],
@@ -33,8 +36,16 @@ import {
 })
 export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
+  
+  // AGGIUNTO: ViewChild per referenziare la tabella
+  @ViewChild(TabellaGenericaComponent) 
+  set tabella(component: TabellaGenericaComponent) {
+    this.tabellaComponent = component;
+  }
+  
+  private tabellaComponent!: TabellaGenericaComponent; // AGGIUNTO
 
-  pageSize = 10;
+  pageSize = 20; // FISSO: Sempre 20 righe
   corsi: ICorsi[] = [];
   corsiFiltrati: ICorsi[] = [];
   piattaforme: IPiattaforma[] = [];
@@ -45,6 +56,17 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
 
   valoriFiltri: { [key: string]: any } = {};
 
+  // AGGIUNTO: Dati per il footer di paginazione
+  paginationInfo = {
+    currentPage: 1,
+    totalPages: 1,
+    pages: [] as number[],
+    displayedItems: 0,
+    totalItems: 0,
+    pageSize: 20,
+    entityName: 'corsi'
+  };
+
   constructor(
     private corsiService: CorsiService,
     private piattaformeService: PiattaformeService,
@@ -54,21 +76,12 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   ) {}
 
   ngAfterViewInit() {
-    this.updatePageSize();
-    window.addEventListener('resize', this.updatePageSize.bind(this));
+    // RIMOSSO: updatePageSize() e listener resize
     this.cd.detectChanges();
   }
 
   ngOnChanges() {
-    this.updatePageSize();
-    window.addEventListener('resize', this.updatePageSize.bind(this));
-    this.cd.detectChanges();
-  }
-
-  updatePageSize() {
-    if (!this.pageContentInner) return;
-    const container = this.pageContentInner.nativeElement;
-    this.pageSize = calcolaPageSizeOptimized(container);
+    // RIMOSSO: updatePageSize() e listener resize
     this.cd.detectChanges();
   }
 
@@ -85,8 +98,8 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
           piattaformaNome: c.piattaforma?.nome || '',
         }));
         this.applicaFiltri();
-        this.cd.detectChanges(); // <-- aggiorna il DOM subito dopo i filtri
-        this.updatePageSize();
+        this.cd.detectChanges();
+        this.paginationInfo.totalItems = this.corsi.length;
       },
       error: error => {
         console.log(error);
@@ -165,7 +178,7 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
         this.modaleService.apri({
           titolo: 'Aggiungi corso',
           componente: FormCorsiComponent,
-          dati: {}, // campi vuoti
+          dati: {},
           onConferma: (formValue: any) => this.addCorso(formValue),
         });
         break;
@@ -188,15 +201,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
           onConferma: () => this.deleteCorso(e.item.id),
         });
         break;
-      // case 'view':
-      //   this.modaleService.apri({
-      //     titolo: 'Dettagli corso',
-      //     componente: FormCorsiComponent,
-      //     dati: {
-      //       messaggio: 'Dettagli del corso selezionato',
-      //     }
-      //   });
-      //   break
       default:
         console.error('Azione non supportata:', e.tipo);
     }
@@ -223,10 +227,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
       ) {
         return false;
       }
-      //AGGIUNGERE QUANDO ISMS PRESENTE A DATABASE
-      // if (this.valoriFiltri['isms'] && d.attivo !== this.valoriFiltri['isms']) {
-      //   return false;
-      // }
       if (
         this.valoriFiltri['piattaforma'] &&
         c.piattaforma?.id != this.valoriFiltri['piattaforma']
@@ -246,10 +246,20 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
       })),
     ];
 
-    // Trova il filtro e aggiorna le options
     const filtro = this.filtri.find(f => f.key === 'piattaforma');
     if (filtro) {
       filtro.options = piattaformaOptions;
+    }
+  }
+
+  // CORRETTI: Metodi per la paginazione
+  aggiornaPaginazione(paginationData: any) {
+    this.paginationInfo = { ...paginationData };
+  }
+
+  cambiaPagina(page: number) {
+    if (this.tabellaComponent) {
+      this.tabellaComponent.goToPage(page);
     }
   }
 }

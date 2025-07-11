@@ -670,3 +670,22 @@ select {
   position: absolute;
   top: 0;
 }
+
+/* Filtri compatti */
+app-filtri-generici {
+  margin: 0px 12px 0px 12px;
+}
+
+/* Tabella prende tutto lo spazio rimanente */
+app-tabella-generica {
+  flex: 1 1 auto; /* CORRETTO: prende tutto lo spazio disponibile */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* AGGIUNTO: altezza piena */
+  margin: 0px 12px 0px 12px;
+}
+
+app-pagination-footer {
+  margin: 0px 12px 0px 12px;
+}

@@ -166,14 +166,6 @@
 }
 
 /* ================== MAIN HEADER =================== */
-/* .main-content {
-  flex: 1;
-  margin-left: 50px;
-  background: var(--color-muted);
-  display: flex;
-  flex-direction: column;
-} */
-
 .main-header {
   background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
@@ -183,15 +175,6 @@
   align-items: center;
   justify-content: space-between;
 }
-
-
-/* regole create per gestire il layout della parte destra universale per ogni pagina */
-/* .main-content, .main-body, .page-container {
-  height: 100%;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-} */
 
 /* ================== RESPONSIVE =================== */
 @media (max-width: 991px) {

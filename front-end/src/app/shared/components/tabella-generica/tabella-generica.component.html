@@ -56,28 +56,4 @@
         </tr>
     </tbody>
     </table>
-    <div class="table-footer">
-        <nav class="table-pagination">
-            <div class="table-pagination-inner">
-
-            <ul class="pagination">
-                <li class="page-item" [class.disabled]="currentPage === 1">
-                    <button class="page-link" (click)="goTo(currentPage - 1)">«</button>
-                </li>
-                <li *ngFor="let p of pages" class="page-item" [class.active]="p === currentPage">
-                    <button class="page-link" (click)="goTo(p)">{{ p }}</button>
-                </li>
-                <li class="page-item" [class.disabled]="currentPage === totalPages">
-                    <button class="page-link" (click)="goTo(currentPage + 1)">»</button>
-                </li>
-            </ul>
-            <span class="pagination-info">
-                Pagina {{ currentPage }} di {{ totalPages }}
-                <span *ngIf="paginatedData.length && data.length">
-                    (Visualizzati {{ ((currentPage - 1) * pageSize) + paginatedData.length }} corsi su {{ data.length }} disponibili)
-                </span>
-            </span>
-            </div>
-        </nav>
-    </div>
 </div>

@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
+import { PageTitleComponent } from '../../../../core/page-title/page-title.component'; // AGGIUNTO
 import {
   IDipendenti,
   DipendenteCreateRequest,
@@ -24,6 +24,7 @@ import { ModalComponent } from '../../../../core/modal/modal.component';
 import { NotificationModalComponent } from '../../../../core/modal/notification-modal.component';
 import { ConfirmationModalComponent } from '../../../../core/modal/confirmation-modal.component';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
+import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import {
   AzioneColor,
@@ -38,27 +39,34 @@ import { FormDipendentiComponent } from '../../components/form-dipendenti/form-d
 import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipendenti/dettaglio-dipendenti.component';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
-import { calcolaPageSizeOptimized } from '../../../../shared/utils/Utils';
 
 @Component({
   selector: 'app-dipendenti',
   standalone: true,
   imports: [
-    PageTitleComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     TabellaGenericaComponent,
     FiltriGenericiComponent,
+    PaginationFooterComponent,
+    PageTitleComponent, // AGGIUNTO: Import del PageTitleComponent
   ],
   templateUrl: './dipendenti.component.html',
-  styleUrl: './dipendenti.component.css',
+  styleUrls: ['./dipendenti.component.css'],
 })
 export class DipendentiComponent implements OnInit, AfterViewInit {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
+  
+  // CORRETTO: ViewChild per referenziare la tabella come in Corsi
+  @ViewChild(TabellaGenericaComponent) 
+  set tabella(component: TabellaGenericaComponent) {
+    this.tabellaComponent = component;
+  }
+  
+  private tabellaComponent!: TabellaGenericaComponent;
 
-  pageSize = 10; // valore di default
-  rowHeight = 60; // px, come da CSS della tabella
+  pageSize = 20; // CORRETTO: 20 righe come in Corsi
 
   filtri: IFiltroDef[] = [
     {
@@ -118,37 +126,12 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
       sortable: true,
       type: 'text',
     },
-    
     {
       key: 'ruolo',
       label: 'Ruolo',
       sortable: true,
       type: 'text',
     },
-    // {
-    //   key: 'azienda',
-    //   label: 'Azienda',
-    //   sortable: true,
-    //   type: 'text',
-    // },
-    // {
-    //   key: 'sede',
-    //   label: 'Sede',
-    //   sortable: true,
-    //   type: 'text',
-    // },
-    // {
-    //   key: 'community',
-    //   label: 'Community',
-    //   sortable: true,
-    //   type: 'text',
-    // },
-    // {
-    //   key: 'commerciale',
-    //   label: 'Responsabile',
-    //   sortable: true,
-    //   type: 'text',
-    // },
     { key: 'isms', label: 'ISMS', sortable: true, type: 'text' },
     {
       key: 'attivo',
@@ -158,7 +141,7 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     },
   ];
 
-  actions: IAzioneDef[] = [
+  azioni: IAzioneDef[] = [
     {
       label: 'Modifica',
       icon: 'fa fa-pen',
@@ -179,6 +162,17 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     },
   ];
 
+  // CORRETTO: Dati per il footer di paginazione come in Corsi
+  paginationInfo = {
+    currentPage: 1,
+    totalPages: 1,
+    pages: [] as number[],
+    displayedItems: 0,
+    totalItems: 0,
+    pageSize: 20,
+    entityName: 'dipendenti'
+  };
+
   constructor(
     private dipendentiService: DipendentiService,
     private modaleService: ModaleService,
@@ -186,22 +180,16 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     private cd: ChangeDetectorRef,
   ) {}
 
+  ngAfterViewInit() {
+    // CORRETTO: Rimosso updatePageSize come in Corsi
+    this.cd.detectChanges();
+  }
+
   ngOnInit(): void {
     this.loadDipendenti();
   }
 
-  ngAfterViewInit() {
-    this.updatePageSize();
-    window.addEventListener('resize', this.updatePageSize.bind(this));
-    this.cd.detectChanges();
-  }
-
-  updatePageSize() {
-    if (!this.pageContentInner) return;
-    const container = this.pageContentInner.nativeElement;
-    this.pageSize = calcolaPageSizeOptimized(container);
-    this.cd.detectChanges();
-  }
+  // RIMOSSO: updatePageSize() method come in Corsi
 
   private loadDipendenti() {
     this.dipendentiService.getListaDipendenti().subscribe({
@@ -209,10 +197,12 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
         this.dipendenti = data.map((d: any) => ({
           ...d,
           nominativo: `${d.nome} ${d.cognome}`.trim(),
-          attivo: d.attivo ? 'Attivo' : 'Non attivo', // <-- qui la trasformazione
+          attivo: d.attivo ? 'Attivo' : 'Non attivo',
         }));
         this.applicaFiltri();
-        setTimeout(() => this.updatePageSize());
+        this.cd.detectChanges();
+        // AGGIUNTO: Aggiorna totalItems come in Corsi
+        this.paginationInfo.totalItems = this.dipendenti.length;
       },
       error: error => {
         this.toastr.error('Errore nel caricamento dei dipendenti');
@@ -281,10 +271,6 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
   }
 
   updateDipendente(id: number, dipendenteData: any) {
-    // const corsoToSave = {
-    //   ...corsoData,
-    //   piattaforma: { id: parseInt(corsoData.piattaforma) },
-    // };
     this.dipendentiService.updDipendente(id, dipendenteData).subscribe({
       next: () => {
         this.loadDipendenti();
@@ -368,6 +354,17 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
         break;
       default:
         console.error('Azione non supportata:', e.tipo);
+    }
+  }
+
+  // CORRETTI: Metodi per la paginazione come in Corsi
+  aggiornaPaginazione(paginationData: any) {
+    this.paginationInfo = { ...paginationData };
+  }
+
+  cambiaPagina(page: number) {
+    if (this.tabellaComponent) {
+      this.tabellaComponent.goToPage(page);
     }
   }
 }

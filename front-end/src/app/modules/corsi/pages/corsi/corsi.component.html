@@ -7,21 +7,34 @@
       (buttonClick)="gestioneAzione({ tipo: 'add', item: null })"
     ></app-page-title>
   </div>
-  <div class="page-content">
-    <div class="page-content-inner" #pageContentInner>
-      <app-filtri-generici
-        [filtri]="filtri"
-        [valori]="valoriFiltri"
-        (valoriChange)="onFiltriChange($event)">
-      </app-filtri-generici>
-      <!-- (rowClick)="apriDettaglioCorso($event)" -->
-      <app-tabella-generica 
-        [data]="corsiFiltrati" 
-        [columns]="columns" 
-        [azioni]="actions"
-        [pageSize]="pageSize"
-        (action)="gestioneAzione($event)">
-      </app-tabella-generica>
-    </div>
+  
+  <div class="page-content" #pageContentInner>
+    <app-filtri-generici
+      [filtri]="filtri"
+      [valori]="valoriFiltri"
+      (valoriChange)="onFiltriChange($event)">
+    </app-filtri-generici>
+    
+    <app-tabella-generica 
+      [data]="corsiFiltrati" 
+      [columns]="columns" 
+      [azioni]="actions"
+      [pageSize]="pageSize"
+      [entityName]="'corsi'"
+      (action)="gestioneAzione($event)"
+      (paginationInfo)="aggiornaPaginazione($event)">
+    </app-tabella-generica>
+
+    <app-pagination-footer
+      [currentPage]="paginationInfo.currentPage"
+      [totalPages]="paginationInfo.totalPages"
+      [pages]="paginationInfo.pages"
+      [displayedItems]="paginationInfo.displayedItems"
+      [totalItems]="paginationInfo.totalItems"
+      [pageSize]="paginationInfo.pageSize"
+      [entityName]="paginationInfo.entityName"
+      (pageChange)="cambiaPagina($event)">
+    </app-pagination-footer>
   </div>
 </div>
+
