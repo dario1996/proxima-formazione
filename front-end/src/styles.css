@@ -596,6 +596,10 @@ html, body {
 }
 
 /* ================== LEGACY SUPPORT =================== */
+.page-header {
+  margin: 0px 12px 0px 12px;
+}
+
 .content-main {
   padding: var(--spacing-xl) 3%;
   margin-left: auto;
@@ -672,8 +676,12 @@ select {
 }
 
 /* Filtri compatti */
+app-page-title {
+  margin: 0px 12px 200px 12px;
+}
+
 app-filtri-generici {
-  margin: 0px 12px 0px 12px;
+  margin: 0px 12px 200px 12px;
 }
 
 /* Tabella prende tutto lo spazio rimanente */
@@ -683,7 +691,7 @@ app-tabella-generica {
   display: flex;
   flex-direction: column;
   height: 100vh; /* AGGIUNTO: altezza piena */
-  margin: 0px 12px 0px 12px;
+  margin: 12px 12px 0px 12px;
 }
 
 app-pagination-footer {
