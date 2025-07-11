@@ -12,6 +12,7 @@
         [valori]="valoriFiltri"
         (valoriChange)="onFiltriChange($event)">
       </app-filtri-generici>
+      <!-- (paginaCambiata)="updatePageSize()" -->
       <app-tabella-generica
         [data]="dipendentiFiltrati"
         [columns]="columns"
@@ -19,7 +20,7 @@
         [pageSize]="pageSize"
         (rowClick)="gestioneAzione({ tipo: 'view', item: $event })"
         (action)="gestioneAzione($event)"
-        (paginaCambiata)="updatePageSize()">
+        >
       </app-tabella-generica>
     </div>
   </div>
