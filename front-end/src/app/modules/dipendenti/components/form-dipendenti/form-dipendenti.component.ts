@@ -22,16 +22,20 @@ export class FormDipendentiComponent {
   private piattaformeService = inject(PiattaformeService);
 
   ngOnInit() {
-    console.log('FormCorsiComponent ngOnInit, dati:', this.dati);
+    console.log('FormDipendentiComponent ngOnInit, dati:', this.dati);
     this.modaleService.config$.subscribe(config => {
       if (config?.dati) {
         this.dati = config.dati;
         if (this.form) {
           this.form.patchValue({
             nome: this.dati.nome || '',
-            argomento: this.dati.argomento || '',
-            durata: this.dati.durata || '',
-            piattaforma: this.dati.piattaforma?.id || '',
+            cognome: this.dati.cognome || '',
+            email: this.dati.email || '',
+            codiceDipendente: this.dati.codiceDipendente || '',
+            reparto: this.dati.reparto || '',
+            commerciale: this.dati.commerciale || '',
+            azienda: this.dati.azienda || '',
+            ruolo: this.dati.ruolo || '',
           });
         }
       }
@@ -67,46 +71,35 @@ export class FormDipendentiComponent {
           Validators.email,
         ],
       ],
-      isms: [
-        this.dati?.isms || '',
+      codiceDipendente: [
+        this.dati?.codiceDipendente || '',
         [
           Validators.required,
+          Validators.maxLength(50),
         ],
       ],
-      ruolo: [
-        this.dati?.isms || '',
+      reparto: [
+        this.dati?.reparto || '',
         [
-          Validators.required,
+          Validators.maxLength(100),
+        ],
+      ],
+      commerciale: [
+        this.dati?.commerciale || '',
+        [
+          Validators.maxLength(100),
         ],
       ],
       azienda: [
-        this.dati?.isms || '',
+        this.dati?.azienda || '',
         [
-          Validators.required,
+          Validators.maxLength(100),
         ],
       ],
-      sede: [
-        this.dati?.isms || '',
+      ruolo: [
+        this.dati?.ruolo || '',
         [
-          Validators.required,
-        ],
-      ],
-      community: [
-        this.dati?.isms || '',
-        [
-          Validators.required,
-        ],
-      ],
-      responsabile: [
-        this.dati?.isms || '',
-        [
-          Validators.required,
-        ],
-      ],
-      stato: [
-        this.dati?.isms || '',
-        [
-          Validators.required,
+          Validators.maxLength(100),
         ],
       ],
     });
