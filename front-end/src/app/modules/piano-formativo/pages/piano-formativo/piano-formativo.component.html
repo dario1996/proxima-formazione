@@ -8,16 +8,16 @@
   </div>
   
   <div class="page-content" #pageContentInner>
-    <!-- <app-filtri-generici
+    <app-filtri-generici
       [filtri]="filtri"
       [valori]="valoriFiltri"
       (valoriChange)="onFiltriChange($event)">
     </app-filtri-generici>
     
     <app-tabella-generica 
-      [data]="corsiFiltrati" 
+      [data]="formazioneDipendentiFiltrato" 
       [columns]="columns" 
-      [azioni]="actions"
+      [azioni]="azioni"
       [pageSize]="pageSize"
       [entityName]="'corsi'"
       (action)="gestioneAzione($event)"
@@ -33,6 +33,6 @@
       [pageSize]="paginationInfo.pageSize"
       [entityName]="paginationInfo.entityName"
       (pageChange)="cambiaPagina($event)">
-    </app-pagination-footer> -->
+    </app-pagination-footer>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { CommonModule } from '@angular/common';
 import {
@@ -26,6 +26,15 @@ import { forkJoin } from 'rxjs';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
 import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
+import { DettaglioDipendentiComponent } from '../../../dipendenti/components/dettaglio-dipendenti/dettaglio-dipendenti.component';
+import { DisableConfirmComponent } from '../../../../core/disable-confirm/disable-confirm.component';
+import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
+import { FormDipendentiComponent } from '../../../dipendenti/components/form-dipendenti/form-dipendenti.component';
+import { ToastrService } from 'ngx-toastr';
+import { ModaleService } from '../../../../core/services/modal.service';
+import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/ui/azione-def';
+import { IColumnDef } from '../../../../shared/models/ui/column-def';
+import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 
 @Component({
   selector: 'app-piano-formativo',
@@ -35,8 +44,6 @@ import { PaginationFooterComponent } from '../../../../shared/components/paginat
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NotificationModalComponent,
-    ConfirmationModalComponent,
     TabellaGenericaComponent,
     FiltriGenericiComponent,
     PaginationFooterComponent,
@@ -45,616 +52,315 @@ import { PaginationFooterComponent } from '../../../../shared/components/paginat
   styleUrl: './piano-formativo.component.css',
 })
 export class PianoFormativoComponent implements OnInit {
-  title: string = 'Piano Formativo';
-  icon: string = 'fa-solid fa-graduation-cap';
+  @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
+  
+  // CORRETTO: ViewChild per referenziare la tabella come in Corsi
+  @ViewChild(TabellaGenericaComponent) 
+  set tabella(component: TabellaGenericaComponent) {
+    this.tabellaComponent = component;
+  }
+  
+  private tabellaComponent!: TabellaGenericaComponent;
 
-  // Data
-  assegnazioni: IAssegnazione[] = [];
-  filteredAssegnazioni: IAssegnazione[] = [];
+  pageSize = 20; // CORRETTO: 20 righe come in Corsi
+
+  filtri: IFiltroDef[] = [
+    {
+      key: 'nominativo',
+      label: 'Dipendente',
+      type: 'text',
+      placeholder: 'Cerca dipendente...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'email',
+      label: 'Email',
+      type: 'text',
+      placeholder: 'Cerca email...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'ruolo',
+      label: 'Ruolo',
+      type: 'text',
+      placeholder: 'Cerca ruolo...',
+      colClass: 'col-12 col-md-4 col-lg-2 mb-2',
+    },
+    {
+      key: 'isms',
+      label: 'ISMS',
+      type: 'select',
+      options: [
+        { value: '', label: 'Tutti' },
+        { value: 'Si', label: 'Si' },
+        { value: 'No', label: 'No' },
+      ],
+      colClass: 'col-6 col-md-3 col-lg-2 mb-2',
+    },
+    {
+      key: 'attivo',
+      label: 'Stato',
+      type: 'select',
+      options: [
+        { value: '', label: 'Tutti' },
+        { value: 'Attivo', label: 'Attivo' },
+        { value: 'Non attivo', label: 'Non attivo' },
+      ],
+      colClass: 'col-6 col-md-3 col-lg-2 mb-2',
+    },
+  ];
+  valoriFiltri: { [key: string]: any } = {};
+
   dipendenti: IDipendenti[] = [];
-  corsi: ICorsi[] = [];
+  formazioneDipendentiFiltrato: IDipendenti[] = [];
 
-  // Filtri
-  searchTerm: string = '';
-  selectedStato: string = '';
-  selectedDipendente: string = '';
-  selectedCorso: string = '';
-  soloObbligatorie: boolean = false;
-  richiedeFeedback: boolean = false;
+  columns: IColumnDef[] = [
+    { key: 'nominativo', label: 'Nominativo', sortable: true, type: 'text' },
+    {
+      key: 'email',
+      label: 'Email',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'ruolo',
+      label: 'Ruolo',
+      sortable: true,
+      type: 'text',
+    },
+    { key: 'isms', label: 'ISMS', sortable: true, type: 'text' },
+    {
+      key: 'attivo',
+      label: 'Stato',
+      sortable: true,
+      type: 'badge',
+    },
+  ];
 
-  // Modal per nuova assegnazione
-  isAssignModalOpen: boolean = false;
-  assignForm!: FormGroup;
+  azioni: IAzioneDef[] = [
+    {
+      label: 'Modifica',
+      icon: 'fa fa-pen',
+      action: AzioneType.Edit,
+      color: AzioneColor.Secondary,
+    },
+    {
+      label: 'Elimina',
+      icon: 'fa fa-trash',
+      action: AzioneType.Delete,
+      color: AzioneColor.Danger,
+    },
+    {
+      label: 'Disattiva',
+      icon: 'fa fa-user-slash',
+      action: AzioneType.Disable,
+      color: AzioneColor.Warning,
+    },
+  ];
 
-  // Search functionality for assign modal
-  dipendenteSearchTerm: string = '';
-  corsoSearchTerm: string = '';
-  filteredDipendenti: IDipendenti[] = [];
-  filteredCorsi: ICorsi[] = [];
-  assignSelectedDipendente: IDipendenti | null = null;
-  assignSelectedCorso: ICorsi | null = null;
-  showDipendentiDropdown: boolean = false;
-  showCorsiDropdown: boolean = false;
-
-  // Modal per modifica stato
-  isStatusModalOpen: boolean = false;
-  statusForm!: FormGroup;
-  editingAssegnazione: IAssegnazione | null = null;
-
-  // Loading states
-  isLoading: boolean = false;
-  isSubmitting: boolean = false;
-
-  // Stati disponibili
-  stati = Object.values(AssegnazioneStato);
-
-  // Notification and Confirmation modals
-  notification = {
-    isOpen: false,
-    title: '',
-    message: '',
-    details: '',
-    type: 'info' as 'success' | 'error' | 'warning' | 'info',
-  };
-
-  confirmation = {
-    isOpen: false,
-    title: '',
-    message: '',
-    details: '',
-    type: 'warning' as 'danger' | 'warning' | 'info' | 'success',
-    action: null as (() => void) | null,
-    isProcessing: false,
+  // CORRETTO: Dati per il footer di paginazione come in Corsi
+  paginationInfo = {
+    currentPage: 1,
+    totalPages: 1,
+    pages: [] as number[],
+    displayedItems: 0,
+    totalItems: 0,
+    pageSize: 20,
+    entityName: 'dipendenti'
   };
 
   constructor(
-    private assegnazioniService: AssegnazioniService,
     private dipendentiService: DipendentiService,
-    private corsiService: CorsiService,
-    private formBuilder: FormBuilder,
-  ) {
-    this.initializeForms();
+    private modaleService: ModaleService,
+    private toastr: ToastrService,
+    private cd: ChangeDetectorRef,
+  ) {}
+
+  ngAfterViewInit() {
+    // CORRETTO: Rimosso updatePageSize come in Corsi
+    this.cd.detectChanges();
   }
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadDipendenti();
   }
 
-  private initializeForms() {
-    this.assignForm = this.formBuilder.group({
-      dipendenteId: ['', [Validators.required]],
-      corsoId: ['', [Validators.required]],
-      obbligatorio: [false],
-    });
+  // RIMOSSO: updatePageSize() method come in Corsi
 
-    this.statusForm = this.formBuilder.group({
-      stato: ['', [Validators.required]],
-      percentualeCompletamento: [0, [Validators.min(0), Validators.max(100)]],
-      oreCompletate: [0, [Validators.min(0)]],
-      valutazione: [null, [Validators.min(1), Validators.max(5)]],
-      noteFeedback: [''],
-      competenzeAcquisite: [''],
-      certificatoOttenuto: [false],
-    });
-  }
-
-  private loadData() {
-    this.isLoading = true;
-
-    // Carica dipendenti, corsi e assegnazioni in parallelo
-    forkJoin({
-      dipendenti: this.dipendentiService.getListaDipendenti(),
-      corsi: this.corsiService.getListaCorsi(),
-      assegnazioni: this.assegnazioniService.getAllAssegnazioni(
-        undefined,
-        false,
-        false,
-      ),
-    }).subscribe({
-      next: (result: {
-        dipendenti: IDipendenti[];
-        corsi: ICorsi[];
-        assegnazioni: IAssegnazione[];
-      }) => {
-        this.dipendenti = result.dipendenti || [];
-        this.corsi = result.corsi || [];
-        this.assegnazioni = result.assegnazioni || [];
-        this.filteredAssegnazioni = this.assegnazioni;
-        this.isLoading = false;
-      },
-      error: (error: any) => {
-        console.error('Errore nel caricamento dei dati:', error);
-        this.isLoading = false;
-        this.showNotification(
-          'Errore',
-          'Errore nel caricamento dei dati',
-          'Si è verificato un errore durante il caricamento. Riprova più tardi.',
-          'error',
-        );
-      },
-    });
-  }
-
-  // Filtri
-  applyFilters() {
-    this.filteredAssegnazioni = this.assegnazioni.filter(assegnazione => {
-      const matchesSearch =
-        !this.searchTerm ||
-        assegnazione.dipendente.nome
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()) ||
-        assegnazione.dipendente.cognome
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()) ||
-        assegnazione.corso.nome
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase());
-
-      const matchesStato =
-        !this.selectedStato || assegnazione.stato === this.selectedStato;
-      const matchesDipendente =
-        !this.selectedDipendente ||
-        assegnazione.dipendente.id.toString() === this.selectedDipendente;
-      const matchesCorso =
-        !this.selectedCorso ||
-        assegnazione.corso.id.toString() === this.selectedCorso;
-      const matchesObbligatorie =
-        !this.soloObbligatorie || assegnazione.obbligatorio;
-      const matchesFeedback =
-        !this.richiedeFeedback ||
-        (assegnazione.corso.feedbackRichiesto && !assegnazione.feedbackFornito);
-
-      return (
-        matchesSearch &&
-        matchesStato &&
-        matchesDipendente &&
-        matchesCorso &&
-        matchesObbligatorie &&
-        matchesFeedback
-      );
-    });
-  }
-
-  onSearchChange() {
-    this.applyFilters();
-  }
-
-  onStatoChange() {
-    this.applyFilters();
-  }
-
-  onDipendenteChange() {
-    this.applyFilters();
-  }
-
-  onCorsoChange() {
-    this.applyFilters();
-  }
-
-  onObbligatorieChange() {
-    this.applyFilters();
-  }
-
-  onFeedbackChange() {
-    this.applyFilters();
-  }
-
-  clearFilters() {
-    this.searchTerm = '';
-    this.selectedStato = '';
-    this.selectedDipendente = '';
-    this.selectedCorso = '';
-    this.soloObbligatorie = false;
-    this.richiedeFeedback = false;
-    this.filteredAssegnazioni = this.assegnazioni;
-  }
-
-  // Azioni CRUD
-  openAssignModal() {
-    this.assignForm.reset();
-    this.resetAssignModal();
-    this.filteredDipendenti = [...this.dipendenti];
-    this.filteredCorsi = [...this.corsi];
-    this.isAssignModalOpen = true;
-  }
-
-  closeAssignModal() {
-    this.isAssignModalOpen = false;
-    this.resetAssignModal();
-  }
-
-  private resetAssignModal() {
-    this.assignForm.reset();
-    this.dipendenteSearchTerm = '';
-    this.corsoSearchTerm = '';
-    this.assignSelectedDipendente = null;
-    this.assignSelectedCorso = null;
-    this.showDipendentiDropdown = false;
-    this.showCorsiDropdown = false;
-    this.filteredDipendenti = [];
-    this.filteredCorsi = [];
-  }
-
-  // Search functionality for dipendenti
-  onDipendenteSearchChange() {
-    console.log('Dipendente search changed:', this.dipendenteSearchTerm);
-    if (this.dipendenteSearchTerm.trim() === '') {
-      this.filteredDipendenti = [...this.dipendenti];
-    } else {
-      this.filteredDipendenti = this.dipendenti.filter(
-        dipendente =>
-          this.getDipendenteNomeCompleto(dipendente)
-            .toLowerCase()
-            .includes(this.dipendenteSearchTerm.toLowerCase()) ||
-          dipendente.email
-            .toLowerCase()
-            .includes(this.dipendenteSearchTerm.toLowerCase()) ||
-          dipendente.reparto
-            .toLowerCase()
-            .includes(this.dipendenteSearchTerm.toLowerCase()),
-      );
-    }
-    console.log('Filtered dipendenti:', this.filteredDipendenti.length);
-    this.showDipendentiDropdown = true;
-  }
-
-  onDipendenteFocus() {
-    this.filteredDipendenti = [...this.dipendenti];
-    this.showDipendentiDropdown = true;
-  }
-
-  onDipendenteBlur() {
-    // Delay hiding to allow click on dropdown items
-    setTimeout(() => {
-      this.showDipendentiDropdown = false;
-    }, 200);
-  }
-
-  selectDipendente(dipendente: IDipendenti) {
-    this.assignSelectedDipendente = dipendente;
-    this.dipendenteSearchTerm = this.getDipendenteNomeCompleto(dipendente);
-    this.assignForm.patchValue({ dipendenteId: dipendente.id });
-    this.showDipendentiDropdown = false;
-  }
-
-  clearDipendenteSelection() {
-    this.assignSelectedDipendente = null;
-    this.dipendenteSearchTerm = '';
-    this.assignForm.patchValue({ dipendenteId: '' });
-    this.showDipendentiDropdown = false;
-    this.filteredDipendenti = [...this.dipendenti];
-  }
-
-  // Search functionality for corsi
-  onCorsoSearchChange() {
-    console.log('Corso search changed:', this.corsoSearchTerm);
-    if (this.corsoSearchTerm.trim() === '') {
-      this.filteredCorsi = [...this.corsi];
-    } else {
-      this.filteredCorsi = this.corsi.filter(
-        corso =>
-          corso.nome
-            .toLowerCase()
-            .includes(this.corsoSearchTerm.toLowerCase()) ||
-          corso.piattaforma.nome
-            .toLowerCase()
-            .includes(this.corsoSearchTerm.toLowerCase()) ||
-          corso.categoria
-            .toLowerCase()
-            .includes(this.corsoSearchTerm.toLowerCase()) ||
-          corso.argomento
-            .toLowerCase()
-            .includes(this.corsoSearchTerm.toLowerCase()),
-      );
-    }
-    console.log('Filtered corsi:', this.filteredCorsi.length);
-    this.showCorsiDropdown = true;
-  }
-
-  onCorsoFocus() {
-    this.filteredCorsi = [...this.corsi];
-    this.showCorsiDropdown = true;
-  }
-
-  onCorsoBlur() {
-    // Delay hiding to allow click on dropdown items
-    setTimeout(() => {
-      this.showCorsiDropdown = false;
-    }, 200);
-  }
-
-  selectCorso(corso: ICorsi) {
-    this.assignSelectedCorso = corso;
-    this.corsoSearchTerm = `${corso.nome} - ${corso.piattaforma.nome}`;
-    this.assignForm.patchValue({ corsoId: corso.id });
-    this.showCorsiDropdown = false;
-  }
-
-  clearCorsoSelection() {
-    this.assignSelectedCorso = null;
-    this.corsoSearchTerm = '';
-    this.assignForm.patchValue({ corsoId: '' });
-    this.showCorsiDropdown = false;
-    this.filteredCorsi = [...this.corsi];
-  }
-
-  onAssignSubmit() {
-    if (this.assignForm.valid) {
-      this.isSubmitting = true;
-      const { dipendenteId, corsoId, obbligatorio } = this.assignForm.value;
-
-      this.assegnazioniService
-        .assignCorsoToDipendente(dipendenteId, corsoId, obbligatorio || false)
-        .subscribe({
-          next: response => {
-            this.isSubmitting = false;
-            this.closeAssignModal();
-            this.showNotification(
-              'Successo',
-              'Corso assegnato con successo',
-              `Il corso è stato assegnato al dipendente.`,
-              'success',
-            );
-            this.loadData();
-          },
-          error: error => {
-            console.error("Errore nell'assegnazione del corso:", error);
-            this.isSubmitting = false;
-            let errorMessage =
-              "Si è verificato un errore durante l'assegnazione.";
-            if (error.error && typeof error.error === 'string') {
-              errorMessage = error.error;
-            }
-            this.showNotification(
-              'Errore',
-              "Errore nell'assegnazione",
-              errorMessage,
-              'error',
-            );
-          },
-        });
-    } else {
-      Object.keys(this.assignForm.controls).forEach(key => {
-        this.assignForm.get(key)?.markAsTouched();
-      });
-    }
-  }
-
-  openStatusModal(assegnazione: IAssegnazione) {
-    this.editingAssegnazione = assegnazione;
-    this.statusForm.patchValue({
-      stato: assegnazione.stato,
-      percentualeCompletamento: assegnazione.percentualeCompletamento,
-      oreCompletate: assegnazione.oreCompletate,
-      valutazione: assegnazione.valutazione,
-      noteFeedback: assegnazione.noteFeedback,
-      competenzeAcquisite: assegnazione.competenzeAcquisite,
-      certificatoOttenuto: assegnazione.certificatoOttenuto,
-    });
-    this.isStatusModalOpen = true;
-  }
-
-  closeStatusModal() {
-    this.isStatusModalOpen = false;
-    this.editingAssegnazione = null;
-    this.statusForm.reset();
-  }
-
-  onStatusSubmit() {
-    if (this.statusForm.valid && this.editingAssegnazione) {
-      this.isSubmitting = true;
-      const formValue = this.statusForm.value;
-
-      // Prepara i dati per l'aggiornamento completo
-      const updateData: any = {};
-
-      if (formValue.stato) updateData.stato = formValue.stato;
-      if (
-        formValue.percentualeCompletamento !== null &&
-        formValue.percentualeCompletamento !== undefined
-      ) {
-        updateData.percentualeCompletamento =
-          formValue.percentualeCompletamento;
-      }
-      if (
-        formValue.oreCompletate !== null &&
-        formValue.oreCompletate !== undefined
-      ) {
-        updateData.oreCompletate = formValue.oreCompletate;
-      }
-      if (formValue.valutazione) updateData.valutazione = formValue.valutazione;
-      if (formValue.noteFeedback)
-        updateData.noteFeedback = formValue.noteFeedback;
-      if (formValue.competenzeAcquisite)
-        updateData.competenzeAcquisite = formValue.competenzeAcquisite;
-      if (
-        formValue.certificatoOttenuto !== null &&
-        formValue.certificatoOttenuto !== undefined
-      ) {
-        updateData.certificatoOttenuto = formValue.certificatoOttenuto;
-      }
-
-      this.assegnazioniService
-        .updateAssegnazione(this.editingAssegnazione.id, updateData)
-        .subscribe({
-          next: response => {
-            this.isSubmitting = false;
-            this.closeStatusModal();
-            this.showNotification(
-              'Successo',
-              'Assegnazione aggiornata con successo',
-              "I dettagli dell'assegnazione sono stati modificati.",
-              'success',
-            );
-            this.loadData();
-          },
-          error: error => {
-            console.error(
-              "Errore nell'aggiornamento dell'assegnazione:",
-              error,
-            );
-            this.isSubmitting = false;
-            this.showNotification(
-              'Errore',
-              "Errore nell'aggiornamento",
-              "Si è verificato un errore durante l'aggiornamento.",
-              'error',
-            );
-          },
-        });
-    }
-  }
-
-  deleteAssegnazione(assegnazione: IAssegnazione) {
-    this.showConfirmation(
-      'Conferma Eliminazione',
-      `Sei sicuro di voler eliminare l'assegnazione del corso "${assegnazione.corso.nome}" al dipendente "${assegnazione.dipendente.nome} ${assegnazione.dipendente.cognome}"?`,
-      'Questa azione non può essere annullata.',
-      'danger',
-      () => this.performDelete(assegnazione.id),
-    );
-  }
-
-  private performDelete(assegnazioneId: number) {
-    this.confirmation.isProcessing = true;
-    this.assegnazioniService.deleteAssegnazione(assegnazioneId).subscribe({
-      next: () => {
-        this.confirmation.isProcessing = false;
-        this.closeConfirmation();
-        this.showNotification(
-          'Successo',
-          'Assegnazione eliminata con successo',
-          "L'assegnazione è stata rimossa dal sistema.",
-          'success',
-        );
-        this.loadData();
+  private loadDipendenti() {
+    this.dipendentiService.getListaDipendenti().subscribe({
+      next: data => {
+        this.dipendenti = data.map((d: any) => ({
+          ...d,
+          nominativo: `${d.nome} ${d.cognome}`.trim(),
+          attivo: d.attivo ? 'Attivo' : 'Non attivo',
+        }));
+        this.applicaFiltri();
+        this.cd.detectChanges();
+        // AGGIUNTO: Aggiorna totalItems come in Corsi
+        this.paginationInfo.totalItems = this.dipendenti.length;
       },
       error: error => {
-        console.error("Errore nell'eliminazione dell'assegnazione:", error);
-        this.confirmation.isProcessing = false;
-        this.closeConfirmation();
-        this.showNotification(
-          'Errore',
-          "Errore nell'eliminazione",
-          "Si è verificato un errore durante l'eliminazione.",
-          'error',
+        this.toastr.error('Errore nel caricamento dei dipendenti');
+      },
+    });
+  }
+
+  onFiltriChange(valori: { [key: string]: any }) {
+    this.valoriFiltri = valori;
+    this.applicaFiltri();
+  }
+
+  applicaFiltri() {
+    this.formazioneDipendentiFiltrato = this.dipendenti.filter(d => {
+      const nominativo = `${d.nome} ${d.cognome}`.trim().toLowerCase();
+
+      if (
+        this.valoriFiltri['nominativo'] &&
+        !nominativo.includes(this.valoriFiltri['nominativo'].toLowerCase())
+      ) {
+        return false;
+      }
+      if (
+        this.valoriFiltri['email'] &&
+        !d.email.toLowerCase().includes(this.valoriFiltri['email'].toLowerCase())
+      ) {
+        return false;
+      }
+      if (
+        this.valoriFiltri['ruolo'] &&
+        !d.ruolo.toLowerCase().includes(this.valoriFiltri['ruolo'].toLowerCase())
+      ) {
+        return false;
+      }
+      if (this.valoriFiltri['attivo'] && d.attivo !== this.valoriFiltri['attivo']) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  deleteDipendente(id: number) {
+    this.dipendentiService.permanentDeleteDipendente(id).subscribe({
+      next: () => {
+        this.loadDipendenti();
+        this.toastr.success('Dipendente eliminato con successo');
+      },
+      error: error => {
+        this.toastr.error("Errore durante l'eliminazione del dipendente");
+      },
+    });
+  }
+
+  toggleDipendenteStatus(id: number) {
+    this.dipendentiService.toggleDipendenteStatus(id).subscribe({
+      next: () => {
+        this.loadDipendenti();
+        this.toastr.success('Stato del dipendente aggiornato con successo');
+      },
+      error: error => {
+        this.toastr.error(
+          "Errore durante l'aggiornamento dello stato del dipendente",
         );
       },
     });
   }
 
-  // Helper methods
-  getDipendenteNomeCompleto(dipendente: IDipendenti): string {
-    return `${dipendente.nome} ${dipendente.cognome}`;
+  updateDipendente(id: number, dipendenteData: any) {
+    this.dipendentiService.updDipendente(id, dipendenteData).subscribe({
+      next: () => {
+        this.loadDipendenti();
+        this.toastr.success('Dipendente modificato con successo');
+        this.modaleService.chiudi();
+      },
+      error: () => {
+        this.toastr.error('Errore durante la modifica del dipendente');
+      },
+    });
   }
 
-  getStatoLabel(stato: AssegnazioneStato): string {
-    const labels: Record<AssegnazioneStato, string> = {
-      [AssegnazioneStato.ASSEGNATO]: 'Assegnato',
-      [AssegnazioneStato.IN_CORSO]: 'In Corso',
-      [AssegnazioneStato.COMPLETATO]: 'Completato',
-      [AssegnazioneStato.NON_INIZIATO]: 'Non Iniziato',
-      [AssegnazioneStato.SOSPESO]: 'Sospeso',
-      [AssegnazioneStato.ANNULLATO]: 'Annullato',
-    };
-    return labels[stato] || stato;
+  addDipendente(dipendenteData: any) {
+    this.dipendentiService.insDipendente(dipendenteData).subscribe({
+      next: () => {
+        this.loadDipendenti();
+        this.toastr.success('Dipendente aggiunto con successo');
+        this.modaleService.chiudi();
+      },
+      error: () => {
+        this.toastr.error("Errore durante l'aggiunta del dipendente");
+      },
+    });
   }
 
-  getStatoBadgeClass(stato: AssegnazioneStato): string {
-    const classes: Record<AssegnazioneStato, string> = {
-      [AssegnazioneStato.ASSEGNATO]: 'bg-primary',
-      [AssegnazioneStato.IN_CORSO]: 'bg-warning',
-      [AssegnazioneStato.COMPLETATO]: 'bg-success',
-      [AssegnazioneStato.NON_INIZIATO]: 'bg-secondary',
-      [AssegnazioneStato.SOSPESO]: 'bg-danger',
-      [AssegnazioneStato.ANNULLATO]: 'bg-dark',
-    };
-    return classes[stato] || 'bg-secondary';
-  }
-
-  formatDate(dateString: string): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('it-IT');
-  }
-
-  isFieldInvalid(formGroup: FormGroup, fieldName: string): boolean {
-    const field = formGroup.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
-  }
-
-  getFieldError(formGroup: FormGroup, fieldName: string): string {
-    const field = formGroup.get(fieldName);
-    if (field && field.errors) {
-      if (field.errors['required']) return `${fieldName} è obbligatorio`;
-      if (field.errors['min']) return `Valore minimo non rispettato`;
-      if (field.errors['max']) return `Valore massimo superato`;
-    }
-    return '';
-  }
-
-  // Notification modal methods
-  private showNotification(
-    title: string,
-    message: string,
-    details: string = '',
-    type: 'success' | 'error' | 'warning' | 'info' = 'info',
-  ) {
-    this.notification = {
-      isOpen: true,
-      title,
-      message,
-      details,
-      type,
-    };
-  }
-
-  closeNotification() {
-    this.notification.isOpen = false;
-  }
-
-  // Confirmation modal methods
-  private showConfirmation(
-    title: string,
-    message: string,
-    details: string = '',
-    type: 'danger' | 'warning' | 'info' | 'success' = 'warning',
-    action: () => void,
-  ) {
-    this.confirmation = {
-      isOpen: true,
-      title,
-      message,
-      details,
-      type,
-      action,
-      isProcessing: false,
-    };
-  }
-
-  closeConfirmation() {
-    this.confirmation.isOpen = false;
-    this.confirmation.action = null;
-    this.confirmation.isProcessing = false;
-  }
-
-  onConfirmationConfirmed() {
-    if (this.confirmation.action) {
-      this.confirmation.action();
+  gestioneAzione(e: { tipo: string; item: any }) {
+    switch (e.tipo) {
+      case 'add':
+        this.modaleService.apri({
+          titolo: 'Aggiungi dipendente',
+          componente: FormDipendentiComponent,
+          dati: {},
+          onConferma: (formValue: any) => this.addDipendente(formValue),
+        });
+        break;
+      case 'edit':
+        this.modaleService.apri({
+          titolo: 'Modifica dipendente',
+          componente: FormDipendentiComponent,
+          dati: e.item,
+          onConferma: (formValue: any) =>
+            this.updateDipendente(e.item.id, formValue),
+        });
+        break;
+      case 'delete':
+        this.modaleService.apri({
+          titolo: 'Conferma eliminazione',
+          componente: DeleteConfirmComponent,
+          dati: {
+            messaggio:
+              'Vuoi davvero eliminare il dipendente "' +
+              e.item.nome +
+              ' ' +
+              e.item.cognome +
+              '"?',
+          },
+          onConferma: () => this.deleteDipendente(e.item.id),
+        });
+        break;
+      case 'disable':
+        this.modaleService.apri({
+          titolo: 'Conferma disattivazione',
+          componente: DisableConfirmComponent,
+          dati: {
+            messaggio:
+              'Vuoi davvero disattivare il dipendente "' +
+              e.item.nome +
+              ' ' +
+              e.item.cognome +
+              '"?',
+          },
+          onConferma: () => this.toggleDipendenteStatus(e.item.id),
+        });
+        break;
+      case 'view':
+        this.modaleService.apri({
+          titolo: 'Dettagli dipendente',
+          componente: DettaglioDipendentiComponent,
+          dati: e.item,
+        });
+        break;
+      default:
+        console.error('Azione non supportata:', e.tipo);
     }
   }
 
-  get completateCount(): number {
-    return this.filteredAssegnazioni.filter(a => a.stato === 'COMPLETATO')
-      .length;
+  // CORRETTI: Metodi per la paginazione come in Corsi
+  aggiornaPaginazione(paginationData: any) {
+    this.paginationInfo = { ...paginationData };
   }
 
-  get inCorsoCount(): number {
-    return this.filteredAssegnazioni.filter(a => a.stato === 'IN_CORSO').length;
-  }
-
-  get assegnateCount(): number {
-    return this.filteredAssegnazioni.filter(a => a.stato === 'ASSEGNATO')
-      .length;
+  cambiaPagina(page: number) {
+    if (this.tabellaComponent) {
+      this.tabellaComponent.goToPage(page);
+    }
   }
 }
