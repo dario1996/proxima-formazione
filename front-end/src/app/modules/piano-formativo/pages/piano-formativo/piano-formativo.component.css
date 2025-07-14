@@ -363,3 +363,39 @@
   background-color: #6c757d;
   color: white;
 }
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 16px;
+    gap: 24px;
+  }
+
+  .page-header-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .modal-footer-content {
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer-content .btn {
+    width: 100%;
+  }
+}

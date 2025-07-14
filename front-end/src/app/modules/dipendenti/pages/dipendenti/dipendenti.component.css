@@ -1,24 +1,3 @@
-/* Radix UI inspired clean layout */
-.page-container {
-  height: 100vh;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding: 13px;
-  position: relative;
-}
-
-.page-content {
-  flex: 1 1 auto; /* CORRETTO: prende tutto lo spazio rimanente */
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-}
-
 /* Filtri compatti */
 app-filtri-generici {
   flex-shrink: 0; /* Non si comprime */

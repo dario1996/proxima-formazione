@@ -23,6 +23,9 @@ import { AssegnazioniService } from '../../../../core/services/data/assegnazioni
 import { DipendentiService } from '../../../../core/services/data/dipendenti.service';
 import { CorsiService } from '../../../../core/services/data/corsi.service';
 import { forkJoin } from 'rxjs';
+import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
+import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
+import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 
 @Component({
   selector: 'app-piano-formativo',
@@ -34,6 +37,9 @@ import { forkJoin } from 'rxjs';
     ReactiveFormsModule,
     NotificationModalComponent,
     ConfirmationModalComponent,
+    TabellaGenericaComponent,
+    FiltriGenericiComponent,
+    PaginationFooterComponent,
   ],
   templateUrl: './piano-formativo.component.html',
   styleUrl: './piano-formativo.component.css',

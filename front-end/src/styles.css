@@ -77,6 +77,28 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Radix UI inspired clean layout */
+.page-container {
+  height: 100vh; /* CORRETTO: usa tutta l'altezza viewport */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 13px;
+  position: relative;
+  background: transparent;
+}
+
+.page-content {
+  flex: 1 1 auto; /* CORRETTO: prende tutto lo spazio rimanente */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
 /* ================== BUTTONS =================== */
 .btn {
   display: inline-flex;
