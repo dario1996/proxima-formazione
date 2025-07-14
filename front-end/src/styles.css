@@ -453,6 +453,20 @@ html, body {
   pointer-events: auto;
 }
 
+.nav-tabs {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  margin: 0px 12px 0px 12px !important;
+  list-style: none !important;
+  gap: 2px !important;
+  width: 100% !important;
+  display: flex;
+}
+
+
+
 /* ================== MAIN CONTENT =================== */
 /* responsabile dell'adattamento della tabella alla pagina */
 .main-content {
@@ -703,7 +717,9 @@ app-page-title {
 }
 
 app-filtri-generici {
-  margin: 0px 12px 200px 12px;
+  flex-shrink: 0; /* Non si comprime */
+  margin-bottom: 8px; /* Ridotto per più spazio alla tabella */
+  margin: 0px 12px 0px 12px;
 }
 
 /* Tabella prende tutto lo spazio rimanente */

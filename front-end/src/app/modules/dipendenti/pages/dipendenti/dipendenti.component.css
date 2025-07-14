@@ -1,20 +1,3 @@
-/* Filtri compatti */
-app-filtri-generici {
-  flex-shrink: 0; /* Non si comprime */
-  margin-bottom: 8px; /* Ridotto per più spazio alla tabella */
-}
-
-/* Tabella prende tutto lo spazio rimanente */
-app-tabella-generica {
-  flex: 1 1 auto; /* Prende tutto lo spazio disponibile */
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100%; /* Altezza piena */
-}
-
-/* RIMOSSO: .page-content-inner - non serve più */
-
 /* Modal form styling - mantieni tutto invariato */
 .modal-body-content {
   padding: 24px;

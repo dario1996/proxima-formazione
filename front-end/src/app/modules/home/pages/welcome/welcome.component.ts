@@ -25,6 +25,17 @@ export class WelcomeComponent implements OnInit {
       ],
     },
     {
+      title: 'Piano Formativo',
+      icon: 'fa-solid fa-graduation-cap fa-xl',
+      links: [
+        {
+          label: 'Piano Formativo',
+          url: 'piano-formativo',
+          icon: 'fa-solid fa-graduation-cap fa-lg',
+        },
+      ],
+    },
+    {
       title: 'Dipendenti',
       icon: 'fa-solid fa-users fa-xl',
       links: [
@@ -43,17 +54,6 @@ export class WelcomeComponent implements OnInit {
           label: 'Corsi',
           url: 'corsi',
           icon: 'fa-solid fa-book fa-lg',
-        },
-      ],
-    },
-    {
-      title: 'Piano Formativo',
-      icon: 'fa-solid fa-graduation-cap fa-xl',
-      links: [
-        {
-          label: 'Piano Formativo',
-          url: 'piano-formativo',
-          icon: 'fa-solid fa-graduation-cap fa-lg',
         },
       ],
     },
