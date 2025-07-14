@@ -1,60 +1,45 @@
-<div class="container-fluid">
-<app-page-title [title]="'Piano Formativo'" [subtitle]="'Gestione delle assegnazioni dei corsi ai dipendenti'"></app-page-title>
+<div class="page-container">
+  <div class="page-header">
+    <app-page-title 
+      [title]="'Piano Formativo'" 
+      [subtitle]="'Gestione delle assegnazioni dei corsi ai dipendenti'"
+      [buttonText]="'Assegna corso'">
+    </app-page-title>
+<!-- 
+    <button class="btn btn-primary" (click)="openAssignModal()" title="Nuova Assegnazione">
+      <i class="fa-solid fa-plus me-2"></i>
+      Assegna Corso
+    </button> -->
+  </div>
+  <div class="page-content" #pageContentInner>
+    <!-- <app-filtri-generici
+      [filtri]="filtri"
+      [valori]="valoriFiltri"
+      (valoriChange)="onFiltriChange($event)">
+    </app-filtri-generici> -->
+  </div>
+</div>
+
   <!-- Loading spinner -->
-  <div *ngIf="isLoading" class="text-center my-4">
+  <!-- <div *ngIf="isLoading" class="text-center my-4">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Caricamento...</span>
     </div>
-  </div>
+  </div> -->
 
   <!-- Content -->
-  <div *ngIf="!isLoading">
     <!-- Pulsante Aggiungi in alto -->
-    <div class="d-flex justify-content-end mb-3">
+    <!-- <div class="d-flex justify-content-end mb-3">
       <button class="btn btn-success" (click)="openAssignModal()" title="Nuova assegnazione">
         <i class="fa-solid fa-plus me-2"></i>
         Assegna Corso
       </button>
-    </div>
+    </div> -->
 
-    <!-- Statistiche -->
-    <div class="stats-row mb-3">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="stat-card bg-primary">
-            <div class="stat-number">{{ filteredAssegnazioni.length }}</div>
-            <div class="stat-label">Assegnazioni Totali</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="stat-card bg-success">
-            <div class="stat-number">
-              {{ completateCount }}
-            </div>
-            <div class="stat-label">Completate</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="stat-card bg-warning">
-            <div class="stat-number">
-              {{ inCorsoCount }}
-            </div>
-            <div class="stat-label">In Corso</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="stat-card bg-info">
-            <div class="stat-number">
-              {{ assegnateCount }}
-            </div>
-            <div class="stat-label">Assegnate</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    
 
     <!-- Filtri -->
-    <div class="filters-container mb-3">
+    <!-- <div class="filters-container mb-3">
       <div class="row">
         <div class="col-md-3">
           <div class="form-group">
@@ -120,10 +105,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Tabella -->
-    <div class="table-container">
+    <!-- <div class="table-container">
       <table class="table table-hover">
         <thead>
           <tr>
@@ -211,18 +196,16 @@
           }
         </tbody>
       </table>
-    </div>
-  </div>
+    </div> -->
 
   <!-- Notification Modal -->
-  <app-notification-modal [isOpen]="notification.isOpen" [title]="notification.title" [message]="notification.message"
+  <!-- <app-notification-modal [isOpen]="notification.isOpen" [title]="notification.title" [message]="notification.message"
     [details]="notification.details" [type]="notification.type" (closed)="closeNotification()">
-  </app-notification-modal>
+  </app-notification-modal> -->
 
   <!-- Confirmation Modal -->
-  <app-confirmation-modal [isOpen]="confirmation.isOpen" [title]="confirmation.title" [message]="confirmation.message"
-    [details]="confirmation.details" [type]="confirmation.type" [isProcessing]="confirmation.isProcessing"
-    confirmText="Conferma" cancelText="Annulla" (confirmed)="onConfirmationConfirmed()"
-    (cancelled)="closeConfirmation()">
-  </app-confirmation-modal>
-</div>
+    <!-- <app-confirmation-modal [isOpen]="confirmation.isOpen" [title]="confirmation.title" [message]="confirmation.message"
+      [details]="confirmation.details" [type]="confirmation.type" [isProcessing]="confirmation.isProcessing"
+      confirmText="Conferma" cancelText="Annulla" (confirmed)="onConfirmationConfirmed()"
+      (cancelled)="closeConfirmation()">
+    </app-confirmation-modal> -->
