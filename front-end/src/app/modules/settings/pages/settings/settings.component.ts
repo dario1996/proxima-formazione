@@ -10,28 +10,32 @@ import { FormPiattaformeComponent } from '../../components/form-piattaforme/form
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { RouterModule } from '@angular/router';
 import { PiattaformeComponent } from "../../components/piattaforme/piattaforme.component";
+import { NavTabsComponent, NavTab } from '../../../../shared/components/nav-tabs/nav-tabs.component';
+import { CorsiComponent } from "../../../corsi/pages/corsi/corsi.component";
+
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, RouterModule, PiattaformeComponent],
+  imports: [CommonModule, PageTitleComponent, RouterModule, PiattaformeComponent, NavTabsComponent, CorsiComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
 })
 export class SettingsComponent implements OnInit {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
-  // title: string = 'Settings';
-  // icon: string = 'fa-solid fa-gears';
   selectedTab = 'piattaforme';
   buttonText: string = '';
-
   piattaforme: IPiattaforma[] = [];
   piattaformeLoaded = false;
-
   closeModalSignal = 0;
-
   pageSize = 10;
   rowHeight = 53;
+  settingsTabs: NavTab[] = [
+    { id: 'piattaforme', label: 'Piattaforme', icon: 'fa fa-desktop', active: true },
+    { id: 'stato_corsi', label: 'Corsi', icon: 'fa fa-flag' },
+    { id: 'sedi', label: 'Sedi', icon: 'fa fa-building' },
+    { id: 'ruoli', label: 'Ruoli Dipendenti', icon: 'fa fa-users-cog' }
+  ];
 
   constructor(
     private piattaformeService: PiattaformeService,
@@ -49,25 +53,26 @@ export class SettingsComponent implements OnInit {
   }
 
   onTabClick(tab: string) {
-    this.selectedTab = tab;
-    switch (tab) {
-      case 'piattaforme':
-        this.buttonText = 'Nuova piattaforma';
-        this.loadPiattaforme();
-        break;
-      case 'stato_corsi':
-        this.buttonText = 'Nuovo stato corso';
-        break;
-      case 'link1':
-        this.buttonText = 'Nuova sede';
-        break;
-      case 'link2':
-        this.buttonText = 'Nuovo ruolo dipendente';
-        break;
-      default:
-        this.buttonText = '';
+      this.selectedTab = tab;
+      this.settingsTabs.forEach(t => t.active = t.id === tab);
+      
+      switch (tab) {
+        case 'piattaforme':
+          this.buttonText = 'Nuova piattaforma';
+          break;
+        case 'stato_corsi':
+          this.buttonText = 'Nuovo stato corso';
+          break;
+        case 'sedi':
+          this.buttonText = 'Nuova sede';
+          break;
+        case 'ruoli':
+          this.buttonText = 'Nuovo ruolo dipendente';
+          break;
+        default:
+          this.buttonText = '';
+      }
     }
-  }
 
   private loadPiattaforme() {
     this.piattaformeService.getListaPiattaforme().subscribe({
@@ -199,4 +204,10 @@ export class SettingsComponent implements OnInit {
     const available = containerHeight - headerHeight - footerHeight;
     this.pageSize = Math.max(1, Math.floor(available / this.rowHeight));
   }
+
+    onTabChange(tab: NavTab) {
+    this.onTabClick(tab.id);
+  }
+
+
 }

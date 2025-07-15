@@ -7,64 +7,38 @@
         </app-page-title>
     </div>
     <div class="page-content">
-        <div class="page-content-inner">
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <button class="nav-link"
-                        [ngClass]="{active: selectedTab === 'piattaforme', 'tab-disabled-look': selectedTab !== 'piattaforme'}"
-                        (click)="onTabClick('piattaforme')">
-                        Piattaforme
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link"
-                        [ngClass]="{active: selectedTab === 'stato_corsi', 'tab-disabled-look': selectedTab !== 'stato_corsi'}"
-                        (click)="onTabClick('stato_corsi')">
-                        Stato corsi
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link"
-                        [ngClass]="{active: selectedTab === 'link1', 'tab-disabled-look': selectedTab !== 'link1'}"
-                        (click)="onTabClick('link1')">
-                        Sedi
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link"
-                        [ngClass]="{active: selectedTab === 'link2', 'tab-disabled-look': selectedTab !== 'link2'}"
-                        (click)="onTabClick('link2')">
-                        Ruoli dipendenti
-                    </button>
-                </li>
-            </ul>
+            <app-nav-tabs 
+                [tabs]="settingsTabs"
+                colorVariant="tabs-blue"
+                size="normal"
+                (tabChange)="onTabChange($event)">
+            </app-nav-tabs>
 
             <div class="tab-content">
                 @if (selectedTab === 'piattaforme') {
-                <!-- <div> -->
                     <app-piattaforme
                         [piattaforme]="piattaforme"
                         [pageSize]="pageSize"
                         (action)="onAction($event)">
                     </app-piattaforme>
-                <!-- </div> -->
                 }
                 @if (selectedTab === 'stato_corsi') {
-                <div>
-                    <p>Contenuto della tab Stato corsi</p>
-                </div>
+                    <!-- <app-corsi
+                        [statoCorsi]="statoCorsi"
+                        [pageSize]="pageSize"
+                        (action)="onAction($event)">
+                    </app-corsi> -->
                 }
-                @if (selectedTab === 'link1') {
+                @if (selectedTab === 'sedi') {
                 <div>
                     <p>Contenuto della tab Sedi</p>
                 </div>
                 }
-                @if (selectedTab === 'link2') {
+                @if (selectedTab === 'ruoli') {
                 <div>
                     <p>Contenuto della tab Ruoli dipendenti</p>
                 </div>
                 }
             </div>
-        </div>
     </div>
 </div>
