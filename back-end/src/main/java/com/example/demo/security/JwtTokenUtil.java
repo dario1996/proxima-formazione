@@ -63,12 +63,19 @@ public class JwtTokenUtil {
         claims.put("authorities", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
-        return doGenerateToken(claims, userDetails.getUsername());
+        claims.put("type", "ACCESS_TOKEN");
+        return doGenerateToken(claims, userDetails.getUsername(), jwtConfig.getExpiration());
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
+    public String generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "REFRESH_TOKEN");
+        return doGenerateToken(claims, userDetails.getUsername(), jwtConfig.getRefreshExpiration());
+    }
+
+    private String doGenerateToken(Map<String, Object> claims, String subject, int expiration) {
         final Date now = new Date();
-        final Date expiryDate = new Date(now.getTime() + jwtConfig.getExpiration() * 1000L);
+        final Date expiryDate = new Date(now.getTime() + expiration * 1000L);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -84,14 +91,58 @@ public class JwtTokenUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public String refreshToken(String token) {
-        final var claims = getAllClaimsFromToken(token);
-        claims.setIssuedAt(new Date());
-        claims.setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpiration() * 1000L));
+    public boolean validateRefreshToken(String token) {
+        try {
+            final var claims = getAllClaimsFromToken(token);
+            final String tokenType = (String) claims.get("type");
+            return "REFRESH_TOKEN".equals(tokenType) && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .compact();
+    public String refreshToken(String refreshToken) {
+        try {
+            if (!validateRefreshToken(refreshToken)) {
+                throw new RuntimeException("Invalid refresh token");
+            }
+
+            final String username = getUsernameFromToken(refreshToken);
+            final var claims = getAllClaimsFromToken(refreshToken);
+            
+            // Create new access token with fresh expiration
+            Map<String, Object> newClaims = new HashMap<>();
+            newClaims.put("authorities", claims.get("authorities"));
+            newClaims.put("type", "ACCESS_TOKEN");
+            
+            return doGenerateToken(newClaims, username, jwtConfig.getExpiration());
+        } catch (Exception e) {
+            log.warning("Token refresh failed: " + e.getMessage());
+            throw new RuntimeException("Token refresh failed", e);
+        }
+    }
+
+    // Activity-based token extension
+    public String extendTokenIfNeeded(String token, UserDetails userDetails) {
+        if (!validateToken(token, userDetails)) {
+            return null;
+        }
+
+        try {
+            final Date expiration = getExpirationDateFromToken(token);
+            final Date now = new Date();
+            final long timeUntilExpiration = expiration.getTime() - now.getTime();
+            
+            // If token expires within 15 minutes, extend it
+            final long fifteenMinutes = 15 * 60 * 1000;
+            if (timeUntilExpiration < fifteenMinutes) {
+                log.info("Extending token for user: " + userDetails.getUsername());
+                return generateToken(userDetails);
+            }
+        } catch (Exception e) {
+            log.warning("Token extension check failed: " + e.getMessage());
+        }
+        
+        return token; // Return original token if no extension needed
     }
 }

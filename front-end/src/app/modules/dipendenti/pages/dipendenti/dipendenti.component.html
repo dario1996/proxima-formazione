@@ -3,17 +3,18 @@
     <app-page-title
       [title]="'Dipendenti'"
       [subtitle]="'Gestione dei dipendenti disponibili'"
-      [buttonText]="'Nuovo dipendente'"
-      (buttonClick)="gestioneAzione({ tipo: 'add', item: null })">
+      [buttons]="buttons"
+      (buttonActionClick)="handleButtonClick($event)">
     </app-page-title>
   </div>
   
   <div class="page-content" #pageContentInner>
-    <app-filtri-generici 
+    <app-advanced-filters 
       [filtri]="filtri" 
       [valori]="valoriFiltri"
-      (valoriChange)="onFiltriChange($event)">
-    </app-filtri-generici>
+      (valoriChange)="onFiltriChange($event)"
+      (filtersApplied)="onFiltersApplied($event)">
+    </app-advanced-filters>
     
     <app-tabella-generica 
       [data]="dipendentiFiltrati"

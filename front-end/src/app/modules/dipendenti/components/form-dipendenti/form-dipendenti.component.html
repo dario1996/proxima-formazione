@@ -82,4 +82,49 @@
       </div>
     </div>
   </div>
+
+  <div class="row mt-3">
+    <div class="col-md-6 form-field">
+      <label for="isms" class="form-label p-0 m-0">ISMS</label>
+      <select id="isms" class="form-control" formControlName="isms"
+        [ngClass]="{ 'is-invalid': submitted && form.controls['isms'].invalid }">
+        <option value="">Seleziona...</option>
+        <option value="Si">Si</option>
+        <option value="No">No</option>
+      </select>
+      <div *ngIf="submitted && form.controls['isms'].invalid" class="invalid-feedback">
+        Il campo ISMS non può superare 10 caratteri.
+      </div>
+    </div>
+    <div class="col-md-6 form-field">
+      <label for="sede" class="form-label p-0 m-0">Sede</label>
+      <input id="sede" type="text" class="form-control" formControlName="sede"
+        placeholder="Inserisci la sede"
+        [ngClass]="{ 'is-invalid': submitted && form.controls['sede'].invalid }" />
+      <div *ngIf="submitted && form.controls['sede'].invalid" class="invalid-feedback">
+        La sede non può superare 100 caratteri.
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-md-6 form-field">
+      <label for="community" class="form-label p-0 m-0">Community</label>
+      <input id="community" type="text" class="form-control" formControlName="community"
+        placeholder="Inserisci la community"
+        [ngClass]="{ 'is-invalid': submitted && form.controls['community'].invalid }" />
+      <div *ngIf="submitted && form.controls['community'].invalid" class="invalid-feedback">
+        La community non può superare 100 caratteri.
+      </div>
+    </div>
+    <div class="col-md-6 form-field">
+      <label for="responsabile" class="form-label p-0 m-0">Responsabile</label>
+      <input id="responsabile" type="text" class="form-control" formControlName="responsabile"
+        placeholder="Inserisci il responsabile"
+        [ngClass]="{ 'is-invalid': submitted && form.controls['responsabile'].invalid }" />
+      <div *ngIf="submitted && form.controls['responsabile'].invalid" class="invalid-feedback">
+        Il responsabile non può superare 200 caratteri.
+      </div>
+    </div>
+  </div>
 </form>

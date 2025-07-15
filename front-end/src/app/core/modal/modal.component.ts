@@ -49,6 +49,18 @@ export class ModalComponent implements OnDestroy {
           this.chiudi();
         });
       }
+      
+      // Handle importCompleted event for ImportDipendentiComponent
+      if (
+        this.config.onConferma &&
+        this.dynamicComponentRef.instance.importCompleted &&
+        this.dynamicComponentRef.instance.importCompleted.subscribe
+      ) {
+        this.dynamicComponentRef.instance.importCompleted.subscribe(() => {
+          this.config?.onConferma?.(null);
+          // Don't close the modal here, let the component handle it
+        });
+      }
     }
   }
 

@@ -63,8 +63,23 @@
             <column name="data_assunzione" type="TIMESTAMP">
                 <constraints nullable="true" />
             </column>
+            <column name="data_cessazione" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
             <column name="codice_dipendente" type="VARCHAR(50)">
                 <constraints nullable="true" unique="true" />
+            </column>
+            <column name="isms" type="VARCHAR(10)">
+                <constraints nullable="true" />
+            </column>
+            <column name="sede" type="VARCHAR(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="community" type="VARCHAR(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="responsabile" type="VARCHAR(200)">
+                <constraints nullable="true" />
             </column>
             <column name="attivo" type="BOOLEAN" defaultValueBoolean="true">
                 <constraints nullable="false" />

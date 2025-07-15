@@ -45,6 +45,22 @@ public class DipendenteCreateRequest {
     @Schema(description = "Ruolo lavorativo", example = "Developer")
     private String ruolo;
 
+    @Size(max = 10, message = "Il campo ISMS non può superare 10 caratteri")
+    @Schema(description = "Indicatore ISMS", example = "Si")
+    private String isms;
+
+    @Size(max = 100, message = "La sede non può superare 100 caratteri")
+    @Schema(description = "Sede di lavoro", example = "Milano")
+    private String sede;
+
+    @Size(max = 100, message = "La community non può superare 100 caratteri")
+    @Schema(description = "Community di appartenenza", example = "Backend")
+    private String community;
+
+    @Size(max = 200, message = "Il responsabile non può superare 200 caratteri")
+    @Schema(description = "Responsabile diretto", example = "Mario Rossi")
+    private String responsabile;
+
     // Costruttori
     public DipendenteCreateRequest() {
     }
@@ -122,5 +138,37 @@ public class DipendenteCreateRequest {
 
     public void setRuolo(String ruolo) {
         this.ruolo = ruolo;
+    }
+
+    public String getIsms() {
+        return isms;
+    }
+
+    public void setIsms(String isms) {
+        this.isms = isms;
+    }
+
+    public String getSede() {
+        return sede;
+    }
+
+    public void setSede(String sede) {
+        this.sede = sede;
+    }
+
+    public String getCommunity() {
+        return community;
+    }
+
+    public void setCommunity(String community) {
+        this.community = community;
+    }
+
+    public String getResponsabile() {
+        return responsabile;
+    }
+
+    public void setResponsabile(String responsabile) {
+        this.responsabile = responsabile;
     }
 }

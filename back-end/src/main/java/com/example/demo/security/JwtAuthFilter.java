@@ -55,6 +55,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtTokenUtil.validateToken(token, userDetails)) {
+                // Check if token should be extended based on activity
+                String extendedToken = jwtTokenUtil.extendTokenIfNeeded(token, userDetails);
+                if (!extendedToken.equals(token)) {
+                    // Add extended token to response header
+                    response.setHeader("X-New-Token", extendedToken);
+                }
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
                         null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -1,0 +1,226 @@
+<div class="import-container">
+  <!-- File Upload Section -->
+  <div class="upload-section" *ngIf="!showPreview">
+    <div class="upload-area" 
+         [class.upload-area-dragover]="false"
+         (click)="fileInput.click()">
+      <div class="upload-content">
+        <i class="fa fa-upload fa-2x text-primary mb-2"></i>
+        <p class="upload-text mb-1">Clicca per selezionare un file Excel</p>
+        <small class="text-muted">Formati supportati: .xlsx, .xls</small>
+      </div>
+    </div>
+    
+    <input #fileInput
+           type="file"
+           class="d-none"
+           accept=".xlsx,.xls"
+           (change)="onFileSelected($event)">
+  </div>
+
+  <!-- Processing Indicator -->
+  <div class="processing-section" *ngIf="isProcessing">
+    <div class="text-center">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Elaborazione in corso...</span>
+      </div>
+      <p>Elaborazione file in corso...</p>
+    </div>
+  </div>
+
+  <!-- Validation Errors -->
+  <div class="alert alert-danger" *ngIf="validationErrors.length > 0">
+    <strong>Errori di validazione:</strong>
+    <ul class="mb-0 mt-2">
+      <li *ngFor="let error of validationErrors">{{ error }}</li>
+    </ul>
+  </div>
+
+  <!-- Preview Section -->
+  <div class="preview-section" *ngIf="showPreview && !isProcessing">
+    <div class="preview-header d-flex justify-content-between align-items-center mb-3">
+      <h6 class="mb-0">Anteprima Dati ({{ previewData.length }} righe)</h6>
+      <button class="btn btn-sm btn-outline-secondary" 
+              (click)="resetImport()">
+        <i class="fa fa-refresh"></i> Carica altro file
+      </button>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <div class="stat-card bg-primary text-white">
+          <div class="stat-value">{{ previewData.length }}</div>
+          <div class="stat-label">Totale righe</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card bg-success text-white">
+          <div class="stat-value">{{ getValidDipendenti().length }}</div>
+          <div class="stat-label">Valide</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card bg-warning text-white">
+          <div class="stat-value">{{ getDuplicateCount() }}</div>
+          <div class="stat-label">Duplicati</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card bg-danger text-white">
+          <div class="stat-value">{{ getErrorCount() }}</div>
+          <div class="stat-label">Con errori</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Options -->
+    <div class="import-options mb-3">
+      <div class="options-header">
+        <span class="options-title">
+          <i class="fa fa-cog text-primary"></i>
+          Opzioni di Importazione
+        </span>
+        <button class="btn btn-sm btn-link" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#importOptions" 
+                aria-expanded="false">
+          <i class="fa fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="collapse" id="importOptions">
+        <div class="options-content">
+          <div class="form-check">
+            <input class="form-check-input" 
+                   type="checkbox" 
+                   id="updateExisting" 
+                   [(ngModel)]="importOptions.updateExisting"
+                   (change)="onImportOptionsChange()">
+            <label class="form-check-label" for="updateExisting">
+              <strong>Aggiorna dipendenti esistenti</strong>
+              <small class="text-muted d-block">
+                Se selezionato, i dipendenti già presenti verranno aggiornati con i nuovi dati. 
+                Altrimenti, i duplicati saranno saltati.
+              </small>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" 
+                   type="checkbox" 
+                   id="skipErrors" 
+                   [(ngModel)]="importOptions.skipErrors"
+                   (change)="onImportOptionsChange()">
+            <label class="form-check-label" for="skipErrors">
+              <strong>Continua in caso di errori</strong>
+              <small class="text-muted d-block">
+                Se selezionato, l'importazione continuerà anche se alcune righe contengono errori.
+              </small>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Preview Table -->
+    <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Riga</th>
+            <th>Nominativo</th>
+            <th>Ruolo</th>
+            <th>Azienda</th>
+            <th>Sede</th>
+            <th>ISMS</th>
+            <th>Community</th>
+            <th>Data Cessazione</th>
+            <th>Responsabile</th>
+            <th>Stato</th>
+            <th>Duplicato</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let dipendente of previewData; let i = index"
+              [class.table-danger]="hasErrors(dipendente)"
+              [class.table-warning]="dipendente.isDuplicate && dipendente.canUpdate && importOptions.updateExisting">
+            <td>{{ i + 1 }}</td>
+            <td>{{ dipendente.nominativo || '-' }}</td>
+            <td>{{ dipendente.ruolo || '-' }}</td>
+            <td>{{ dipendente.azienda || '-' }}</td>
+            <td>{{ dipendente.sede || '-' }}</td>
+            <td>{{ dipendente.isms || '-' }}</td>
+            <td>{{ dipendente.community || '-' }}</td>
+            <td>{{ dipendente.dataCessazione || '-' }}</td>
+            <td>{{ dipendente.responsabile || '-' }}</td>
+            <td>
+              <span class="badge" 
+                    [class.badge-success]="!hasErrors(dipendente)"
+                    [class.badge-warning]="dipendente.isDuplicate && dipendente.canUpdate && importOptions.updateExisting"
+                    [class.badge-danger]="hasErrors(dipendente)">
+                {{ hasErrors(dipendente) ? 'Errore' : 
+                   (dipendente.isDuplicate && dipendente.canUpdate && importOptions.updateExisting ? 'Aggiornamento' : 'Valido') }}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="dipendente.isDuplicate" class="badge"
+                    [class.badge-info]="dipendente.canUpdate"
+                    [class.badge-secondary]="!dipendente.canUpdate">
+                {{ dipendente.canUpdate ? 'Aggiornabile' : 'Identico' }}
+              </span>
+              <span *ngIf="!dipendente.isDuplicate" class="badge badge-light">
+                Nuovo
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Duplicate Warning -->
+    <div class="alert alert-warning" *ngIf="getDuplicateCount() > 0 && !importOptions.updateExisting">
+      <h6 class="alert-heading">
+        <i class="fa fa-exclamation-triangle"></i>
+        Attenzione: Duplicati rilevati
+      </h6>
+      <p class="mb-2">
+        Sono stati rilevati <strong>{{ getDuplicateCount() }}</strong> dipendenti duplicati. 
+        Senza l'opzione "Aggiorna dipendenti esistenti" attivata, questi dipendenti verranno saltati.
+      </p>
+      <p class="mb-0">
+        <small class="text-muted">
+          Attiva l'opzione "Aggiorna dipendenti esistenti" per permettere l'aggiornamento dei dipendenti già presenti.
+        </small>
+      </p>
+    </div>
+
+    <!-- Error Details -->
+    <div class="error-details" *ngIf="hasErrorsInData()">
+      <h6 class="text-danger mb-3">Dettagli Errori</h6>
+      <div class="error-item" *ngFor="let dipendente of previewData; let i = index">
+        <div *ngIf="hasErrors(dipendente)" class="alert alert-danger">
+          <strong>Riga {{ i + 1 }} ({{ dipendente.nominativo || 'N/A' }}):</strong>
+          <ul class="mb-0 mt-1">
+            <li *ngFor="let error of dipendente.errors">{{ error }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Button for Preview Mode -->
+    <div class="d-flex justify-content-end mt-3">
+      <button type="button" 
+              class="btn btn-primary"
+              [disabled]="!showPreview || hasValidationErrors() || isProcessing || getValidDipendenti().length === 0"
+              (click)="importData()">
+        <i class="fa fa-upload"></i> 
+        <span *ngIf="getValidDipendenti().length > 0">
+          Importa {{ getValidDipendenti().length }} dipendenti
+        </span>
+        <span *ngIf="getValidDipendenti().length === 0">
+          Nessun dipendente da importare
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

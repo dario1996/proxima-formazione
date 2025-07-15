@@ -36,6 +36,10 @@ export class FormDipendentiComponent {
             commerciale: this.dati.commerciale || '',
             azienda: this.dati.azienda || '',
             ruolo: this.dati.ruolo || '',
+            isms: this.dati.isms || '',
+            sede: this.dati.sede || '',
+            community: this.dati.community || '',
+            responsabile: this.dati.responsabile || '',
           });
         }
       }
@@ -102,6 +106,11 @@ export class FormDipendentiComponent {
           Validators.maxLength(100),
         ],
       ],
+      // New fields - optional, will be null if not provided
+      isms: [this.dati?.isms || ''],
+      sede: [this.dati?.sede || ''],
+      community: [this.dati?.community || ''],
+      responsabile: [this.dati?.responsabile || ''],
     });
   }
 
