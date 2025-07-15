@@ -81,4 +81,18 @@ export class DipendentiService {
         },
       },
     );
+
+  bulkImport = (dipendenti: any[]) =>
+    this.httpClient.post<any>(
+      `http://${this.server}:${this.port}/api/dipendenti/bulk-import`,
+      {
+        dipendenti: dipendenti,
+        options: {
+          skipErrors: true,
+          updateExisting: false,
+          defaultReparto: 'IT',
+          defaultCommerciale: 'Generale'
+        }
+      },
+    );
 }

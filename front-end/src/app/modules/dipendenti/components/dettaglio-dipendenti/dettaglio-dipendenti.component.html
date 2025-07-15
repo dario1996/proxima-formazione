@@ -1,34 +1,94 @@
-<div class="dettaglio-dipendente-container">
-  <div class="dettaglio-avatar mb-2">
-    <i class="fa fa-user"></i>
+<div class="detail-panel">
+  <div class="detail-header">
+    <div class="detail-avatar">
+      <i class="fa fa-user"></i>
+    </div>
+    <h2 class="detail-title">
+      {{ dati?.nominativo || (dati?.nome + ' ' + dati?.cognome) }}
+    </h2>
   </div>
-  <h3 class="dettaglio-nome mb-3">
-    {{ dati?.nominativo || (dati?.nome + ' ' + dati?.cognome) }}
-  </h3>
-  <div class="dettaglio-info">
-    <div class="dettaglio-field">
-      <span class="dettaglio-label">
-        <i class="fa fa-building text-primary me-1"></i> Azienda:
-      </span>
-      <span class="dettaglio-value">{{ dati?.azienda || '–' }}</span>
-    </div>
-    <div class="dettaglio-field">
-      <span class="dettaglio-label">
-        <i class="fa fa-map-marker-alt text-success me-1"></i> Sede:
-      </span>
-      <span class="dettaglio-value">{{ dati?.sede || '–' }}</span>
-    </div>
-    <div class="dettaglio-field">
-      <span class="dettaglio-label">
-        <i class="fa fa-users text-info me-1"></i> Community:
-      </span>
-      <span class="dettaglio-value">{{ dati?.community || '–' }}</span>
-    </div>
-    <div class="dettaglio-field">
-      <span class="dettaglio-label">
-        <i class="fa fa-briefcase text-secondary me-1"></i> Commerciale:
-      </span>
-      <span class="dettaglio-value">{{ dati?.commerciale || '–' }}</span>
+  
+  <div class="detail-content">
+    <div class="detail-section">
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-envelope"></i>
+          <span>Email</span>
+        </div>
+        <div class="detail-field-value">{{ dati?.email || '–' }}</div>
+      </div>
+      
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-building"></i>
+          <span>Azienda</span>
+        </div>
+        <div class="detail-field-value">{{ dati?.azienda || '–' }}</div>
+      </div>
+      
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-map-marker-alt"></i>
+          <span>Sede</span>
+        </div>
+        <div class="detail-field-value">{{ dati?.sede || '–' }}</div>
+      </div>
+      
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-briefcase"></i>
+          <span>Reparto</span>
+        </div>
+        <div class="detail-field-value">{{ dati?.reparto || '–' }}</div>
+      </div>
+      
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-id-badge"></i>
+          <span>Ruolo</span>
+        </div>
+        <div class="detail-field-value">{{ dati?.ruolo || '–' }}</div>
+      </div>
+      
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-users"></i>
+          <span>Community</span>
+        </div>
+        <div class="detail-field-value">{{ dati?.community || '–' }}</div>
+      </div>
+      
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-shield-alt"></i>
+          <span>ISMS</span>
+        </div>
+        <div class="detail-field-value">
+          <span class="badge" [ngClass]="dati?.isms === 'Si' ? 'badge-success' : 'badge-secondary'">
+            {{ dati?.isms || '–' }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-user-tie"></i>
+          <span>Responsabile</span>
+        </div>
+        <div class="detail-field-value">{{ dati?.responsabile || '–' }}</div>
+      </div>
+      
+      <div class="detail-field">
+        <div class="detail-field-label">
+          <i class="fa fa-toggle-on"></i>
+          <span>Stato</span>
+        </div>
+        <div class="detail-field-value">
+          <span class="badge" [ngClass]="dati?.attivo === 'Attivo' || dati?.attivo === true ? 'badge-success' : 'badge-secondary'">
+            {{ dati?.attivo === true ? 'Attivo' : (dati?.attivo === false ? 'Non attivo' : dati?.attivo) || '–' }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

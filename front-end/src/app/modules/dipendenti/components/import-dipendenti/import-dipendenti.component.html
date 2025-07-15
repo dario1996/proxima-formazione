@@ -1,0 +1,147 @@
+<div class="import-container">
+  <div class="import-header">
+    <h5 class="mb-0">Import Massivo Dipendenti</h5>
+    <p class="text-muted mb-3">Carica un file Excel con i dati dei dipendenti</p>
+  </div>
+
+  <!-- File Upload Section -->
+  <div class="upload-section" *ngIf="!showPreview">
+    <div class="upload-area" 
+         [class.upload-area-dragover]="false"
+         (click)="fileInput.click()">
+      <div class="upload-icon">
+        <i class="fa fa-upload fa-3x text-muted"></i>
+      </div>
+      <p class="upload-text">Clicca per selezionare un file Excel</p>
+      <p class="upload-subtext">Formati supportati: .xlsx, .xls</p>
+    </div>
+    
+    <input #fileInput
+           type="file"
+           class="d-none"
+           accept=".xlsx,.xls"
+           (change)="onFileSelected($event)">
+  </div>
+
+  <!-- Processing Indicator -->
+  <div class="processing-section" *ngIf="isProcessing">
+    <div class="text-center">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Elaborazione in corso...</span>
+      </div>
+      <p>Elaborazione file in corso...</p>
+    </div>
+  </div>
+
+  <!-- Validation Errors -->
+  <div class="alert alert-danger" *ngIf="validationErrors.length > 0">
+    <strong>Errori di validazione:</strong>
+    <ul class="mb-0 mt-2">
+      <li *ngFor="let error of validationErrors">{{ error }}</li>
+    </ul>
+  </div>
+
+  <!-- Preview Section -->
+  <div class="preview-section" *ngIf="showPreview && !isProcessing">
+    <div class="preview-header d-flex justify-content-between align-items-center mb-3">
+      <h6 class="mb-0">Anteprima Dati ({{ previewData.length }} righe)</h6>
+      <button class="btn btn-sm btn-outline-secondary" 
+              (click)="resetImport()">
+        <i class="fa fa-refresh"></i> Carica altro file
+      </button>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <div class="stat-card bg-primary text-white">
+          <div class="stat-value">{{ previewData.length }}</div>
+          <div class="stat-label">Totale righe</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card bg-success text-white">
+          <div class="stat-value">{{ getValidDipendenti().length }}</div>
+          <div class="stat-label">Valide</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card bg-danger text-white">
+          <div class="stat-value">{{ previewData.length - getValidDipendenti().length }}</div>
+          <div class="stat-label">Con errori</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Preview Table -->
+    <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Riga</th>
+            <th>Nominativo</th>
+            <th>Ruolo</th>
+            <th>Azienda</th>
+            <th>Sede</th>
+            <th>ISMS</th>
+            <th>Community</th>
+            <th>Data Cessazione</th>
+            <th>Responsabile</th>
+            <th>Stato</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let dipendente of previewData; let i = index"
+              [class.table-danger]="hasErrors(dipendente)">
+            <td>{{ i + 1 }}</td>
+            <td>{{ dipendente.nominativo || '-' }}</td>
+            <td>{{ dipendente.ruolo || '-' }}</td>
+            <td>{{ dipendente.azienda || '-' }}</td>
+            <td>{{ dipendente.sede || '-' }}</td>
+            <td>{{ dipendente.isms || '-' }}</td>
+            <td>{{ dipendente.community || '-' }}</td>
+            <td>{{ dipendente.dataCessazione || '-' }}</td>
+            <td>{{ dipendente.responsabile || '-' }}</td>
+            <td>
+              <span class="badge" 
+                    [class.badge-success]="!hasErrors(dipendente)"
+                    [class.badge-danger]="hasErrors(dipendente)">
+                {{ hasErrors(dipendente) ? 'Errore' : 'Valido' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Error Details -->
+    <div class="error-details" *ngIf="hasErrorsInData()">
+      <h6 class="text-danger mb-3">Dettagli Errori</h6>
+      <div class="error-item" *ngFor="let dipendente of previewData; let i = index">
+        <div *ngIf="hasErrors(dipendente)" class="alert alert-danger">
+          <strong>Riga {{ i + 1 }} ({{ dipendente.nominativo || 'N/A' }}):</strong>
+          <ul class="mb-0 mt-1">
+            <li *ngFor="let error of dipendente.errors">{{ error }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="modal-footer border-top mt-4 pt-3">
+    <button type="button" 
+            class="btn btn-secondary"
+            (click)="cancelImport()">
+      <i class="fa fa-times"></i> Annulla
+    </button>
+    
+    <button type="button" 
+            class="btn btn-primary"
+            [disabled]="!showPreview || hasValidationErrors() || isProcessing"
+            (click)="importData()">
+      <i class="fa fa-upload"></i> 
+      Importa {{ getValidDipendenti().length }} dipendenti
+    </button>
+  </div>
+</div>

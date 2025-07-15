@@ -5,11 +5,26 @@
             {{ subtitle }}
         </p>
     </div>
-    <button
-        *ngIf="showButton"
-        class="btn btn-sm btn-primary text-center"
-        (click)="buttonClick.emit()">
-        <i class="fas fa-plus btn-icon"></i>
-        {{ buttonText }}
-    </button>
+    <div class="page-actions">
+        <!-- Multiple buttons support -->
+        <div *ngIf="buttons.length > 0" class="buttons-container">
+            <button
+                *ngFor="let button of buttons"
+                class="btn btn-sm"
+                [class]="button.class || 'btn-primary'"
+                (click)="buttonActionClick.emit(button.action || '')">
+                <i *ngIf="button.icon" [class]="button.icon + ' btn-icon'"></i>
+                {{ button.text }}
+            </button>
+        </div>
+        
+        <!-- Single button fallback (backward compatibility) -->
+        <button
+            *ngIf="showButton && buttons.length === 0"
+            class="btn btn-sm btn-primary text-center"
+            (click)="buttonClick.emit()">
+            <i class="fas fa-plus btn-icon"></i>
+            {{ buttonText }}
+        </button>
+    </div>
 </div>

@@ -65,6 +65,10 @@
             <column name="reparto" value="IT" />
             <column name="data_assunzione" valueDate="2023-01-15T00:00:00" />
             <column name="codice_dipendente" value="EMP001" />
+            <column name="isms" value="Si" />
+            <column name="sede" value="Milano" />
+            <column name="community" value="Backend" />
+            <column name="responsabile" value="Mario Bianchi" />
             <column name="attivo" valueBoolean="true" />
             <column name="data_creazione" valueDate="2024-01-01T00:00:00" />
         </insert>
@@ -79,6 +83,10 @@
             <column name="reparto" value="IT" />
             <column name="data_assunzione" valueDate="2022-03-10T00:00:00" />
             <column name="codice_dipendente" value="EMP002" />
+            <column name="isms" value="No" />
+            <column name="sede" value="Roma" />
+            <column name="community" value="Management" />
+            <column name="responsabile" value="Luigi Neri" />
             <column name="attivo" valueBoolean="true" />
             <column name="data_creazione" valueDate="2024-01-01T00:00:00" />
         </insert>

@@ -3,8 +3,8 @@
     <app-page-title
       [title]="'Dipendenti'"
       [subtitle]="'Gestione dei dipendenti disponibili'"
-      [buttonText]="'Nuovo dipendente'"
-      (buttonClick)="gestioneAzione({ tipo: 'add', item: null })">
+      [buttons]="buttons"
+      (buttonActionClick)="handleButtonClick($event)">
     </app-page-title>
   </div>
   

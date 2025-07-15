@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.DipendenteCreateRequest;
+import com.example.demo.dto.DipendenteBulkImportRequest;
+import com.example.demo.dto.DipendenteBulkImportResponse;
 import com.example.demo.entity.Dipendente;
 import com.example.demo.repository.DipendenteRepository;
+import com.example.demo.service.DipendenteBulkImportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,6 +31,9 @@ public class DipendenteController {
 
     @Autowired
     private DipendenteRepository dipendenteRepository;
+
+    @Autowired
+    private DipendenteBulkImportService bulkImportService;
 
     @Operation(summary = "Registra un nuovo dipendente", description = "Crea un nuovo dipendente nel sistema con tutti i dati anagrafici e organizzativi necessari")
     @ApiResponses(value = {
@@ -69,6 +75,10 @@ public class DipendenteController {
         dipendente.setCommerciale(request.getCommerciale());
         dipendente.setAzienda(request.getAzienda());
         dipendente.setRuolo(request.getRuolo());
+        dipendente.setIsms(request.getIsms());
+        dipendente.setSede(request.getSede());
+        dipendente.setCommunity(request.getCommunity());
+        dipendente.setResponsabile(request.getResponsabile());
 
         Dipendente savedDipendente = dipendenteRepository.save(dipendente);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDipendente);
@@ -171,6 +181,10 @@ public class DipendenteController {
         dipendente.setCommerciale(request.getCommerciale());
         dipendente.setAzienda(request.getAzienda());
         dipendente.setRuolo(request.getRuolo());
+        dipendente.setIsms(request.getIsms());
+        dipendente.setSede(request.getSede());
+        dipendente.setCommunity(request.getCommunity());
+        dipendente.setResponsabile(request.getResponsabile());
 
         Dipendente updatedDipendente = dipendenteRepository.save(dipendente);
         return ResponseEntity.ok(updatedDipendente);
@@ -234,5 +248,56 @@ public class DipendenteController {
 
         dipendenteRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Importazione massiva di dipendenti", description = "Importa una lista di dipendenti in una singola operazione con validazione e gestione errori")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Importazione completata", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DipendenteBulkImportResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dati richiesta non validi"),
+            @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    @PostMapping("/bulk-import")
+    public ResponseEntity<DipendenteBulkImportResponse> bulkImport(
+            @Valid @RequestBody @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dati per l'importazione massiva", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DipendenteBulkImportRequest.class), examples = @ExampleObject(name = "Esempio importazione", value = """
+                    {
+                      "dipendenti": [
+                        {
+                          "nominativo": "Mario Rossi",
+                          "ruolo": "Developer",
+                          "azienda": "Proxima S.r.l.",
+                          "sede": "Milano",
+                          "isms": "Si",
+                          "community": "Backend",
+                          "responsabile": "Luigi Bianchi"
+                        },
+                        {
+                          "nominativo": "Anna Verdi",
+                          "ruolo": "Designer",
+                          "azienda": "Proxima S.r.l.",
+                          "sede": "Roma",
+                          "isms": "No",
+                          "community": "Frontend",
+                          "responsabile": "Luigi Bianchi"
+                        }
+                      ],
+                      "options": {
+                        "skipErrors": true,
+                        "updateExisting": false,
+                        "defaultReparto": "IT",
+                        "defaultCommerciale": "Generale"
+                      }
+                    }
+                    """))) DipendenteBulkImportRequest request) {
+
+        try {
+            DipendenteBulkImportResponse response = bulkImportService.bulkImport(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // In caso di errore grave, restituisci una risposta di errore
+            DipendenteBulkImportResponse errorResponse = new DipendenteBulkImportResponse();
+            errorResponse.setTotalProcessed(request.getDipendenti().size());
+            errorResponse.addError(-1, "general", "Errore durante l'importazione: " + e.getMessage(), "");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 }

@@ -39,8 +39,23 @@ public class Dipendente {
     @Column(name = "data_assunzione")
     private LocalDateTime dataAssunzione;
 
+    @Column(name = "data_cessazione")
+    private LocalDateTime dataCessazione;
+
     @Column(name = "codice_dipendente", length = 50, unique = true)
     private String codiceDipendente;
+
+    @Column(name = "isms", length = 10)
+    private String isms;
+
+    @Column(name = "sede", length = 100)
+    private String sede;
+
+    @Column(name = "community", length = 100)
+    private String community;
+
+    @Column(name = "responsabile", length = 200)
+    private String responsabile;
 
     @Column(name = "attivo", nullable = false)
     private Boolean attivo = true;
@@ -157,12 +172,52 @@ public class Dipendente {
         this.dataAssunzione = dataAssunzione;
     }
 
+    public LocalDateTime getDataCessazione() {
+        return dataCessazione;
+    }
+
+    public void setDataCessazione(LocalDateTime dataCessazione) {
+        this.dataCessazione = dataCessazione;
+    }
+
     public String getCodiceDipendente() {
         return codiceDipendente;
     }
 
     public void setCodiceDipendente(String codiceDipendente) {
         this.codiceDipendente = codiceDipendente;
+    }
+
+    public String getIsms() {
+        return isms;
+    }
+
+    public void setIsms(String isms) {
+        this.isms = isms;
+    }
+
+    public String getSede() {
+        return sede;
+    }
+
+    public void setSede(String sede) {
+        this.sede = sede;
+    }
+
+    public String getCommunity() {
+        return community;
+    }
+
+    public void setCommunity(String community) {
+        this.community = community;
+    }
+
+    public String getResponsabile() {
+        return responsabile;
+    }
+
+    public void setResponsabile(String responsabile) {
+        this.responsabile = responsabile;
     }
 
     public Boolean getAttivo() {
