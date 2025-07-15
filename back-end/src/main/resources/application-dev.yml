@@ -37,7 +37,8 @@ sicurezza:
   refresh: /refresh
   header: Authorization
   prefix: Bearer
-  expiration: 600
+  expiration: 3600 # 1 hour instead of 10 minutes
+  refresh-expiration: 86400 # 24 hours for refresh token
   secret: wNoe5AlDAtrrRJtbPQZ6UtdgvYwF2DKYSlNEVcCD/IzToqX9bXpmRzflYBGDViZDJgV3HTPfDGY5ix1U9hJtfA==
 
 # Enhanced Logging for Development

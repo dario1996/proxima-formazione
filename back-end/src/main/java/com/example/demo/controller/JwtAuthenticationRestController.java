@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.JwtTokenRequest;
 import com.example.demo.entity.JwtTokenResponse;
+import com.example.demo.entity.JwtTokensResponse;
 import com.example.demo.exceptions.AuthenticationException;
 import com.example.demo.security.JwtConfig;
 import com.example.demo.security.JwtTokenUtil;
@@ -53,7 +54,7 @@ public class JwtAuthenticationRestController
 	
 	@PostMapping(value = "${sicurezza.uri}")
 	@SneakyThrows
-	public ResponseEntity<JwtTokenResponse> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest) 
+	public ResponseEntity<JwtTokensResponse> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest) 
 	{
 		log.info("Autenticazione e Generazione Token");
 
@@ -62,11 +63,20 @@ public class JwtAuthenticationRestController
 		final UserDetails userDetails = userDetailsService
 				.loadUserByUsername(authenticationRequest.getUsername());
 
-		final String token = jwtTokenUtil.generateToken(userDetails);
+		final String accessToken = jwtTokenUtil.generateToken(userDetails);
+		final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
 		
-		log.warning(String.format("Token %s", token));
+		log.warning(String.format("Access Token %s", accessToken));
+		log.warning(String.format("Refresh Token %s", refreshToken));
 
-		return ResponseEntity.ok(new JwtTokenResponse(token));
+		JwtTokensResponse response = new JwtTokensResponse(
+			accessToken, 
+			refreshToken, 
+			jwtConfig.getExpiration(), 
+			"Bearer"
+		);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("${sicurezza.refresh}")
@@ -74,18 +84,18 @@ public class JwtAuthenticationRestController
 	    final String authHeader = request.getHeader(jwtConfig.getHeader());
 
 	    if (authHeader != null && authHeader.startsWith(jwtConfig.getPrefix() + " ")) {
-	        String token = authHeader.substring(jwtConfig.getPrefix().length() + 1);
+	        String refreshToken = authHeader.substring(jwtConfig.getPrefix().length() + 1);
 
 	        try {
-	            String refreshedToken = jwtTokenUtil.refreshToken(token);
-	            return ResponseEntity.ok(new JwtTokenResponse(refreshedToken));
+	            String newAccessToken = jwtTokenUtil.refreshToken(refreshToken);
+	            return ResponseEntity.ok(new JwtTokenResponse(newAccessToken));
 	        } catch (Exception e) {
 	            log.warning("Refresh token failed: " + e.getMessage());
-	            return ResponseEntity.badRequest().build();
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	        }
 	    }
 
-	    return ResponseEntity.badRequest().build();
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	}
 
 
