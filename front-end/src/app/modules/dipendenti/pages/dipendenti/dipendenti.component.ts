@@ -39,7 +39,7 @@ import { FormDipendentiComponent } from '../../components/form-dipendenti/form-d
 import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipendenti/dettaglio-dipendenti.component';
 import { ImportDipendentiComponent } from '../../components/import-dipendenti/import-dipendenti.component';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
-import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
+import { AdvancedFiltersComponent } from '../../../../shared/components/advanced-filters/advanced-filters.component';
 
 @Component({
   selector: 'app-dipendenti',
@@ -49,7 +49,7 @@ import { FiltriGenericiComponent } from '../../../../shared/components/filtri-ge
     FormsModule,
     ReactiveFormsModule,
     TabellaGenericaComponent,
-    FiltriGenericiComponent,
+    AdvancedFiltersComponent,
     PaginationFooterComponent,
     PageTitleComponent, // AGGIUNTO: Import del PageTitleComponent
   ],
@@ -293,6 +293,11 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
   }
 
   onFiltriChange(valori: { [key: string]: any }) {
+    this.valoriFiltri = valori;
+    // Note: No immediate filter application - filters are applied only when the user clicks "Apply" in the panel
+  }
+
+  onFiltersApplied(valori: { [key: string]: any }) {
     this.valoriFiltri = valori;
     this.applicaFiltri();
   }
