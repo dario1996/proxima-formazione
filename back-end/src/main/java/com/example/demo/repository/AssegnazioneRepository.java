@@ -5,8 +5,10 @@ import com.example.demo.entity.Corso;
 import com.example.demo.entity.Dipendente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +28,7 @@ public interface AssegnazioneRepository extends JpaRepository<Assegnazione, Long
     List<Assegnazione> findByCorsoId(Long corsoId);
 
     // Find assignments by status
-    List<Assegnazione> findByStato(Assegnazione.StatoAssegnazione stato);
+    List<Assegnazione> findByStato(Assegnazione.Stato stato);
 
     // Find specific assignment by employee and course
     Optional<Assegnazione> findByDipendenteAndCorso(Dipendente dipendente, Corso corso);
@@ -34,16 +36,20 @@ public interface AssegnazioneRepository extends JpaRepository<Assegnazione, Long
     // Find specific assignment by employee ID and course ID
     Optional<Assegnazione> findByDipendenteIdAndCorsoId(Long dipendenteId, Long corsoId);
 
-    // Find completed assignments
-    List<Assegnazione> findByStatoAndDataCompletamentoIsNotNull(Assegnazione.StatoAssegnazione stato);
-
-    // Find mandatory assignments
-    List<Assegnazione> findByObbligatorioTrue();
-
-    // Find assignments requiring feedback
-    @Query("SELECT a FROM Assegnazione a WHERE a.corso.feedbackRichiesto = true AND a.feedbackFornito = false AND a.stato = 'COMPLETATO'")
-    List<Assegnazione> findCompletedAssignmentsRequiringFeedback();
-
     // Check if assignment already exists
     boolean existsByDipendenteIdAndCorsoId(Long dipendenteId, Long corsoId);
+
+    // New methods for the new fields
+    List<Assegnazione> findByEsito(Assegnazione.Esito esito);
+    List<Assegnazione> findByModalita(String modalita);
+    List<Assegnazione> findByAttestatoTrue();
+    List<Assegnazione> findByFonteRichiesta(String fonteRichiesta);
+    List<Assegnazione> findByStatoAndEsito(Assegnazione.Stato stato, Assegnazione.Esito esito);
+
+    // Custom queries
+    @Query("SELECT a FROM Assegnazione a WHERE a.dataTerminePrevista < :oggi AND a.stato != 'TERMINATO' AND a.stato != 'INTERROTTO'")
+    List<Assegnazione> findAssegnazioniInRitardo(@Param("oggi") LocalDate oggi);
+
+    @Query("SELECT a FROM Assegnazione a WHERE a.attestato = true AND a.stato = 'TERMINATO'")
+    List<Assegnazione> findAssegnazioniConAttestato();
 }

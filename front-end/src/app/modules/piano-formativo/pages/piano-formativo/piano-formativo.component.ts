@@ -4,32 +4,17 @@ import { CommonModule } from '@angular/common';
 import {
   FormsModule,
   ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
 } from '@angular/forms';
 import { ModalComponent } from '../../../../core/modal/modal.component';
-import { NotificationModalComponent } from '../../../../core/modal/notification-modal.component';
-import { ConfirmationModalComponent } from '../../../../core/modal/confirmation-modal.component';
-
 import {
   IAssegnazione,
-  AssegnazioneStato,
 } from '../../../../shared/models/Assegnazione';
-import { IDipendenti } from '../../../../shared/models/Dipendenti';
-import { ICorsi } from '../../../../shared/models/Corsi';
-
 import { AssegnazioniService } from '../../../../core/services/data/assegnazioni.service';
-import { DipendentiService } from '../../../../core/services/data/dipendenti.service';
-import { CorsiService } from '../../../../core/services/data/corsi.service';
-import { forkJoin } from 'rxjs';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
 import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
-import { DettaglioDipendentiComponent } from '../../../dipendenti/components/dettaglio-dipendenti/dettaglio-dipendenti.component';
-import { DisableConfirmComponent } from '../../../../core/disable-confirm/disable-confirm.component';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
-import { FormDipendentiComponent } from '../../../dipendenti/components/form-dipendenti/form-dipendenti.component';
+// import { FormAssegnazioneComponent } from '../../components/form-assegnazione/form-assegnazione.component';
 import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
 import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/ui/azione-def';
@@ -47,6 +32,7 @@ import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
     TabellaGenericaComponent,
     FiltriGenericiComponent,
     PaginationFooterComponent,
+    // FormAssegnazioneComponent,
   ],
   templateUrl: './piano-formativo.component.html',
   styleUrl: './piano-formativo.component.css',
@@ -66,78 +52,75 @@ export class PianoFormativoComponent implements OnInit {
 
   filtri: IFiltroDef[] = [
     {
-      key: 'nominativo',
+      key: 'dipendente',
       label: 'Dipendente',
       type: 'text',
       placeholder: 'Cerca dipendente...',
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
-      key: 'email',
-      label: 'Email',
+      key: 'corso',
+      label: 'Corso',
       type: 'text',
-      placeholder: 'Cerca email...',
+      placeholder: 'Cerca corso...',
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
-      key: 'ruolo',
-      label: 'Ruolo',
+      key: 'modalita',
+      label: 'Modalità',
       type: 'text',
-      placeholder: 'Cerca ruolo...',
+      placeholder: 'Cerca modalità...',
       colClass: 'col-12 col-md-4 col-lg-2 mb-2',
     },
     {
-      key: 'isms',
-      label: 'ISMS',
-      type: 'select',
-      options: [
-        { value: '', label: 'Tutti' },
-        { value: 'Si', label: 'Si' },
-        { value: 'No', label: 'No' },
-      ],
-      colClass: 'col-6 col-md-3 col-lg-2 mb-2',
-    },
-    {
-      key: 'attivo',
+      key: 'stato',
       label: 'Stato',
       type: 'select',
       options: [
         { value: '', label: 'Tutti' },
-        { value: 'Attivo', label: 'Attivo' },
-        { value: 'Non attivo', label: 'Non attivo' },
+        { value: 'INIZIATO', label: 'Iniziato' },
+        { value: 'IN_CORSO', label: 'In corso' },
+        { value: 'TERMINATO', label: 'Terminato' },
+        { value: 'INTERROTTO', label: 'Interrotto' },
+      ],
+      colClass: 'col-6 col-md-3 col-lg-2 mb-2',
+    },
+    {
+      key: 'attestato',
+      label: 'Attestato',
+      type: 'select',
+      options: [
+        { value: '', label: 'Tutti' },
+        { value: 'Sì', label: 'Sì' },
+        { value: 'No', label: 'No' },
       ],
       colClass: 'col-6 col-md-3 col-lg-2 mb-2',
     },
   ];
   valoriFiltri: { [key: string]: any } = {};
 
-  dipendenti: IDipendenti[] = [];
-  formazioneDipendentiFiltrato: IDipendenti[] = [];
+  assegnazioni: IAssegnazione[] = [];
+  assegnazioniFiltrate: IAssegnazione[] = [];
 
   columns: IColumnDef[] = [
-    { key: 'nominativo', label: 'Nominativo', sortable: true, type: 'text' },
-    {
-      key: 'email',
-      label: 'Email',
-      sortable: true,
-      type: 'text',
-    },
-    {
-      key: 'ruolo',
-      label: 'Ruolo',
-      sortable: true,
-      type: 'text',
-    },
-    { key: 'isms', label: 'ISMS', sortable: true, type: 'text' },
-    {
-      key: 'attivo',
-      label: 'Stato',
-      sortable: true,
-      type: 'badge',
-    },
+    { key: 'dipendente', label: 'Dipendente', sortable: true, type: 'text' },
+    { key: 'corso', label: 'Corso', sortable: true, type: 'text' },
+    { key: 'dataAssegnazione', label: 'Data Assegnazione', sortable: true, type: 'date' },
+    { key: 'modalita', label: 'Modalità', sortable: true, type: 'text' },
+    { key: 'stato', label: 'Stato', sortable: true, type: 'badge' },
+    { key: 'dataTerminePrevista', label: 'Data Termine Prevista', sortable: true, type: 'date' },
+    { key: 'dataInizio', label: 'Data Inizio', sortable: true, type: 'date' },
+    { key: 'dataFine', label: 'Data Fine', sortable: true, type: 'date' },
+    { key: 'attestato', label: 'Attestato', sortable: true, type: 'badge' }
   ];
 
   azioni: IAzioneDef[] = [
+    {
+      label: 'Assegna Corso',
+      icon: 'fa fa-plus-circle',
+      action: AzioneType.Add,
+      color: AzioneColor.Primary,
+    },
     {
       label: 'Modifica',
       icon: 'fa fa-pen',
@@ -150,15 +133,8 @@ export class PianoFormativoComponent implements OnInit {
       action: AzioneType.Delete,
       color: AzioneColor.Danger,
     },
-    {
-      label: 'Disattiva',
-      icon: 'fa fa-user-slash',
-      action: AzioneType.Disable,
-      color: AzioneColor.Warning,
-    },
   ];
 
-  // CORRETTO: Dati per il footer di paginazione come in Corsi
   paginationInfo = {
     currentPage: 1,
     totalPages: 1,
@@ -166,45 +142,45 @@ export class PianoFormativoComponent implements OnInit {
     displayedItems: 0,
     totalItems: 0,
     pageSize: 20,
-    entityName: 'dipendenti'
+    entityName: 'assegnazioni'
   };
 
   constructor(
-    private dipendentiService: DipendentiService,
+    private assegnazioniService: AssegnazioniService,
     private modaleService: ModaleService,
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
   ) {}
 
   ngAfterViewInit() {
-    // CORRETTO: Rimosso updatePageSize come in Corsi
     this.cd.detectChanges();
   }
 
   ngOnInit(): void {
-    this.loadDipendenti();
+    this.loadAssegnazioni();
   }
 
-  // RIMOSSO: updatePageSize() method come in Corsi
-
-  private loadDipendenti() {
-    this.dipendentiService.getListaDipendenti().subscribe({
-      next: data => {
-        this.dipendenti = data.map((d: any) => ({
-          ...d,
-          nominativo: `${d.nome} ${d.cognome}`.trim(),
-          attivo: d.attivo ? 'Attivo' : 'Non attivo',
-        }));
-        this.applicaFiltri();
-        this.cd.detectChanges();
-        // AGGIUNTO: Aggiorna totalItems come in Corsi
-        this.paginationInfo.totalItems = this.dipendenti.length;
-      },
-      error: error => {
-        this.toastr.error('Errore nel caricamento dei dipendenti');
-      },
-    });
-  }
+private loadAssegnazioni() {
+  this.assegnazioniService.getAllAssegnazioni().subscribe({
+    next: data => {
+      // this.assegnazioni = data.map(assegnazione => ({
+      //   ...assegnazione,
+      //   dipendente: `${assegnazione.dipendente?.nome} ${assegnazione.dipendente?.cognome}`.trim(),
+      //   corso: assegnazione.corso?.nome || 'N/A',
+      //   attestato: assegnazione.attestato ? 'Sì' : 'No'
+      // }));
+      this.assegnazioniFiltrate = [...this.assegnazioni];
+      
+      // Aggiorna le informazioni di paginazione
+      this.paginationInfo.totalItems = this.assegnazioni.length;
+      this.paginationInfo.displayedItems = this.assegnazioni.length;
+      this.paginationInfo.totalPages = Math.ceil(this.assegnazioni.length / this.paginationInfo.pageSize);
+    },
+    error: () => {
+      this.toastr.error('Errore nel caricamento delle assegnazioni');
+    },
+  });
+}
 
   onFiltriChange(valori: { [key: string]: any }) {
     this.valoriFiltri = valori;
@@ -212,148 +188,116 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   applicaFiltri() {
-    this.formazioneDipendentiFiltrato = this.dipendenti.filter(d => {
-      const nominativo = `${d.nome} ${d.cognome}`.trim().toLowerCase();
-
+    this.assegnazioniFiltrate = this.assegnazioni.filter(assegnazione => {
+      // if (
+      //   this.valoriFiltri['dipendente'] &&
+      //   !assegnazione.dipendente.toLowerCase().includes(this.valoriFiltri['dipendente'].toLowerCase())
+      // ) {
+      //   return false;
+      // }
+      // if (
+      //   this.valoriFiltri['corso'] &&
+      //   !assegnazione.corso.toLowerCase().includes(this.valoriFiltri['corso'].toLowerCase())
+      // ) {
+      //   return false;
+      // }
       if (
-        this.valoriFiltri['nominativo'] &&
-        !nominativo.includes(this.valoriFiltri['nominativo'].toLowerCase())
+        this.valoriFiltri['modalita'] &&
+        !assegnazione.modalita?.toLowerCase().includes(this.valoriFiltri['modalita'].toLowerCase())
       ) {
         return false;
       }
-      if (
-        this.valoriFiltri['email'] &&
-        !d.email.toLowerCase().includes(this.valoriFiltri['email'].toLowerCase())
-      ) {
+      if (this.valoriFiltri['stato'] && assegnazione.stato !== this.valoriFiltri['stato']) {
         return false;
       }
-      if (
-        this.valoriFiltri['ruolo'] &&
-        !d.ruolo.toLowerCase().includes(this.valoriFiltri['ruolo'].toLowerCase())
-      ) {
-        return false;
-      }
-      if (this.valoriFiltri['attivo'] && d.attivo !== this.valoriFiltri['attivo']) {
+      if (this.valoriFiltri['attestato'] && assegnazione.attestato !== this.valoriFiltri['attestato']) {
         return false;
       }
       return true;
     });
   }
 
-  deleteDipendente(id: number) {
-    this.dipendentiService.permanentDeleteDipendente(id).subscribe({
+  addAssegnazione(assegnazioneData: any) {
+    this.assegnazioniService.assignCorsoToDipendente(
+      assegnazioneData.dipendenteId,
+      assegnazioneData.corsoId,
+      assegnazioneData.obbligatorio || false
+    ).subscribe({
       next: () => {
-        this.loadDipendenti();
-        this.toastr.success('Dipendente eliminato con successo');
-      },
-      error: error => {
-        this.toastr.error("Errore durante l'eliminazione del dipendente");
-      },
-    });
-  }
-
-  toggleDipendenteStatus(id: number) {
-    this.dipendentiService.toggleDipendenteStatus(id).subscribe({
-      next: () => {
-        this.loadDipendenti();
-        this.toastr.success('Stato del dipendente aggiornato con successo');
-      },
-      error: error => {
-        this.toastr.error(
-          "Errore durante l'aggiornamento dello stato del dipendente",
-        );
-      },
-    });
-  }
-
-  updateDipendente(id: number, dipendenteData: any) {
-    this.dipendentiService.updDipendente(id, dipendenteData).subscribe({
-      next: () => {
-        this.loadDipendenti();
-        this.toastr.success('Dipendente modificato con successo');
+        this.loadAssegnazioni();
+        this.toastr.success('Corso assegnato con successo');
         this.modaleService.chiudi();
       },
       error: () => {
-        this.toastr.error('Errore durante la modifica del dipendente');
+        this.toastr.error("Errore durante l'assegnazione del corso");
       },
     });
   }
 
-  addDipendente(dipendenteData: any) {
-    this.dipendentiService.insDipendente(dipendenteData).subscribe({
+  updateAssegnazione(id: number, assegnazioneData: any) {
+    this.assegnazioniService.updateAssegnazione(id, assegnazioneData).subscribe({
       next: () => {
-        this.loadDipendenti();
-        this.toastr.success('Dipendente aggiunto con successo');
+        this.loadAssegnazioni();
+        this.toastr.success('Assegnazione modificata con successo');
         this.modaleService.chiudi();
       },
       error: () => {
-        this.toastr.error("Errore durante l'aggiunta del dipendente");
+        this.toastr.error('Errore durante la modifica dell\'assegnazione');
+      },
+    });
+  }
+
+  deleteAssegnazione(id: number) {
+    this.assegnazioniService.deleteAssegnazione(id).subscribe({
+      next: () => {
+        this.loadAssegnazioni();
+        this.toastr.success('Assegnazione eliminata con successo');
+      },
+      error: () => {
+        this.toastr.error("Errore durante l'eliminazione dell'assegnazione");
       },
     });
   }
 
   gestioneAzione(e: { tipo: string; item: any }) {
     switch (e.tipo) {
-      case 'add':
-        this.modaleService.apri({
-          titolo: 'Aggiungi dipendente',
-          componente: FormDipendentiComponent,
-          dati: {},
-          onConferma: (formValue: any) => this.addDipendente(formValue),
-        });
-        break;
-      case 'edit':
-        this.modaleService.apri({
-          titolo: 'Modifica dipendente',
-          componente: FormDipendentiComponent,
-          dati: e.item,
-          onConferma: (formValue: any) =>
-            this.updateDipendente(e.item.id, formValue),
-        });
-        break;
-      case 'delete':
-        this.modaleService.apri({
-          titolo: 'Conferma eliminazione',
-          componente: DeleteConfirmComponent,
-          dati: {
-            messaggio:
-              'Vuoi davvero eliminare il dipendente "' +
-              e.item.nome +
-              ' ' +
-              e.item.cognome +
-              '"?',
-          },
-          onConferma: () => this.deleteDipendente(e.item.id),
-        });
-        break;
-      case 'disable':
-        this.modaleService.apri({
-          titolo: 'Conferma disattivazione',
-          componente: DisableConfirmComponent,
-          dati: {
-            messaggio:
-              'Vuoi davvero disattivare il dipendente "' +
-              e.item.nome +
-              ' ' +
-              e.item.cognome +
-              '"?',
-          },
-          onConferma: () => this.toggleDipendenteStatus(e.item.id),
-        });
-        break;
-      case 'view':
-        this.modaleService.apri({
-          titolo: 'Dettagli dipendente',
-          componente: DettaglioDipendentiComponent,
-          dati: e.item,
-        });
-        break;
+      // case 'add':
+      //   this.modaleService.apri({
+      //     titolo: 'Assegna Corso',
+      //     componente: FormAssegnazioneComponent,
+      //     dati: {},
+      //     onConferma: (formValue: any) => this.addAssegnazione(formValue),
+      //   });
+      //   break;
+      // case 'edit':
+      //   this.modaleService.apri({
+      //     titolo: 'Modifica Assegnazione',
+      //     componente: ,
+      //     dati: e.item,
+      //     onConferma: (formValue: any) =>
+      //       this.updateAssegnazione(e.item.id, formValue),
+      //   });
+      //   break;
+      // case 'delete':
+      //   this.modaleService.apri({
+      //     titolo: 'Conferma eliminazione',
+      //     componente: DeleteConfirmComponent,
+      //     dati: {
+      //       messaggio:
+      //         'Vuoi davvero eliminare l\'assegnazione del corso "' +
+      //         e.item.corso +
+      //         '" per "' +
+      //         e.item.dipendente +
+      //         '"?',
+      //     },
+      //     onConferma: () => this.deleteAssegnazione(e.item.id),
+      //   });
+      //   break;
       default:
         console.error('Azione non supportata:', e.tipo);
     }
   }
 
-  // CORRETTI: Metodi per la paginazione come in Corsi
   aggiornaPaginazione(paginationData: any) {
     this.paginationInfo = { ...paginationData };
   }

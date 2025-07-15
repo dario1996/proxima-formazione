@@ -17,7 +17,7 @@ import { CorsiComponent } from "../../../corsi/pages/corsi/corsi.component";
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, RouterModule, PiattaformeComponent, NavTabsComponent, CorsiComponent],
+  imports: [CommonModule, PageTitleComponent, RouterModule, PiattaformeComponent, NavTabsComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
 })

@@ -71,14 +71,8 @@ export class AssegnazioniService {
         updateData.percentualeCompletamento.toString();
     if (updateData.oreCompletate !== undefined)
       params.oreCompletate = updateData.oreCompletate.toString();
-    if (updateData.valutazione !== undefined)
-      params.valutazione = updateData.valutazione.toString();
-    if (updateData.noteFeedback !== undefined)
-      params.noteFeedback = updateData.noteFeedback;
-    if (updateData.competenzeAcquisite !== undefined)
-      params.competenzeAcquisite = updateData.competenzeAcquisite;
-    if (updateData.certificatoOttenuto !== undefined)
-      params.certificatoOttenuto = updateData.certificatoOttenuto.toString();
+    if (updateData.attestato !== undefined)
+      params.attestato = updateData.attestato.toString();
 
     return this.httpClient.put<IAssegnazione>(
       `http://${this.server}:${this.port}/api/assegnazioni/${assegnazioneId}`,

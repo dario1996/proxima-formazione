@@ -1,0 +1,92 @@
+<!-- <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="row">
+    <div class="col-md-6 form-field">
+      <label for="dipendenteId" class="form-label p-0 m-0">Dipendente</label>
+      <select id="dipendenteId" class="form-control" formControlName="dipendenteId"
+        [ngClass]="{ 'is-invalid': submitted && form.controls['dipendenteId'].invalid }">
+        <option value="">Seleziona dipendente</option>
+        <option *ngFor="let dipendente of dipendenti" [value]="dipendente.id">
+          {{dipendente.nome}} {{dipendente.cognome}}
+        </option>
+      </select>
+      <div *ngIf="submitted && form.controls['dipendenteId'].invalid" class="invalid-feedback">
+        Il dipendente è obbligatorio.
+      </div>
+    </div>
+    <div class="col-md-6 form-field">
+      <label for="corsoId" class="form-label p-0 m-0">Corso</label>
+      <select id="corsoId" class="form-control" formControlName="corsoId"
+        [ngClass]="{ 'is-invalid': submitted && form.controls['corsoId'].invalid }">
+        <option value="">Seleziona corso</option>
+        <option *ngFor="let corso of corsi" [value]="corso.id">
+          {{corso.nome}}
+        </option>
+      </select>
+      <div *ngIf="submitted && form.controls['corsoId'].invalid" class="invalid-feedback">
+        Il corso è obbligatorio.
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-md-6 form-field">
+      <label for="modalita" class="form-label p-0 m-0">Modalità</label>
+      <select id="modalita" class="form-control" formControlName="modalita"
+        [ngClass]="{ 'is-invalid': submitted && form.controls['modalita'].invalid }">
+        <option value="">Seleziona modalità</option>
+        <option *ngFor="let modalita of modalitaOptions" [value]="modalita">
+          {{modalita}}
+        </option>
+      </select>
+      <div *ngIf="submitted && form.controls['modalita'].invalid" class="invalid-feedback">
+        La modalità è obbligatoria.
+      </div>
+    </div>
+    <div class="col-md-6 form-field">
+      <label for="stato" class="form-label p-0 m-0">Stato</label>
+      <select id="stato" class="form-control" formControlName="stato"
+        [ngClass]="{ 'is-invalid': submitted && form.controls['stato'].invalid }">
+        <option *ngFor="let stato of statoOptions" [value]="stato">
+          {{stato}}
+        </option>
+      </select>
+      <div *ngIf="submitted && form.controls['stato'].invalid" class="invalid-feedback">
+        Lo stato è obbligatorio.
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-md-6 form-field">
+      <label for="dataTerminePrevista" class="form-label p-0 m-0">Data Termine Prevista</label>
+      <input id="dataTerminePrevista" type="date" class="form-control" formControlName="dataTerminePrevista" />
+    </div>
+    <div class="col-md-6 form-field">
+      <label for="dataInizio" class="form-label p-0 m-0">Data Inizio</label>
+      <input id="dataInizio" type="date" class="form-control" formControlName="dataInizio" />
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-md-6 form-field">
+      <label for="dataFine" class="form-label p-0 m-0">Data Fine</label>
+      <input id="dataFine" type="date" class="form-control" formControlName="dataFine" />
+    </div>
+    <div class="col-md-6 form-field">
+      <div class="form-check mt-4">
+        <input class="form-check-input" type="checkbox" id="attestato" formControlName="attestato">
+        <label class="form-check-label" for="attestato">
+          Attestato ottenuto
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-12 form-field">
+      <label for="fonteRichiesta" class="form-label p-0 m-0">Fonte Richiesta</label>
+      <textarea id="fonteRichiesta" class="form-control" formControlName="fonteRichiesta" 
+        rows="3" placeholder="Inserisci la fonte della richiesta"></textarea>
+    </div>
+  </div>
+</form> -->

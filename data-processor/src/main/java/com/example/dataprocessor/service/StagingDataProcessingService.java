@@ -282,38 +282,19 @@ public class StagingDataProcessingService {
 
             // If 100% complete, mark as completed
             if (record.getPercentageComplete().compareTo(BigDecimal.valueOf(100)) >= 0) {
-                assegnazione.setStato(Assegnazione.StatoAssegnazione.COMPLETATO);
+                assegnazione.setStato(Assegnazione.Stato.TERMINATO);
                 if (record.getCompletionDate() != null) {
-                    assegnazione.setDataCompletamento(record.getCompletionDate());
+                    assegnazione.setDataFine(record.getCompletionDate());
                 }
             } else if (record.getPercentageComplete().compareTo(BigDecimal.ZERO) > 0) {
-                assegnazione.setStato(Assegnazione.StatoAssegnazione.IN_CORSO);
+                assegnazione.setStato(Assegnazione.Stato.IN_CORSO);
             }
-        }
-
-        // Set hours completed from time viewed
-        if (record.getTimeViewedSeconds() != null && record.getTimeViewedSeconds() > 0) {
-            BigDecimal hours = BigDecimal.valueOf(record.getTimeViewedSeconds())
-                    .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_UP);
-            assegnazione.setOreCompletate(hours);
-        }
-
-        // Set rating if available
-        if (record.getRating() != null) {
-            assegnazione.setValutazione(record.getRating());
-            assegnazione.setFeedbackFornito(true);
-        }
-
-        // Set skills as acquired competencies
-        if (record.getSkills() != null && !record.getSkills().trim().isEmpty()) {
-            assegnazione.setCompetenzeAcquisite(record.getSkills());
         }
 
         // Mark as completed if completion date is set
         if (record.getCompletionDate() != null) {
-            assegnazione.setDataCompletamento(record.getCompletionDate());
-            assegnazione.setStato(Assegnazione.StatoAssegnazione.COMPLETATO);
-            assegnazione.setCertificatoOttenuto(true);
+            assegnazione.setDataFine(record.getCompletionDate());
+            assegnazione.setStato(Assegnazione.Stato.TERMINATO);
         }
 
         assegnazioneRepository.save(assegnazione);

@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +39,7 @@ public class AssegnazioneController {
     private CorsoRepository corsoRepository;
 
     @Operation(summary = "Assegna un corso a un dipendente", description = "Crea una nuova assegnazione collegando un dipendente specifico a un corso specifico. "
-            +
-            "Lo stato iniziale sarà ASSEGNATO e la data di assegnazione sarà quella corrente.")
+            + "Lo stato iniziale sarà INIZIATO e la data di assegnazione sarà quella corrente.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Assegnazione creata con successo", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Assegnazione.class))),
             @ApiResponse(responseCode = "404", description = "Dipendente o corso non trovato"),
@@ -49,7 +49,9 @@ public class AssegnazioneController {
     public ResponseEntity<?> assignCorsoToDipendente(
             @Parameter(description = "ID del dipendente a cui assegnare il corso", required = true) @PathVariable Long dipendenteId,
             @Parameter(description = "ID del corso da assegnare", required = true) @PathVariable Long corsoId,
-            @Parameter(description = "Se il corso è obbligatorio per il dipendente") @RequestParam(required = false, defaultValue = "false") boolean obbligatorio) {
+            @Parameter(description = "Modalità di fruizione del corso") @RequestParam(required = false) String modalita,
+            @Parameter(description = "Data termine prevista (YYYY-MM-DD)") @RequestParam(required = false) String dataTerminePrevista,
+            @Parameter(description = "Fonte della richiesta") @RequestParam(required = false) String fonteRichiesta) {
 
         // Verifica esistenza dipendente
         Optional<Dipendente> dipendente = dipendenteRepository.findById(dipendenteId);
@@ -75,9 +77,27 @@ public class AssegnazioneController {
         Assegnazione assegnazione = new Assegnazione();
         assegnazione.setDipendente(dipendente.get());
         assegnazione.setCorso(corso.get());
-        assegnazione.setStato(Assegnazione.StatoAssegnazione.ASSEGNATO);
+        assegnazione.setStato(Assegnazione.Stato.INIZIATO); // Default dal DB
+        assegnazione.setEsito(Assegnazione.Esito.IN_CORSO); // Default dal DB
         assegnazione.setDataAssegnazione(LocalDate.now());
-        assegnazione.setObbligatorio(obbligatorio);
+        assegnazione.setDataCreazione(LocalDateTime.now());
+        
+        // Parametri opzionali
+        if (modalita != null) {
+            assegnazione.setModalita(modalita);
+        }
+        
+        if (dataTerminePrevista != null) {
+            try {
+                assegnazione.setDataTerminePrevista(LocalDate.parse(dataTerminePrevista));
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Formato data non valido. Usare YYYY-MM-DD");
+            }
+        }
+        
+        if (fonteRichiesta != null) {
+            assegnazione.setFonteRichiesta(fonteRichiesta);
+        }
 
         Assegnazione savedAssegnazione = assegnazioneRepository.save(assegnazione);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedAssegnazione);
@@ -133,7 +153,7 @@ public class AssegnazioneController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Aggiorna lo stato di un'assegnazione", description = "Modifica lo stato di progresso di un'assegnazione (es. da ASSEGNATO a IN_CORSO a COMPLETATO)")
+    @Operation(summary = "Aggiorna lo stato di un'assegnazione", description = "Modifica lo stato di progresso di un'assegnazione")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Assegnazione aggiornata con successo"),
             @ApiResponse(responseCode = "404", description = "Assegnazione non trovata"),
@@ -142,8 +162,8 @@ public class AssegnazioneController {
     @PutMapping("/assegnazioni/{assegnazioneId}/stato")
     public ResponseEntity<?> updateAssegnazioneStato(
             @Parameter(description = "ID dell'assegnazione", required = true) @PathVariable Long assegnazioneId,
-            @Parameter(description = "Nuovo stato dell'assegnazione", schema = @Schema(allowableValues = { "ASSEGNATO",
-                    "IN_CORSO", "COMPLETATO", "NON_INIZIATO", "SOSPESO", "ANNULLATO" })) @RequestParam String stato) {
+            @Parameter(description = "Nuovo stato dell'assegnazione", schema = @Schema(allowableValues = { 
+                "INIZIATO", "IN_CORSO", "COMPLETATO", "NON_INIZIATO", "SOSPESO", "ANNULLATO" })) @RequestParam String stato) {
 
         Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
         if (!optionalAssegnazione.isPresent()) {
@@ -151,20 +171,25 @@ public class AssegnazioneController {
         }
 
         try {
-            Assegnazione.StatoAssegnazione nuovoStato = Assegnazione.StatoAssegnazione.valueOf(stato.toUpperCase());
+            Assegnazione.Stato nuovoStato = Assegnazione.Stato.valueOf(stato.toUpperCase());
             Assegnazione assegnazione = optionalAssegnazione.get();
             assegnazione.setStato(nuovoStato);
 
-            // Se completato, imposta data completamento
-            if (nuovoStato == Assegnazione.StatoAssegnazione.COMPLETATO) {
-                assegnazione.setDataCompletamento(LocalDate.now());
-                assegnazione.setPercentualeCompletamento(new java.math.BigDecimal("100.00"));
+            // Se completato, imposta data fine
+            if (nuovoStato == Assegnazione.Stato.TERMINATO) {
+                assegnazione.setDataFine(LocalDate.now());
+                assegnazione.setEsito(Assegnazione.Esito.SUPERATO);
             }
 
-            // Se iniziato, imposta data inizio
-            if (nuovoStato == Assegnazione.StatoAssegnazione.IN_CORSO && assegnazione.getDataInizio() == null) {
+            // Se iniziato o in corso, imposta data inizio se non presente
+            if ((nuovoStato == Assegnazione.Stato.IN_CORSO || 
+                 nuovoStato == Assegnazione.Stato.INIZIATO) && 
+                 assegnazione.getDataInizio() == null) {
                 assegnazione.setDataInizio(LocalDate.now());
             }
+
+            // Aggiorna timestamp modifica
+            assegnazione.setDataModifica(LocalDateTime.now());
 
             Assegnazione updatedAssegnazione = assegnazioneRepository.save(assegnazione);
             return ResponseEntity.ok(updatedAssegnazione);
@@ -172,43 +197,98 @@ public class AssegnazioneController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body("Stato non valido: " + stato
-                            + ". Stati validi: ASSEGNATO, IN_CORSO, COMPLETATO, NON_INIZIATO, SOSPESO, ANNULLATO");
+                            + ". Stati validi: INIZIATO, IN_CORSO, COMPLETATO, NON_INIZIATO, SOSPESO, ANNULLATO");
         }
     }
 
-    @Operation(summary = "Recupera tutte le assegnazioni", description = "Restituisce l'elenco completo delle assegnazioni con possibilità di filtro per stato")
+    @Operation(summary = "Aggiorna l'esito di un'assegnazione", description = "Modifica l'esito di un'assegnazione")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Assegnazione aggiornata con successo"),
+            @ApiResponse(responseCode = "404", description = "Assegnazione non trovata"),
+            @ApiResponse(responseCode = "400", description = "Esito non valido")
+    })
+    @PutMapping("/assegnazioni/{assegnazioneId}/esito")
+    public ResponseEntity<?> updateAssegnazioneEsito(
+            @Parameter(description = "ID dell'assegnazione", required = true) @PathVariable Long assegnazioneId,
+            @Parameter(description = "Nuovo esito dell'assegnazione", schema = @Schema(allowableValues = { 
+                "IN_CORSO", "SUPERATO", "NON_SUPERATO", "ABBANDONATO", "RIMANDATO" })) @RequestParam String esito) {
+
+        Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
+        if (!optionalAssegnazione.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Assegnazione.Esito nuovoEsito = Assegnazione.Esito.valueOf(esito.toUpperCase());
+            Assegnazione assegnazione = optionalAssegnazione.get();
+            assegnazione.setEsito(nuovoEsito);
+
+            // Se superato, marca come completato e imposta data fine
+            if (nuovoEsito == Assegnazione.Esito.SUPERATO) {
+                assegnazione.setStato(Assegnazione.Stato.TERMINATO);
+                assegnazione.setDataFine(LocalDate.now());
+                assegnazione.setAttestato(true);
+            }
+
+            // Se abbandonato o non superato, marca come annullato
+            if (nuovoEsito == Assegnazione.Esito.ABBANDONATO || 
+                nuovoEsito == Assegnazione.Esito.NON_SUPERATO) {
+                assegnazione.setStato(Assegnazione.Stato.TERMINATO);
+                assegnazione.setDataFine(LocalDate.now());
+            }
+
+            // Aggiorna timestamp modifica
+            assegnazione.setDataModifica(LocalDateTime.now());
+
+            Assegnazione updatedAssegnazione = assegnazioneRepository.save(assegnazione);
+            return ResponseEntity.ok(updatedAssegnazione);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body("Esito non valido: " + esito
+                            + ". Esiti validi: IN_CORSO, SUPERATO, NON_SUPERATO, ABBANDONATO, RIMANDATO");
+        }
+    }
+
+    @Operation(summary = "Recupera tutte le assegnazioni", description = "Restituisce l'elenco completo delle assegnazioni con possibilità di filtro")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista assegnazioni recuperata con successo")
     })
     @GetMapping("/assegnazioni")
-    public ResponseEntity<List<Assegnazione>> getAllAssegnazioni(
-            @Parameter(description = "Filtra per stato assegnazione", schema = @Schema(allowableValues = { "ASSEGNATO",
-                    "IN_CORSO", "COMPLETATO", "NON_INIZIATO", "SOSPESO",
-                    "ANNULLATO" })) @RequestParam(required = false) String stato,
-            @Parameter(description = "Mostra solo assegnazioni obbligatorie") @RequestParam(required = false, defaultValue = "false") boolean soloObbligatorie,
-            @Parameter(description = "Mostra solo assegnazioni che richiedono feedback") @RequestParam(required = false, defaultValue = "false") boolean richiedeFeedback) {
+    public ResponseEntity<?> getAllAssegnazioni(
+            @Parameter(description = "Filtra per stato assegnazione") @RequestParam(required = false) String stato,
+            @Parameter(description = "Filtra per esito assegnazione") @RequestParam(required = false) String esito,
+            @Parameter(description = "Filtra per modalità") @RequestParam(required = false) String modalita,
+            @Parameter(description = "Mostra solo con attestato") @RequestParam(required = false, defaultValue = "false") boolean conAttestato,
+            @Parameter(description = "Filtra per fonte richiesta") @RequestParam(required = false) String fonteRichiesta) {
 
         List<Assegnazione> assegnazioni;
 
-        if (stato != null) {
-            try {
-                Assegnazione.StatoAssegnazione statoEnum = Assegnazione.StatoAssegnazione.valueOf(stato.toUpperCase());
+        try {
+            if (stato != null) {
+                Assegnazione.Stato statoEnum = Assegnazione.Stato.valueOf(stato.toUpperCase());
                 assegnazioni = assegnazioneRepository.findByStato(statoEnum);
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().build();
+            } else if (esito != null) {
+                Assegnazione.Esito esitoEnum = Assegnazione.Esito.valueOf(esito.toUpperCase());
+                assegnazioni = assegnazioneRepository.findByEsito(esitoEnum);
+            } else if (modalita != null) {
+                assegnazioni = assegnazioneRepository.findByModalita(modalita);
+            } else if (conAttestato) {
+                assegnazioni = assegnazioneRepository.findByAttestatoTrue();
+            } else if (fonteRichiesta != null) {
+                assegnazioni = assegnazioneRepository.findByFonteRichiesta(fonteRichiesta);
+            } else {
+                assegnazioni = assegnazioneRepository.findAll();
             }
-        } else if (soloObbligatorie) {
-            assegnazioni = assegnazioneRepository.findByObbligatorioTrue();
-        } else if (richiedeFeedback) {
-            assegnazioni = assegnazioneRepository.findCompletedAssignmentsRequiringFeedback();
-        } else {
-            assegnazioni = assegnazioneRepository.findAll();
-        }
 
-        return ResponseEntity.ok(assegnazioni);
+            return ResponseEntity.ok(assegnazioni);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Parametro non valido: " + e.getMessage());
+        }
     }
 
-    @Operation(summary = "Aggiorna un'assegnazione completa", description = "Aggiorna tutti i dettagli di un'assegnazione inclusi stato, percentuale, ore, valutazione e feedback")
+    @Operation(summary = "Aggiorna un'assegnazione completa", description = "Aggiorna tutti i dettagli di un'assegnazione")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Assegnazione aggiornata con successo"),
             @ApiResponse(responseCode = "404", description = "Assegnazione non trovata"),
@@ -218,12 +298,13 @@ public class AssegnazioneController {
     public ResponseEntity<?> updateAssegnazione(
             @Parameter(description = "ID dell'assegnazione", required = true) @PathVariable Long assegnazioneId,
             @Parameter(description = "Nuovo stato") @RequestParam(required = false) String stato,
-            @Parameter(description = "Percentuale completamento (0-100)") @RequestParam(required = false) Integer percentualeCompletamento,
-            @Parameter(description = "Ore completate") @RequestParam(required = false) Double oreCompletate,
-            @Parameter(description = "Valutazione (1-5)") @RequestParam(required = false) Integer valutazione,
-            @Parameter(description = "Note feedback") @RequestParam(required = false) String noteFeedback,
-            @Parameter(description = "Competenze acquisite") @RequestParam(required = false) String competenzeAcquisite,
-            @Parameter(description = "Certificato ottenuto") @RequestParam(required = false) Boolean certificatoOttenuto) {
+            @Parameter(description = "Nuovo esito") @RequestParam(required = false) String esito,
+            @Parameter(description = "Modalità") @RequestParam(required = false) String modalita,
+            @Parameter(description = "Data termine prevista (YYYY-MM-DD)") @RequestParam(required = false) String dataTerminePrevista,
+            @Parameter(description = "Data inizio (YYYY-MM-DD)") @RequestParam(required = false) String dataInizio,
+            @Parameter(description = "Data fine (YYYY-MM-DD)") @RequestParam(required = false) String dataFine,
+            @Parameter(description = "Attestato ottenuto") @RequestParam(required = false) Boolean attestato,
+            @Parameter(description = "Fonte richiesta") @RequestParam(required = false) String fonteRichiesta) {
 
         Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
         if (!optionalAssegnazione.isPresent()) {
@@ -235,73 +316,54 @@ public class AssegnazioneController {
         try {
             // Aggiorna stato se fornito
             if (stato != null) {
-                Assegnazione.StatoAssegnazione nuovoStato = Assegnazione.StatoAssegnazione.valueOf(stato.toUpperCase());
+                Assegnazione.Stato nuovoStato = Assegnazione.Stato.valueOf(stato.toUpperCase());
                 assegnazione.setStato(nuovoStato);
-
-                // Se completato, imposta data completamento
-                if (nuovoStato == Assegnazione.StatoAssegnazione.COMPLETATO) {
-                    assegnazione.setDataCompletamento(LocalDate.now());
-                    // Se non è stata fornita una percentuale specifica, imposta 100%
-                    if (percentualeCompletamento == null) {
-                        assegnazione.setPercentualeCompletamento(new java.math.BigDecimal("100.00"));
-                    }
-                }
-
-                // Se iniziato, imposta data inizio
-                if (nuovoStato == Assegnazione.StatoAssegnazione.IN_CORSO && assegnazione.getDataInizio() == null) {
-                    assegnazione.setDataInizio(LocalDate.now());
-                }
             }
 
-            // Aggiorna percentuale se fornita
-            if (percentualeCompletamento != null) {
-                if (percentualeCompletamento < 0 || percentualeCompletamento > 100) {
-                    return ResponseEntity.badRequest().body("Percentuale completamento deve essere tra 0 e 100");
-                }
-                assegnazione.setPercentualeCompletamento(new java.math.BigDecimal(percentualeCompletamento));
+            // Aggiorna esito se fornito
+            if (esito != null) {
+                Assegnazione.Esito nuovoEsito = Assegnazione.Esito.valueOf(esito.toUpperCase());
+                assegnazione.setEsito(nuovoEsito);
             }
 
-            // Aggiorna ore completate se fornite
-            if (oreCompletate != null) {
-                if (oreCompletate < 0) {
-                    return ResponseEntity.badRequest().body("Ore completate non possono essere negative");
-                }
-                assegnazione.setOreCompletate(new java.math.BigDecimal(oreCompletate));
+            // Aggiorna modalità se fornita
+            if (modalita != null) {
+                assegnazione.setModalita(modalita);
             }
 
-            // Aggiorna valutazione se fornita
-            if (valutazione != null) {
-                if (valutazione < 1 || valutazione > 5) {
-                    return ResponseEntity.badRequest().body("Valutazione deve essere tra 1 e 5");
-                }
-                assegnazione.setValutazione(new java.math.BigDecimal(valutazione));
+            // Aggiorna date se fornite
+            if (dataTerminePrevista != null) {
+                assegnazione.setDataTerminePrevista(LocalDate.parse(dataTerminePrevista));
             }
 
-            // Aggiorna note feedback se fornite
-            if (noteFeedback != null) {
-                assegnazione.setNoteFeedback(noteFeedback);
+            if (dataInizio != null) {
+                assegnazione.setDataInizio(LocalDate.parse(dataInizio));
             }
 
-            // Aggiorna competenze acquisite se fornite
-            if (competenzeAcquisite != null) {
-                assegnazione.setCompetenzeAcquisite(competenzeAcquisite);
+            if (dataFine != null) {
+                assegnazione.setDataFine(LocalDate.parse(dataFine));
             }
 
-            // Aggiorna certificato ottenuto se fornito
-            if (certificatoOttenuto != null) {
-                assegnazione.setCertificatoOttenuto(certificatoOttenuto);
-
-                // Se ha ottenuto il certificato, segna che ha fornito feedback
-                if (certificatoOttenuto) {
-                    assegnazione.setFeedbackFornito(true);
-                }
+            // Aggiorna attestato se fornito
+            if (attestato != null) {
+                assegnazione.setAttestato(attestato);
             }
+
+            // Aggiorna fonte richiesta se fornita
+            if (fonteRichiesta != null) {
+                assegnazione.setFonteRichiesta(fonteRichiesta);
+            }
+
+            // Aggiorna timestamp modifica
+            assegnazione.setDataModifica(LocalDateTime.now());
 
             Assegnazione updatedAssegnazione = assegnazioneRepository.save(assegnazione);
             return ResponseEntity.ok(updatedAssegnazione);
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Stato non valido: " + stato);
+            return ResponseEntity.badRequest().body("Parametro non valido: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Formato data non valido. Usare YYYY-MM-DD");
         }
     }
 
@@ -320,5 +382,22 @@ public class AssegnazioneController {
 
         assegnazioneRepository.deleteById(assegnazioneId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Recupera assegnazioni in ritardo", description = "Restituisce le assegnazioni con data termine prevista scaduta")
+    @GetMapping("/assegnazioni/ritardo")
+    public ResponseEntity<List<Assegnazione>> getAssegnazioniInRitardo() {
+        List<Assegnazione> assegnazioni = assegnazioneRepository.findAssegnazioniInRitardo(LocalDate.now());
+        return ResponseEntity.ok(assegnazioni);
+    }
+
+    @Operation(summary = "Recupera assegnazioni completate", description = "Restituisce le assegnazioni completate con successo")
+    @GetMapping("/assegnazioni/completate")
+    public ResponseEntity<List<Assegnazione>> getAssegnazioniCompletate() {
+        List<Assegnazione> assegnazioni = assegnazioneRepository.findByStatoAndEsito(
+            Assegnazione.Stato.TERMINATO, 
+            Assegnazione.Esito.SUPERATO
+        );
+        return ResponseEntity.ok(assegnazioni);
     }
 }

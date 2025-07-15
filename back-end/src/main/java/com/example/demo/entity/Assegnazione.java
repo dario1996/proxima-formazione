@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,39 +31,34 @@ public class Assegnazione {
     @Column(name = "data_assegnazione", nullable = false)
     private LocalDate dataAssegnazione;
 
-    @Column(name = "data_inizio")
-    private LocalDate dataInizio;
+    @Column(name = "modalita", length = 20)
+    private String modalita;
 
-    @Column(name = "data_completamento")
-    private LocalDate dataCompletamento;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stato", nullable = false, length = 20)
+    private Stato stato = Stato.INIZIATO;
 
     @Column(name = "percentuale_completamento", precision = 5, scale = 2)
     private BigDecimal percentualeCompletamento = BigDecimal.ZERO;
 
-    @Column(name = "ore_completate", precision = 5, scale = 2)
-    private BigDecimal oreCompletate = BigDecimal.ZERO;
+    @Column(name = "data_termine_prevista")
+    private LocalDate dataTerminePrevista;
+
+    @Column(name = "data_inizio")
+    private LocalDate dataInizio;
+
+    @Column(name = "data_fine")
+    private LocalDate dataFine;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private StatoAssegnazione stato = StatoAssegnazione.ASSEGNATO;
+    @Column(name = "esito", length = 20)
+    private Esito esito = Esito.IN_CORSO;
 
-    @Column(name = "obbligatorio", nullable = false)
-    private Boolean obbligatorio = false;
+    @Column(name = "attestato", nullable = false)
+    private Boolean attestato = false;
 
-    @Column(name = "feedback_fornito")
-    private Boolean feedbackFornito = false;
-
-    @Column(name = "valutazione", precision = 3, scale = 1)
-    private BigDecimal valutazione; // Da 1.0 a 5.0
-
-    @Column(name = "note_feedback", length = 1000)
-    private String noteFeedback;
-
-    @Column(name = "competenze_acquisite", length = 500)
-    private String competenzeAcquisite;
-
-    @Column(name = "certificato_ottenuto")
-    private Boolean certificatoOttenuto = false;
+    @Column(name = "fonte_richiesta", length = 30)
+    private String fonteRichiesta;
 
     @Column(name = "data_creazione", nullable = false)
     private LocalDateTime dataCreazione;
@@ -70,14 +66,21 @@ public class Assegnazione {
     @Column(name = "data_modifica")
     private LocalDateTime dataModifica;
 
-    // Enum per stato assegnazione
-    public enum StatoAssegnazione {
-        ASSEGNATO,
+    // Enum per stato assegnazione (basato sui valori XML)
+    public enum Stato {
+        INIZIATO,
+        TERMINATO,
         IN_CORSO,
-        COMPLETATO,
-        NON_INIZIATO,
-        SOSPESO,
-        ANNULLATO
+        INTERROTTO
+    }
+
+    // Enum per esito assegnazione
+    public enum Esito {
+        IN_CORSO,
+        SUPERATO,
+        NON_SUPERATO,
+        ABBANDONATO,
+        RIMANDATO
     }
 
     // Costruttori
@@ -100,13 +103,17 @@ public class Assegnazione {
 
     // Metodi helper
     public boolean isCompletato() {
-        return stato == StatoAssegnazione.COMPLETATO;
+        return stato == Stato.TERMINATO;
     }
 
     public boolean isInRitardo() {
-        return corso.getDataScadenza() != null &&
-                LocalDate.now().isAfter(corso.getDataScadenza()) &&
+        return dataTerminePrevista != null &&
+                LocalDate.now().isAfter(dataTerminePrevista) &&
                 !isCompletato();
+    }
+
+    public boolean haAttestato() {
+        return attestato != null && attestato;
     }
 
     // Getters e Setters
@@ -142,6 +149,30 @@ public class Assegnazione {
         this.dataAssegnazione = dataAssegnazione;
     }
 
+    public String getModalita() {
+        return modalita;
+    }
+
+    public void setModalita(String modalita) {
+        this.modalita = modalita;
+    }
+
+    public Stato getStato() {
+        return stato;
+    }
+
+    public void setStato(Stato stato) {
+        this.stato = stato;
+    }
+
+    public LocalDate getDataTerminePrevista() {
+        return dataTerminePrevista;
+    }
+
+    public void setDataTerminePrevista(LocalDate dataTerminePrevista) {
+        this.dataTerminePrevista = dataTerminePrevista;
+    }
+
     public LocalDate getDataInizio() {
         return dataInizio;
     }
@@ -150,84 +181,36 @@ public class Assegnazione {
         this.dataInizio = dataInizio;
     }
 
-    public LocalDate getDataCompletamento() {
-        return dataCompletamento;
+    public LocalDate getDataFine() {
+        return dataFine;
     }
 
-    public void setDataCompletamento(LocalDate dataCompletamento) {
-        this.dataCompletamento = dataCompletamento;
+    public void setDataFine(LocalDate dataFine) {
+        this.dataFine = dataFine;
     }
 
-    public BigDecimal getPercentualeCompletamento() {
-        return percentualeCompletamento;
+    public Esito getEsito() {
+        return esito;
     }
 
-    public void setPercentualeCompletamento(BigDecimal percentualeCompletamento) {
-        this.percentualeCompletamento = percentualeCompletamento;
+    public void setEsito(Esito esito) {
+        this.esito = esito;
     }
 
-    public BigDecimal getOreCompletate() {
-        return oreCompletate;
+    public Boolean getAttestato() {
+        return attestato;
     }
 
-    public void setOreCompletate(BigDecimal oreCompletate) {
-        this.oreCompletate = oreCompletate;
+    public void setAttestato(Boolean attestato) {
+        this.attestato = attestato;
     }
 
-    public StatoAssegnazione getStato() {
-        return stato;
+    public String getFonteRichiesta() {
+        return fonteRichiesta;
     }
 
-    public void setStato(StatoAssegnazione stato) {
-        this.stato = stato;
-    }
-
-    public Boolean getObbligatorio() {
-        return obbligatorio;
-    }
-
-    public void setObbligatorio(Boolean obbligatorio) {
-        this.obbligatorio = obbligatorio;
-    }
-
-    public Boolean getFeedbackFornito() {
-        return feedbackFornito;
-    }
-
-    public void setFeedbackFornito(Boolean feedbackFornito) {
-        this.feedbackFornito = feedbackFornito;
-    }
-
-    public BigDecimal getValutazione() {
-        return valutazione;
-    }
-
-    public void setValutazione(BigDecimal valutazione) {
-        this.valutazione = valutazione;
-    }
-
-    public String getNoteFeedback() {
-        return noteFeedback;
-    }
-
-    public void setNoteFeedback(String noteFeedback) {
-        this.noteFeedback = noteFeedback;
-    }
-
-    public String getCompetenzeAcquisite() {
-        return competenzeAcquisite;
-    }
-
-    public void setCompetenzeAcquisite(String competenzeAcquisite) {
-        this.competenzeAcquisite = competenzeAcquisite;
-    }
-
-    public Boolean getCertificatoOttenuto() {
-        return certificatoOttenuto;
-    }
-
-    public void setCertificatoOttenuto(Boolean certificatoOttenuto) {
-        this.certificatoOttenuto = certificatoOttenuto;
+    public void setFonteRichiesta(String fonteRichiesta) {
+        this.fonteRichiesta = fonteRichiesta;
     }
 
     public LocalDateTime getDataCreazione() {
@@ -244,5 +227,25 @@ public class Assegnazione {
 
     public void setDataModifica(LocalDateTime dataModifica) {
         this.dataModifica = dataModifica;
+    }
+
+    @Override
+    public String toString() {
+        return "Assegnazione{" +
+                "id=" + id +
+                ", dataAssegnazione=" + dataAssegnazione +
+                ", stato=" + stato +
+                ", esito=" + esito +
+                ", modalita='" + modalita + '\'' +
+                ", attestato=" + attestato +
+                '}';
+    }
+
+    public BigDecimal getPercentualeCompletamento() {
+        return percentualeCompletamento;
+    }
+
+    public void setPercentualeCompletamento(BigDecimal percentualeCompletamento) {
+        this.percentualeCompletamento = percentualeCompletamento;
     }
 }

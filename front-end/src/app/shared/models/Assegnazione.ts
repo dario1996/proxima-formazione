@@ -3,20 +3,18 @@ import { ICorsi } from './Corsi';
 
 export interface IAssegnazione {
   id: number;
-  dipendente: IDipendenti;
   corso: ICorsi;
+  dipendente: IDipendenti;
   dataAssegnazione: string;
+  modalita: string;
+  stato: string
+  dataTerminePrevista: string;
   dataInizio: string;
-  dataCompletamento: string;
+  dataFine: string;
+  statoCorso: string;
   percentualeCompletamento: number;
-  oreCompletate: number;
-  stato: AssegnazioneStato;
-  obbligatorio: boolean;
-  feedbackFornito: boolean;
-  valutazione: number;
-  noteFeedback: string;
-  competenzeAcquisite: string;
-  certificatoOttenuto: boolean;
+  attestato: boolean;
+  fonteRichiesta: string;
   dataCreazione: string;
   dataModifica: string;
 }
@@ -38,11 +36,7 @@ export interface AssegnazioneCreateRequest {
 
 export interface AssegnazioneUpdateRequest {
   stato?: AssegnazioneStato;
-  percentualeCompletamento?: number;
+  percentualeCompletamento: number;
   oreCompletate?: number;
-  feedbackFornito?: boolean;
-  valutazione?: number;
-  noteFeedback?: string;
-  competenzeAcquisite?: string;
-  certificatoOttenuto?: boolean;
+  attestato?: boolean;
 }

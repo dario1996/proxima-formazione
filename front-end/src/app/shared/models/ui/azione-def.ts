@@ -7,6 +7,7 @@ export enum AzioneColor {
 }
 
 export enum AzioneType {
+  Add = 'add',
   Edit = 'edit',
   Delete = 'delete',
   Disable = 'disable',
