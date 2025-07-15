@@ -9,11 +9,12 @@
   </div>
   
   <div class="page-content" #pageContentInner>
-    <app-filtri-generici 
+    <app-advanced-filters 
       [filtri]="filtri" 
       [valori]="valoriFiltri"
-      (valoriChange)="onFiltriChange($event)">
-    </app-filtri-generici>
+      (valoriChange)="onFiltriChange($event)"
+      (filtersApplied)="onFiltersApplied($event)">
+    </app-advanced-filters>
     
     <app-tabella-generica 
       [data]="dipendentiFiltrati"
