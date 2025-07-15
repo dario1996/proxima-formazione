@@ -82,17 +82,23 @@ export class DipendentiService {
       },
     );
 
-  bulkImport = (dipendenti: any[]) =>
+  bulkImport = (dipendenti: any[], options?: any) =>
     this.httpClient.post<any>(
       `http://${this.server}:${this.port}/api/dipendenti/bulk-import`,
       {
         dipendenti: dipendenti,
         options: {
-          skipErrors: true,
-          updateExisting: false,
-          defaultReparto: 'IT',
-          defaultCommerciale: 'Generale'
+          skipErrors: options?.skipErrors ?? true,
+          updateExisting: options?.updateExisting ?? false,
+          defaultReparto: options?.defaultReparto ?? 'IT',
+          defaultCommerciale: options?.defaultCommerciale ?? 'Generale'
         }
       },
+    );
+
+  checkDuplicates = (dipendenti: any[]) =>
+    this.httpClient.post<any>(
+      `http://${this.server}:${this.port}/api/dipendenti/check-duplicates`,
+      { dipendenti: dipendenti },
     );
 }

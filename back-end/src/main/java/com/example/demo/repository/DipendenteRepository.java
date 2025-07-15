@@ -34,6 +34,11 @@ public interface DipendenteRepository extends JpaRepository<Dipendente, Long> {
             "LOWER(d.email) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Dipendente> searchByNameSurnameOrEmail(@Param("searchTerm") String searchTerm);
 
+    // Find by nome and cognome (case insensitive)
+    @Query("SELECT d FROM Dipendente d WHERE " +
+            "LOWER(d.nome) = LOWER(:nome) AND LOWER(d.cognome) = LOWER(:cognome)")
+    List<Dipendente> findByNomeAndCognomeIgnoreCase(@Param("nome") String nome, @Param("cognome") String cognome);
+
     // Check if codice dipendente exists
     boolean existsByCodiceDipendente(String codiceDipendente);
 

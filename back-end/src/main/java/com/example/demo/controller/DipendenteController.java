@@ -300,4 +300,31 @@ public class DipendenteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
+    @Operation(summary = "Controlla duplicati", description = "Verifica se ci sono duplicati nella lista di dipendenti da importare")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Controllo completato", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Dati richiesta non validi"),
+            @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    @PostMapping("/check-duplicates")
+    public ResponseEntity<?> checkDuplicates(
+            @RequestBody @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Lista dipendenti da verificare") 
+            java.util.Map<String, Object> request) {
+
+        try {
+            @SuppressWarnings("unchecked")
+            List<Object> dipendenti = (List<Object>) request.get("dipendenti");
+            
+            List<java.util.Map<String, Object>> duplicateInfo = bulkImportService.checkDuplicates(dipendenti);
+            
+            return ResponseEntity.ok(java.util.Map.of(
+                "duplicates", duplicateInfo,
+                "totalChecked", dipendenti.size()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(java.util.Map.of("error", "Errore durante il controllo duplicati: " + e.getMessage()));
+        }
+    }
 }

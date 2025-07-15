@@ -328,10 +328,13 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
       
       // Filter by ISMS
       if (this.valoriFiltri['isms']) {
-        if (this.valoriFiltri['isms'] === 'Si' && d.isms !== 'Si') {
+        const ismsValue = d.isms ? d.isms.trim() : null;
+        const filterValue = this.valoriFiltri['isms'];
+        
+        if (filterValue === 'Si' && ismsValue !== 'Si') {
           return false;
         }
-        if (this.valoriFiltri['isms'] === 'No' && d.isms !== 'No') {
+        if (filterValue === 'No' && ismsValue !== 'No') {
           return false;
         }
       }

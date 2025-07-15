@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -92,10 +93,29 @@ public class DipendenteBulkImportService {
         String nome = nameParts[0];
         String cognome = nameParts[1];
 
+        // Controllo duplicati per nome e cognome
+        List<Dipendente> existingByName = dipendenteRepository.findByNomeAndCognomeIgnoreCase(nome, cognome);
+        if (!existingByName.isEmpty()) {
+            if (options.isUpdateExisting()) {
+                // Se ci sono più dipendenti con lo stesso nome, prendi il primo
+                Dipendente existingDipendente = existingByName.get(0);
+                updateExistingDipendente(existingDipendente, item, rowIndex, options, response);
+                
+                // Log se ci sono più dipendenti con lo stesso nome
+                if (existingByName.size() > 1) {
+                    logger.warn("Trovati {} dipendenti con nome '{}' e cognome '{}'. Aggiornato il primo (ID: {})", 
+                              existingByName.size(), nome, cognome, existingDipendente.getId());
+                }
+            } else {
+                response.addError(rowIndex, "nominativo", "Dipendente già esistente con nome e cognome identici", item.getNominativo());
+            }
+            return;
+        }
+
         // Generazione email automatica se non presente
         String email = generateEmail(nome, cognome);
 
-        // Controllo duplicati
+        // Controllo duplicati per email (come ulteriore sicurezza)
         Optional<Dipendente> existingByEmail = dipendenteRepository.findByEmail(email);
         if (existingByEmail.isPresent()) {
             if (options.isUpdateExisting()) {
@@ -352,5 +372,120 @@ public class DipendenteBulkImportService {
         // If all formatters fail, log the error
         logger.warn("Unable to parse date string: {}", cleanDateString);
         return null;
+    }
+
+    /**
+     * Checks for duplicates in the provided list of dipendenti without importing them
+     * Returns information about which dipendenti are duplicates and whether they can be updated
+     */
+    public List<java.util.Map<String, Object>> checkDuplicates(List<Object> dipendenti) {
+        List<java.util.Map<String, Object>> duplicateInfo = new java.util.ArrayList<>();
+        
+        for (int i = 0; i < dipendenti.size(); i++) {
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> item = (java.util.Map<String, Object>) dipendenti.get(i);
+            
+            String nominativo = (String) item.get("nominativo");
+            if (nominativo == null || nominativo.trim().isEmpty()) {
+                continue;
+            }
+            
+            // Extract name and surname
+            String[] nameParts = extractNameAndSurname(nominativo);
+            if (nameParts == null) {
+                continue;
+            }
+            
+            String nome = nameParts[0];
+            String cognome = nameParts[1];
+            
+            // Check for duplicates by name and surname
+            List<Dipendente> existingByName = dipendenteRepository.findByNomeAndCognomeIgnoreCase(nome, cognome);
+            
+            java.util.Map<String, Object> duplicateCheck = new java.util.HashMap<>();
+            duplicateCheck.put("index", i);
+            duplicateCheck.put("nominativo", nominativo);
+            duplicateCheck.put("isDuplicate", !existingByName.isEmpty());
+            
+            if (!existingByName.isEmpty()) {
+                // Check if this duplicate can be updated (has different data)
+                Dipendente existing = existingByName.get(0);
+                boolean canUpdate = canUpdateDipendente(existing, item);
+                
+                duplicateCheck.put("canUpdate", canUpdate);
+                duplicateCheck.put("existingId", existing.getId());
+                duplicateCheck.put("existingData", java.util.Map.of(
+                    "nome", existing.getNome(),
+                    "cognome", existing.getCognome(),
+                    "email", existing.getEmail(),
+                    "ruolo", existing.getRuolo() != null ? existing.getRuolo() : "",
+                    "azienda", existing.getAzienda() != null ? existing.getAzienda() : "",
+                    "sede", existing.getSede() != null ? existing.getSede() : "",
+                    "community", existing.getCommunity() != null ? existing.getCommunity() : "",
+                    "isms", existing.getIsms() != null ? existing.getIsms() : "",
+                    "responsabile", existing.getResponsabile() != null ? existing.getResponsabile() : ""
+                ));
+            } else {
+                duplicateCheck.put("canUpdate", false);
+            }
+            
+            duplicateInfo.add(duplicateCheck);
+        }
+        
+        return duplicateInfo;
+    }
+    
+    /**
+     * Checks if a dipendente can be updated with new data
+     */
+    private boolean canUpdateDipendente(Dipendente existing, java.util.Map<String, Object> newData) {
+        // Check if any field is different and can be updated
+        String newRuolo = (String) newData.get("ruolo");
+        String newAzienda = (String) newData.get("azienda");
+        String newSede = (String) newData.get("sede");
+        String newCommunity = (String) newData.get("community");
+        String newIsms = (String) newData.get("isms");
+        String newResponsabile = (String) newData.get("responsabile");
+        String newDataCessazione = (String) newData.get("dataCessazione");
+        
+        // Check if any field has different value
+        if (newRuolo != null && !newRuolo.trim().isEmpty() && 
+            !newRuolo.trim().equals(existing.getRuolo())) {
+            return true;
+        }
+        
+        if (newAzienda != null && !newAzienda.trim().isEmpty() && 
+            !newAzienda.trim().equals(existing.getAzienda())) {
+            return true;
+        }
+        
+        if (newSede != null && !newSede.trim().isEmpty() && 
+            !newSede.trim().equals(existing.getSede() != null ? existing.getSede() : "")) {
+            return true;
+        }
+        
+        if (newCommunity != null && !newCommunity.trim().isEmpty() && 
+            !newCommunity.trim().equals(existing.getCommunity() != null ? existing.getCommunity() : "")) {
+            return true;
+        }
+        
+        if (newIsms != null && !newIsms.trim().isEmpty() && 
+            !newIsms.trim().equals(existing.getIsms() != null ? existing.getIsms() : "")) {
+            return true;
+        }
+        
+        if (newResponsabile != null && !newResponsabile.trim().isEmpty() && 
+            !newResponsabile.trim().equals(existing.getResponsabile() != null ? existing.getResponsabile() : "")) {
+            return true;
+        }
+        
+        if (newDataCessazione != null && !newDataCessazione.trim().isEmpty()) {
+            LocalDateTime newDate = parseDate(newDataCessazione);
+            if (newDate != null && !newDate.equals(existing.getDataCessazione())) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

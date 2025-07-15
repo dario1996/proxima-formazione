@@ -23,6 +23,10 @@ interface DipendentiImportData {
   community?: string;
   responsabile?: string;
   errors?: string[];
+  isDuplicate?: boolean;
+  canUpdate?: boolean;
+  existingId?: number;
+  existingData?: any;
 }
 
 @Component({
@@ -40,6 +44,13 @@ export class ImportDipendentiComponent implements OnInit {
   previewData: DipendentiImportData[] = [];
   showPreview = false;
   validationErrors: string[] = [];
+  
+  importOptions = {
+    updateExisting: false,
+    skipErrors: true,
+    defaultReparto: '',
+    defaultCommerciale: ''
+  };
   
   constructor(
     private dipendentiService: DipendentiService,
@@ -110,6 +121,7 @@ export class ImportDipendentiComponent implements OnInit {
         }
 
         this.validateData();
+        this.checkDuplicates();
         this.showPreview = true;
         this.isProcessing = false;
 
@@ -213,21 +225,110 @@ export class ImportDipendentiComponent implements OnInit {
     });
   }
 
+  private checkDuplicates(): void {
+    // Prepare data for duplicate check
+    const dipendentiForCheck = this.previewData.map(dipendente => ({
+      nominativo: dipendente.nominativo,
+      dataCessazione: dipendente.dataCessazione,
+      isms: dipendente.isms,
+      ruolo: dipendente.ruolo,
+      azienda: dipendente.azienda,
+      sede: dipendente.sede,
+      community: dipendente.community,
+      responsabile: dipendente.responsabile
+    }));
+
+    this.dipendentiService.checkDuplicates(dipendentiForCheck).subscribe({
+      next: (response) => {
+        this.processDuplicateInfo(response.duplicates);
+      },
+      error: (error) => {
+        console.error('Errore durante il controllo duplicati:', error);
+        // Continue without duplicate info if check fails
+      }
+    });
+  }
+
+  private processDuplicateInfo(duplicates: any[]): void {
+    duplicates.forEach(duplicate => {
+      const index = duplicate.index;
+      if (index < this.previewData.length) {
+        this.previewData[index].isDuplicate = duplicate.isDuplicate;
+        this.previewData[index].canUpdate = duplicate.canUpdate;
+        this.previewData[index].existingId = duplicate.existingId;
+        this.previewData[index].existingData = duplicate.existingData;
+        
+        // Add warning for duplicates
+        if (duplicate.isDuplicate) {
+          if (!this.previewData[index].errors) {
+            this.previewData[index].errors = [];
+          }
+          
+          if (duplicate.canUpdate) {
+            this.previewData[index].errors!.push('Dipendente già esistente - può essere aggiornato');
+          } else {
+            this.previewData[index].errors!.push('Dipendente già esistente - nessuna modifica rilevata');
+          }
+        }
+      }
+    });
+  }
+
   hasValidationErrors(): boolean {
     return this.validationErrors.length > 0 || 
            this.previewData.some(d => d.errors && d.errors.length > 0);
   }
 
   getValidDipendenti(): DipendentiImportData[] {
-    return this.previewData.filter(d => !d.errors || d.errors.length === 0);
+    return this.previewData.filter(d => {
+      // Check if has basic validation errors (excluding duplicate warnings)
+      const hasBasicErrors = d.errors && d.errors.some(error => 
+        !error.includes('Dipendente già esistente')
+      );
+      
+      if (hasBasicErrors) {
+        return false;
+      }
+      
+      // If it's a duplicate, check if it can be updated and updateExisting is enabled
+      if (d.isDuplicate) {
+        return d.canUpdate && this.importOptions.updateExisting;
+      }
+      
+      // Non-duplicate valid rows
+      return true;
+    });
   }
 
   hasErrorsInData(): boolean {
     return this.previewData.some(d => d.errors && d.errors.length > 0);
   }
 
+  getDuplicateCount(): number {
+    return this.previewData.filter(d => d.isDuplicate).length;
+  }
+
+  getErrorCount(): number {
+    return this.previewData.filter(d => this.hasErrors(d)).length;
+  }
+
   hasErrors(dipendente: DipendentiImportData): boolean {
-    return dipendente.errors !== undefined && dipendente.errors.length > 0;
+    if (!dipendente.errors || dipendente.errors.length === 0) {
+      return false;
+    }
+    
+    // Check if all errors are duplicate-related
+    const onlyDuplicateErrors = dipendente.errors.every(error => 
+      error.includes('Dipendente già esistente')
+    );
+    
+    if (onlyDuplicateErrors && dipendente.isDuplicate) {
+      // If it's a duplicate that can be updated and updateExisting is enabled, it's not an error
+      return !(dipendente.canUpdate && this.importOptions.updateExisting);
+    }
+    
+    // Has other validation errors
+    return true;
   }
 
   importData(): void {
@@ -257,7 +358,7 @@ export class ImportDipendentiComponent implements OnInit {
     }));
 
     // Chiama il backend per l'importazione
-    this.dipendentiService.bulkImport(dipendentiForImport).subscribe({
+    this.dipendentiService.bulkImport(dipendentiForImport, this.importOptions).subscribe({
       next: (response) => {
         this.isProcessing = false;
         this.handleImportResponse(response);
@@ -313,5 +414,20 @@ export class ImportDipendentiComponent implements OnInit {
     this.showPreview = false;
     this.validationErrors = [];
     this.isProcessing = false;
+    
+    // Reset import options to defaults
+    this.importOptions = {
+      updateExisting: false,
+      skipErrors: true,
+      defaultReparto: '',
+      defaultCommerciale: ''
+    };
+  }
+
+  onImportOptionsChange(): void {
+    // Refresh validation when import options change
+    if (this.showPreview) {
+      this.validateData();
+    }
   }
 }
