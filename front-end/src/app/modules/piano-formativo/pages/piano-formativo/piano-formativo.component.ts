@@ -29,7 +29,6 @@ import { PaginationFooterComponent } from '../../../../shared/components/paginat
 import { DettaglioDipendentiComponent } from '../../../dipendenti/components/dettaglio-dipendenti/dettaglio-dipendenti.component';
 import { DisableConfirmComponent } from '../../../../core/disable-confirm/disable-confirm.component';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
-import { FormDipendentiComponent } from '../../../dipendenti/components/form-dipendenti/form-dipendenti.component';
 import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
 import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/ui/azione-def';
@@ -111,50 +110,66 @@ export class PianoFormativoComponent implements OnInit {
   ];
   valoriFiltri: { [key: string]: any } = {};
 
-  dipendenti: IDipendenti[] = [];
-  formazioneDipendentiFiltrato: IDipendenti[] = [];
+  assegnazioni: IAssegnazione[] = [];
+  formazioneDipendentiFiltrato: IAssegnazione[] = [];
 
   columns: IColumnDef[] = [
-    { key: 'nominativo', label: 'Nominativo', sortable: true, type: 'text' },
-    {
-      key: 'email',
-      label: 'Email',
-      sortable: true,
-      type: 'text',
+    { 
+      key: 'dipendenteNome', 
+      label: 'Dipendente', 
+      sortable: true, 
+      type: 'text'
     },
     {
-      key: 'ruolo',
-      label: 'Ruolo',
+      key: 'corsoNome',
+      label: 'Corso',
       sortable: true,
-      type: 'text',
+      type: 'text'
     },
-    { key: 'isms', label: 'ISMS', sortable: true, type: 'text' },
     {
-      key: 'attivo',
+      key: 'dataAssegnazione',
+      label: 'Data Assegnazione',
+      sortable: true,
+      type: 'date',
+    },
+    {
+      key: 'statoDisplay',
       label: 'Stato',
       sortable: true,
       type: 'badge',
+    },
+    {
+      key: 'dataTerminaPrevista',
+      label: 'Data Termina Prevista',
+      sortable: true,
+      type: 'date'
+    },
+    {
+      key: 'dataInizio',
+      label: 'Data Inizio',
+      sortable: true,
+      type: 'date',
+    },
+    {
+      key: 'dataCompletamento',
+      label: 'Data Fine',
+      sortable: true,
+      type: 'date',
+    },
+    {
+      key: 'attestatoDisplay',
+      label: 'Attestato',
+      sortable: true,
+      type: 'badge'
     },
   ];
 
   azioni: IAzioneDef[] = [
     {
-      label: 'Modifica',
-      icon: 'fa fa-pen',
-      action: AzioneType.Edit,
-      color: AzioneColor.Secondary,
-    },
-    {
       label: 'Elimina',
       icon: 'fa fa-trash',
       action: AzioneType.Delete,
       color: AzioneColor.Danger,
-    },
-    {
-      label: 'Disattiva',
-      icon: 'fa fa-user-slash',
-      action: AzioneType.Disable,
-      color: AzioneColor.Warning,
     },
   ];
 
@@ -166,10 +181,11 @@ export class PianoFormativoComponent implements OnInit {
     displayedItems: 0,
     totalItems: 0,
     pageSize: 20,
-    entityName: 'dipendenti'
+    entityName: 'assegnazioni'
   };
 
   constructor(
+    private assegnazioniService: AssegnazioniService,
     private dipendentiService: DipendentiService,
     private modaleService: ModaleService,
     private toastr: ToastrService,
@@ -182,26 +198,44 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadDipendenti();
+    this.loadAssegnazioni();
   }
 
   // RIMOSSO: updatePageSize() method come in Corsi
 
-  private loadDipendenti() {
-    this.dipendentiService.getListaDipendenti().subscribe({
+  private getStatoDisplayLabel(stato: AssegnazioneStato): string {
+    switch (stato) {
+      case AssegnazioneStato.DA_INIZIARE:
+        return 'Da iniziare';
+      case AssegnazioneStato.IN_CORSO:
+        return 'In corso';
+      case AssegnazioneStato.TERMINATO:
+        return 'Terminato';
+      case AssegnazioneStato.INTERROTTO:
+        return 'Interrotto';
+      default:
+        return stato;
+    }
+  }
+
+  private loadAssegnazioni() {
+    this.assegnazioniService.getAllAssegnazioni().subscribe({
       next: data => {
-        this.dipendenti = data.map((d: any) => ({
-          ...d,
-          nominativo: `${d.nome} ${d.cognome}`.trim(),
-          attivo: d.attivo ? 'Attivo' : 'Non attivo',
+        this.assegnazioni = data.map((a: IAssegnazione) => ({
+          ...a,
+          dipendenteNome: `${a.dipendente.nome} ${a.dipendente.cognome}`.trim(),
+          corsoNome: a.corso.nome,
+          dataTerminaPrevista: a.corso.dataScadenza,
+          attestatoDisplay: a.attestato ? 'SI' : 'NO',
+          statoDisplay: this.getStatoDisplayLabel(a.stato)
         }));
         this.applicaFiltri();
         this.cd.detectChanges();
         // AGGIUNTO: Aggiorna totalItems come in Corsi
-        this.paginationInfo.totalItems = this.dipendenti.length;
+        this.paginationInfo.totalItems = this.assegnazioni.length;
       },
       error: error => {
-        this.toastr.error('Errore nel caricamento dei dipendenti');
+        this.toastr.error('Errore nel caricamento delle assegnazioni');
       },
     });
   }
@@ -212,8 +246,8 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   applicaFiltri() {
-    this.formazioneDipendentiFiltrato = this.dipendenti.filter(d => {
-      const nominativo = `${d.nome} ${d.cognome}`.trim().toLowerCase();
+    this.formazioneDipendentiFiltrato = this.assegnazioni.filter((a: IAssegnazione) => {
+      const nominativo = `${a.dipendente.nome} ${a.dipendente.cognome}`.trim().toLowerCase();
 
       if (
         this.valoriFiltri['nominativo'] &&
@@ -223,129 +257,50 @@ export class PianoFormativoComponent implements OnInit {
       }
       if (
         this.valoriFiltri['email'] &&
-        !d.email.toLowerCase().includes(this.valoriFiltri['email'].toLowerCase())
+        !a.dipendente.email.toLowerCase().includes(this.valoriFiltri['email'].toLowerCase())
       ) {
         return false;
       }
       if (
         this.valoriFiltri['ruolo'] &&
-        !d.ruolo.toLowerCase().includes(this.valoriFiltri['ruolo'].toLowerCase())
+        !a.dipendente.ruolo.toLowerCase().includes(this.valoriFiltri['ruolo'].toLowerCase())
       ) {
         return false;
       }
-      if (this.valoriFiltri['attivo'] && d.attivo !== this.valoriFiltri['attivo']) {
+      if (this.valoriFiltri['attivo'] && a.dipendente.attivo !== (this.valoriFiltri['attivo'] === 'Attivo')) {
         return false;
       }
       return true;
     });
   }
 
-  deleteDipendente(id: number) {
-    this.dipendentiService.permanentDeleteDipendente(id).subscribe({
+  deleteAssegnazione(id: number) {
+    this.assegnazioniService.deleteAssegnazione(id).subscribe({
       next: () => {
-        this.loadDipendenti();
-        this.toastr.success('Dipendente eliminato con successo');
+        this.loadAssegnazioni();
+        this.toastr.success('Assegnazione eliminata con successo');
       },
       error: error => {
-        this.toastr.error("Errore durante l'eliminazione del dipendente");
-      },
-    });
-  }
-
-  toggleDipendenteStatus(id: number) {
-    this.dipendentiService.toggleDipendenteStatus(id).subscribe({
-      next: () => {
-        this.loadDipendenti();
-        this.toastr.success('Stato del dipendente aggiornato con successo');
-      },
-      error: error => {
-        this.toastr.error(
-          "Errore durante l'aggiornamento dello stato del dipendente",
-        );
-      },
-    });
-  }
-
-  updateDipendente(id: number, dipendenteData: any) {
-    this.dipendentiService.updDipendente(id, dipendenteData).subscribe({
-      next: () => {
-        this.loadDipendenti();
-        this.toastr.success('Dipendente modificato con successo');
-        this.modaleService.chiudi();
-      },
-      error: () => {
-        this.toastr.error('Errore durante la modifica del dipendente');
-      },
-    });
-  }
-
-  addDipendente(dipendenteData: any) {
-    this.dipendentiService.insDipendente(dipendenteData).subscribe({
-      next: () => {
-        this.loadDipendenti();
-        this.toastr.success('Dipendente aggiunto con successo');
-        this.modaleService.chiudi();
-      },
-      error: () => {
-        this.toastr.error("Errore durante l'aggiunta del dipendente");
+        this.toastr.error("Errore durante l'eliminazione dell'assegnazione");
       },
     });
   }
 
   gestioneAzione(e: { tipo: string; item: any }) {
     switch (e.tipo) {
-      case 'add':
-        this.modaleService.apri({
-          titolo: 'Aggiungi dipendente',
-          componente: FormDipendentiComponent,
-          dati: {},
-          onConferma: (formValue: any) => this.addDipendente(formValue),
-        });
-        break;
-      case 'edit':
-        this.modaleService.apri({
-          titolo: 'Modifica dipendente',
-          componente: FormDipendentiComponent,
-          dati: e.item,
-          onConferma: (formValue: any) =>
-            this.updateDipendente(e.item.id, formValue),
-        });
-        break;
       case 'delete':
         this.modaleService.apri({
           titolo: 'Conferma eliminazione',
           componente: DeleteConfirmComponent,
           dati: {
             messaggio:
-              'Vuoi davvero eliminare il dipendente "' +
-              e.item.nome +
-              ' ' +
-              e.item.cognome +
+              'Vuoi davvero eliminare l\'assegnazione per "' +
+              e.item.dipendenteNome +
+              '" del corso "' +
+              e.item.corsoNome +
               '"?',
           },
-          onConferma: () => this.deleteDipendente(e.item.id),
-        });
-        break;
-      case 'disable':
-        this.modaleService.apri({
-          titolo: 'Conferma disattivazione',
-          componente: DisableConfirmComponent,
-          dati: {
-            messaggio:
-              'Vuoi davvero disattivare il dipendente "' +
-              e.item.nome +
-              ' ' +
-              e.item.cognome +
-              '"?',
-          },
-          onConferma: () => this.toggleDipendenteStatus(e.item.id),
-        });
-        break;
-      case 'view':
-        this.modaleService.apri({
-          titolo: 'Dettagli dipendente',
-          componente: DettaglioDipendentiComponent,
-          dati: e.item,
+          onConferma: () => this.deleteAssegnazione(e.item.id),
         });
         break;
       default:

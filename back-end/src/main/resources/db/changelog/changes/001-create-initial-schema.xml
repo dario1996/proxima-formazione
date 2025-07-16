@@ -218,6 +218,18 @@
             <column name="certificato_ottenuto" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="true" />
             </column>
+            <column name="esito" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="fonte_richiesta" type="VARCHAR(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="impatto_isms" type="BOOLEAN">
+                <constraints nullable="true" />
+            </column>
+            <column name="attestato" type="BOOLEAN">
+                <constraints nullable="true" />
+            </column>
             <column name="data_creazione" type="TIMESTAMP">
                 <constraints nullable="false" />
             </column>

@@ -39,7 +39,7 @@ public class AssegnazioneController {
 
     @Operation(summary = "Assegna un corso a un dipendente", description = "Crea una nuova assegnazione collegando un dipendente specifico a un corso specifico. "
             +
-            "Lo stato iniziale sarà ASSEGNATO e la data di assegnazione sarà quella corrente.")
+            "Lo stato iniziale sarà DA_INIZIARE e la data di assegnazione sarà quella corrente.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Assegnazione creata con successo", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Assegnazione.class))),
             @ApiResponse(responseCode = "404", description = "Dipendente o corso non trovato"),
@@ -75,7 +75,7 @@ public class AssegnazioneController {
         Assegnazione assegnazione = new Assegnazione();
         assegnazione.setDipendente(dipendente.get());
         assegnazione.setCorso(corso.get());
-        assegnazione.setStato(Assegnazione.StatoAssegnazione.ASSEGNATO);
+        assegnazione.setStato(Assegnazione.StatoAssegnazione.DA_INIZIARE);
         assegnazione.setDataAssegnazione(LocalDate.now());
         assegnazione.setObbligatorio(obbligatorio);
 
@@ -133,7 +133,7 @@ public class AssegnazioneController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Aggiorna lo stato di un'assegnazione", description = "Modifica lo stato di progresso di un'assegnazione (es. da ASSEGNATO a IN_CORSO a COMPLETATO)")
+    @Operation(summary = "Aggiorna lo stato di un'assegnazione", description = "Modifica lo stato di progresso di un'assegnazione (es. da DA_INIZIARE a IN_CORSO a TERMINATO)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Assegnazione aggiornata con successo"),
             @ApiResponse(responseCode = "404", description = "Assegnazione non trovata"),
@@ -142,8 +142,8 @@ public class AssegnazioneController {
     @PutMapping("/assegnazioni/{assegnazioneId}/stato")
     public ResponseEntity<?> updateAssegnazioneStato(
             @Parameter(description = "ID dell'assegnazione", required = true) @PathVariable Long assegnazioneId,
-            @Parameter(description = "Nuovo stato dell'assegnazione", schema = @Schema(allowableValues = { "ASSEGNATO",
-                    "IN_CORSO", "COMPLETATO", "NON_INIZIATO", "SOSPESO", "ANNULLATO" })) @RequestParam String stato) {
+            @Parameter(description = "Nuovo stato dell'assegnazione", schema = @Schema(allowableValues = { "DA_INIZIARE",
+                    "IN_CORSO", "TERMINATO", "INTERROTTO" })) @RequestParam String stato) {
 
         Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
         if (!optionalAssegnazione.isPresent()) {
@@ -155,8 +155,8 @@ public class AssegnazioneController {
             Assegnazione assegnazione = optionalAssegnazione.get();
             assegnazione.setStato(nuovoStato);
 
-            // Se completato, imposta data completamento
-            if (nuovoStato == Assegnazione.StatoAssegnazione.COMPLETATO) {
+            // Se terminato, imposta data completamento
+            if (nuovoStato == Assegnazione.StatoAssegnazione.TERMINATO) {
                 assegnazione.setDataCompletamento(LocalDate.now());
                 assegnazione.setPercentualeCompletamento(new java.math.BigDecimal("100.00"));
             }
@@ -172,7 +172,7 @@ public class AssegnazioneController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body("Stato non valido: " + stato
-                            + ". Stati validi: ASSEGNATO, IN_CORSO, COMPLETATO, NON_INIZIATO, SOSPESO, ANNULLATO");
+                            + ". Stati validi: DA_INIZIARE, IN_CORSO, TERMINATO, INTERROTTO");
         }
     }
 
@@ -182,9 +182,8 @@ public class AssegnazioneController {
     })
     @GetMapping("/assegnazioni")
     public ResponseEntity<List<Assegnazione>> getAllAssegnazioni(
-            @Parameter(description = "Filtra per stato assegnazione", schema = @Schema(allowableValues = { "ASSEGNATO",
-                    "IN_CORSO", "COMPLETATO", "NON_INIZIATO", "SOSPESO",
-                    "ANNULLATO" })) @RequestParam(required = false) String stato,
+            @Parameter(description = "Filtra per stato assegnazione", schema = @Schema(allowableValues = { "DA_INIZIARE",
+                    "IN_CORSO", "TERMINATO", "INTERROTTO" })) @RequestParam(required = false) String stato,
             @Parameter(description = "Mostra solo assegnazioni obbligatorie") @RequestParam(required = false, defaultValue = "false") boolean soloObbligatorie,
             @Parameter(description = "Mostra solo assegnazioni che richiedono feedback") @RequestParam(required = false, defaultValue = "false") boolean richiedeFeedback) {
 
@@ -223,7 +222,14 @@ public class AssegnazioneController {
             @Parameter(description = "Valutazione (1-5)") @RequestParam(required = false) Integer valutazione,
             @Parameter(description = "Note feedback") @RequestParam(required = false) String noteFeedback,
             @Parameter(description = "Competenze acquisite") @RequestParam(required = false) String competenzeAcquisite,
-            @Parameter(description = "Certificato ottenuto") @RequestParam(required = false) Boolean certificatoOttenuto) {
+            @Parameter(description = "Certificato ottenuto") @RequestParam(required = false) Boolean certificatoOttenuto,
+            @Parameter(description = "Feedback fornito") @RequestParam(required = false) Boolean feedbackFornito,
+            @Parameter(description = "Esito") @RequestParam(required = false) String esito,
+            @Parameter(description = "Fonte richiesta") @RequestParam(required = false) String fonteRichiesta,
+            @Parameter(description = "Impatto ISMS") @RequestParam(required = false) Boolean impattoIsms,
+            @Parameter(description = "Attestato") @RequestParam(required = false) Boolean attestato,
+            @Parameter(description = "Data inizio") @RequestParam(required = false) String dataInizio,
+            @Parameter(description = "Data completamento") @RequestParam(required = false) String dataCompletamento) {
 
         Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
         if (!optionalAssegnazione.isPresent()) {
@@ -238,8 +244,8 @@ public class AssegnazioneController {
                 Assegnazione.StatoAssegnazione nuovoStato = Assegnazione.StatoAssegnazione.valueOf(stato.toUpperCase());
                 assegnazione.setStato(nuovoStato);
 
-                // Se completato, imposta data completamento
-                if (nuovoStato == Assegnazione.StatoAssegnazione.COMPLETATO) {
+                // Se terminato, imposta data completamento
+                if (nuovoStato == Assegnazione.StatoAssegnazione.TERMINATO) {
                     assegnazione.setDataCompletamento(LocalDate.now());
                     // Se non è stata fornita una percentuale specifica, imposta 100%
                     if (percentualeCompletamento == null) {
@@ -294,6 +300,49 @@ public class AssegnazioneController {
                 // Se ha ottenuto il certificato, segna che ha fornito feedback
                 if (certificatoOttenuto) {
                     assegnazione.setFeedbackFornito(true);
+                }
+            }
+
+            // Aggiorna feedback fornito se fornito
+            if (feedbackFornito != null) {
+                assegnazione.setFeedbackFornito(feedbackFornito);
+            }
+
+            // Aggiorna esito se fornito
+            if (esito != null) {
+                assegnazione.setEsito(esito);
+            }
+
+            // Aggiorna fonte richiesta se fornita
+            if (fonteRichiesta != null) {
+                assegnazione.setFonteRichiesta(fonteRichiesta);
+            }
+
+            // Aggiorna impatto ISMS se fornito
+            if (impattoIsms != null) {
+                assegnazione.setImpattoIsms(impattoIsms);
+            }
+
+            // Aggiorna attestato se fornito
+            if (attestato != null) {
+                assegnazione.setAttestato(attestato);
+            }
+
+            // Aggiorna data inizio se fornita
+            if (dataInizio != null && !dataInizio.isEmpty()) {
+                try {
+                    assegnazione.setDataInizio(LocalDate.parse(dataInizio));
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("Formato data inizio non valido: " + dataInizio);
+                }
+            }
+
+            // Aggiorna data completamento se fornita
+            if (dataCompletamento != null && !dataCompletamento.isEmpty()) {
+                try {
+                    assegnazione.setDataCompletamento(LocalDate.parse(dataCompletamento));
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("Formato data completamento non valido: " + dataCompletamento);
                 }
             }
 

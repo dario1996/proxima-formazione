@@ -1,0 +1,196 @@
+<div class="container-fluid">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <!-- Informazioni base (se in edit mode) -->
+    <div *ngIf="isEdit && dati" class="alert alert-info">
+      <strong>{{ dati.dipendente.nome }} {{ dati.dipendente.cognome }}</strong> | 
+      <strong>{{ dati.corso.nome }}</strong> | 
+      {{ dati.dataAssegnazione | date:'dd/MM/yyyy' }}
+    </div>
+
+    <!-- Prima riga: Stato, Completamento, Ore -->
+    <div class="row mb-2">
+      <div class="col-4">
+        <label for="stato" class="form-label">Stato <span class="text-danger">*</span></label>
+        <select 
+          id="stato" 
+          formControlName="stato" 
+          class="form-select form-select-sm"
+          [class.is-invalid]="isFieldInvalid('stato')">
+          <option value="">Seleziona...</option>
+          <option *ngFor="let option of statoOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+        <div *ngIf="isFieldInvalid('stato')" class="invalid-feedback">
+          {{ getFieldError('stato') }}
+        </div>
+      </div>
+
+      <div class="col-4">
+        <label for="percentualeCompletamento" class="form-label">Completamento (%)</label>
+        <input 
+          type="number" 
+          id="percentualeCompletamento"
+          formControlName="percentualeCompletamento"
+          class="form-control form-control-sm"
+          min="0" max="100"
+          [class.is-invalid]="isFieldInvalid('percentualeCompletamento')">
+        <div *ngIf="isFieldInvalid('percentualeCompletamento')" class="invalid-feedback">
+          {{ getFieldError('percentualeCompletamento') }}
+        </div>
+      </div>
+
+      <div class="col-4">
+        <label for="oreCompletate" class="form-label">Ore</label>
+        <input 
+          type="number" 
+          id="oreCompletate"
+          formControlName="oreCompletate"
+          class="form-control form-control-sm"
+          min="0"
+          [class.is-invalid]="isFieldInvalid('oreCompletate')">
+        <div *ngIf="isFieldInvalid('oreCompletate')" class="invalid-feedback">
+          {{ getFieldError('oreCompletate') }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Seconda riga: Valutazione, Date -->
+    <div class="row mb-2">
+      <div class="col-4">
+        <label for="valutazione" class="form-label">Valutazione (1-10)</label>
+        <input 
+          type="number" 
+          id="valutazione"
+          formControlName="valutazione"
+          class="form-control form-control-sm"
+          min="1" max="10"
+          [class.is-invalid]="isFieldInvalid('valutazione')">
+        <div *ngIf="isFieldInvalid('valutazione')" class="invalid-feedback">
+          {{ getFieldError('valutazione') }}
+        </div>
+      </div>
+
+      <div class="col-4">
+        <label for="dataInizio" class="form-label">Data Inizio</label>
+        <input 
+          type="date" 
+          id="dataInizio"
+          formControlName="dataInizio"
+          class="form-control form-control-sm">
+      </div>
+
+      <div class="col-4">
+        <label for="dataCompletamento" class="form-label">Data Fine</label>
+        <input 
+          type="date" 
+          id="dataCompletamento"
+          formControlName="dataCompletamento"
+          class="form-control form-control-sm">
+      </div>
+    </div>
+
+    <!-- Terza riga: Esito, Fonte -->
+    <div class="row mb-2">
+      <div class="col-6">
+        <label for="esito" class="form-label">Esito</label>
+        <input 
+          type="text" 
+          id="esito"
+          formControlName="esito"
+          class="form-control form-control-sm"
+          placeholder="Inserisci esito...">
+      </div>
+
+      <div class="col-6">
+        <label for="fonteRichiesta" class="form-label">Fonte Richiesta</label>
+        <input 
+          type="text" 
+          id="fonteRichiesta"
+          formControlName="fonteRichiesta"
+          class="form-control form-control-sm"
+          placeholder="Inserisci fonte...">
+      </div>
+    </div>
+
+    <!-- Checkboxes compatte -->
+    <div class="checkbox-section">
+      <label class="form-label">Opzioni</label>
+      <div class="row checkbox-row">
+        <div class="col-3">
+          <div class="form-check form-check-inline">
+            <input 
+              type="checkbox" 
+              id="certificatoOttenuto"
+              formControlName="certificatoOttenuto"
+              class="form-check-input">
+            <label class="form-check-label" for="certificatoOttenuto">
+              Certificato
+            </label>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-check form-check-inline">
+            <input 
+              type="checkbox" 
+              id="feedbackFornito"
+              formControlName="feedbackFornito"
+              class="form-check-input">
+            <label class="form-check-label" for="feedbackFornito">
+              Feedback
+            </label>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-check form-check-inline">
+            <input 
+              type="checkbox" 
+              id="impattoIsms"
+              formControlName="impattoIsms"
+              class="form-check-input">
+            <label class="form-check-label" for="impattoIsms">
+              ISMS
+            </label>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-check form-check-inline">
+            <input 
+              type="checkbox" 
+              id="attestato"
+              formControlName="attestato"
+              class="form-check-input">
+            <label class="form-check-label" for="attestato">
+              Attestato
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Textarea compatte -->
+    <div class="row">
+      <div class="col-6">
+        <label for="noteFeedback" class="form-label">Note Feedback</label>
+        <textarea 
+          id="noteFeedback"
+          formControlName="noteFeedback"
+          class="form-control form-control-sm"
+          rows="2"
+          placeholder="Note feedback...">
+        </textarea>
+      </div>
+
+      <div class="col-6">
+        <label for="competenzeAcquisite" class="form-label">Competenze</label>
+        <textarea 
+          id="competenzeAcquisite"
+          formControlName="competenzeAcquisite"
+          class="form-control form-control-sm"
+          rows="2"
+          placeholder="Competenze acquisite...">
+        </textarea>
+      </div>
+    </div>
+  </form>
+</div>

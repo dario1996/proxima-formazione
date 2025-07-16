@@ -44,7 +44,7 @@ public class Assegnazione {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private StatoAssegnazione stato = StatoAssegnazione.ASSEGNATO;
+    private StatoAssegnazione stato = StatoAssegnazione.DA_INIZIARE;
 
     @Column(name = "obbligatorio", nullable = false)
     private Boolean obbligatorio = false;
@@ -64,6 +64,18 @@ public class Assegnazione {
     @Column(name = "certificato_ottenuto")
     private Boolean certificatoOttenuto = false;
 
+    @Column(name = "esito", length = 50)
+    private String esito;
+
+    @Column(name = "fonte_richiesta", length = 100)
+    private String fonteRichiesta;
+
+    @Column(name = "impatto_isms")
+    private Boolean impattoIsms;
+
+    @Column(name = "attestato")
+    private Boolean attestato;
+
     @Column(name = "data_creazione", nullable = false)
     private LocalDateTime dataCreazione;
 
@@ -72,12 +84,10 @@ public class Assegnazione {
 
     // Enum per stato assegnazione
     public enum StatoAssegnazione {
-        ASSEGNATO,
+        DA_INIZIARE,
         IN_CORSO,
-        COMPLETATO,
-        NON_INIZIATO,
-        SOSPESO,
-        ANNULLATO
+        TERMINATO,
+        INTERROTTO
     }
 
     // Costruttori
@@ -100,7 +110,7 @@ public class Assegnazione {
 
     // Metodi helper
     public boolean isCompletato() {
-        return stato == StatoAssegnazione.COMPLETATO;
+        return stato == StatoAssegnazione.TERMINATO;
     }
 
     public boolean isInRitardo() {
@@ -244,5 +254,37 @@ public class Assegnazione {
 
     public void setDataModifica(LocalDateTime dataModifica) {
         this.dataModifica = dataModifica;
+    }
+
+    public String getEsito() {
+        return esito;
+    }
+
+    public void setEsito(String esito) {
+        this.esito = esito;
+    }
+
+    public String getFonteRichiesta() {
+        return fonteRichiesta;
+    }
+
+    public void setFonteRichiesta(String fonteRichiesta) {
+        this.fonteRichiesta = fonteRichiesta;
+    }
+
+    public Boolean getImpattoIsms() {
+        return impattoIsms;
+    }
+
+    public void setImpattoIsms(Boolean impattoIsms) {
+        this.impattoIsms = impattoIsms;
+    }
+
+    public Boolean getAttestato() {
+        return attestato;
+    }
+
+    public void setAttestato(Boolean attestato) {
+        this.attestato = attestato;
     }
 }

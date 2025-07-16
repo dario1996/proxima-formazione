@@ -17,17 +17,19 @@ export interface IAssegnazione {
   noteFeedback: string;
   competenzeAcquisite: string;
   certificatoOttenuto: boolean;
+  esito: string;
+  fonteRichiesta: string;
+  impattoIsms: boolean;
+  attestato: boolean;
   dataCreazione: string;
   dataModifica: string;
 }
 
 export enum AssegnazioneStato {
-  ASSEGNATO = 'ASSEGNATO',
+  DA_INIZIARE = 'DA_INIZIARE',
   IN_CORSO = 'IN_CORSO',
-  COMPLETATO = 'COMPLETATO',
-  NON_INIZIATO = 'NON_INIZIATO',
-  SOSPESO = 'SOSPESO',
-  ANNULLATO = 'ANNULLATO',
+  TERMINATO = 'TERMINATO',
+  INTERROTTO = 'INTERROTTO',
 }
 
 export interface AssegnazioneCreateRequest {
@@ -45,4 +47,10 @@ export interface AssegnazioneUpdateRequest {
   noteFeedback?: string;
   competenzeAcquisite?: string;
   certificatoOttenuto?: boolean;
+  esito?: string;
+  fonteRichiesta?: string;
+  impattoIsms?: boolean;
+  attestato?: boolean;
+  dataInizio?: string;
+  dataCompletamento?: string;
 }

@@ -94,6 +94,7 @@ public class Corso {
     // Enum per stato corso
     public enum StatoCorso {
         PIANIFICATO,
+        ATTIVO,
         IN_CORSO,
         COMPLETATO,
         SOSPESO,

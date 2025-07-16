@@ -43,8 +43,11 @@
             <td *ngFor="let col of columns" [ngClass]="{'col-email': col.key === 'email'}">
               <ng-container [ngSwitch]="col.type">
                 <span *ngSwitchCase="'badge'" class="badge"
-                      [class.bg-success]="row[col.key] === 'Attivo'"
-                      [class.bg-secondary]="row[col.key] === 'Non attivo'">
+                      [class.bg-success]="row[col.key] === 'Attivo' || row[col.key] === 'Terminato' || row[col.key] === 'SI'"
+                      [class.bg-secondary]="row[col.key] === 'Non attivo' || row[col.key] === 'NO'"
+                      [class.bg-warning]="row[col.key] === 'In corso'"
+                      [class.bg-info]="row[col.key] === 'Da iniziare'"
+                      [class.bg-danger]="row[col.key] === 'Interrotto'">
                   {{ row[col.key] }}
                 </span>
                 <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>

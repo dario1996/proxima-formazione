@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 import {
   IAssegnazione,
@@ -79,11 +80,47 @@ export class AssegnazioniService {
       params.competenzeAcquisite = updateData.competenzeAcquisite;
     if (updateData.certificatoOttenuto !== undefined)
       params.certificatoOttenuto = updateData.certificatoOttenuto.toString();
+    if (updateData.esito !== undefined)
+      params.esito = updateData.esito;
+    if (updateData.fonteRichiesta !== undefined)
+      params.fonteRichiesta = updateData.fonteRichiesta;
+    if (updateData.impattoIsms !== undefined)
+      params.impattoIsms = updateData.impattoIsms.toString();
+    if (updateData.attestato !== undefined)
+      params.attestato = updateData.attestato.toString();
+    if (updateData.dataInizio !== undefined)
+      params.dataInizio = updateData.dataInizio;
+    if (updateData.dataCompletamento !== undefined)
+      params.dataCompletamento = updateData.dataCompletamento;
+    if (updateData.feedbackFornito !== undefined)
+      params.feedbackFornito = updateData.feedbackFornito.toString();
 
-    return this.httpClient.put<IAssegnazione>(
-      `http://${this.server}:${this.port}/api/assegnazioni/${assegnazioneId}`,
-      null,
-      { params },
+    console.log('Sending PUT request with params:', params);
+    const url = `http://${this.server}:${this.port}/api/assegnazioni/${assegnazioneId}`;
+    console.log('URL:', url);
+
+    return this.httpClient.put<IAssegnazione>(url, null, { 
+      params,
+      observe: 'response'
+    }).pipe(
+      map((response: HttpResponse<IAssegnazione>) => {
+        console.log('Full HTTP response:', response);
+        console.log('Response status:', response.status);
+        console.log('Response body:', response.body);
+        return response.body!;
+      }),
+      catchError((error: any) => {
+        console.error('Raw HTTP error in service:', error);
+        console.error('Error status:', error.status);
+        console.error('Error statusText:', error.statusText);
+        console.error('Error message:', error.message);
+        console.error('Error error:', error.error);
+        console.error('Error type:', typeof error);
+        console.error('Error constructor:', error.constructor.name);
+        
+        // Re-throw the original error to bypass the interceptor transformation
+        throw error;
+      })
     );
   };
 
