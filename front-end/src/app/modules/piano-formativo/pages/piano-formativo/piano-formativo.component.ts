@@ -348,13 +348,18 @@ export class PianoFormativoComponent implements OnInit {
 
   // NUOVO: Metodo per gestire il click del pulsante "Assegna corso"
   onAssegnaCorso() {
+    console.log('🚀 Apertura modale assegnazione corso');
+    
     this.modaleService.apri({
       titolo: 'Assegna Corso',
       componente: FormAssegnazioneComponent,
       dati: {},
       onConferma: (risultato: any) => {
+        console.log('✅ Ricevuto risultato dal modale:', risultato);
         if (risultato) {
           this.assegnaCorso(risultato);
+        } else {
+          console.warn('⚠️ Nessun risultato ricevuto dal modale');
         }
       }
     });

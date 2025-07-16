@@ -20,6 +20,7 @@ export class FormAssegnazioneComponent implements OnInit {
   form: FormGroup;
   dipendenti: IDipendenti[] = [];
   corsi: ICorsi[] = [];
+  submitted = false;
   
   // Per la ricerca dipendenti
   dipendentiFiltrati: IDipendenti[] = [];
@@ -167,6 +168,7 @@ export class FormAssegnazioneComponent implements OnInit {
   }
 
   onSubmit() {
+    this.submitted = true;
     if (this.form.valid && this.dipendenteSelezionato && this.corsoSelezionato) {
       const assegnazione = {
         dipendenteId: this.dipendenteSelezionato.id,
@@ -174,7 +176,15 @@ export class FormAssegnazioneComponent implements OnInit {
         dataAssegnazione: new Date(),
         stato: 'Assegnato'
       };
+      
+      console.log('🎯 Emetto evento conferma con:', assegnazione);
       this.conferma.emit(assegnazione);
+    } else {
+      console.warn('⚠️ Form non valido o selezioni mancanti:', {
+        formValid: this.form.valid,
+        dipendenteSelezionato: !!this.dipendenteSelezionato,
+        corsoSelezionato: !!this.corsoSelezionato
+      });
     }
   }
 
@@ -206,5 +216,9 @@ export class FormAssegnazioneComponent implements OnInit {
     setTimeout(() => {
       this.showCorsiDropdown = false;
     }, 200);
+  }
+
+  confermaForm() {
+    this.onSubmit();
   }
 }
