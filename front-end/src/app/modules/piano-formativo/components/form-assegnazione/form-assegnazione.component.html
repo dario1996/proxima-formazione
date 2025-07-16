@@ -128,8 +128,8 @@
           <div *ngIf="showCorsiDropdown && corsiFiltrati.length > 0" 
                class="search-dropdown position-absolute w-100">
             <div *ngFor="let corso of corsiFiltrati.slice(0, 10)" 
-                 class="search-dropdown-item p-3 cursor-pointer"
-                 (mousedown)="selezionaCorso(corso)">
+                class="search-dropdown-item p-3 cursor-pointer"
+                (mousedown)="selezionaCorso(corso)">
               <div class="d-flex justify-content-between align-items-start">
                 <div class="flex-grow-1">
                   <div class="fw-bold text-success">
@@ -139,9 +139,9 @@
                     <i class="fas fa-tag me-1"></i>
                     {{ corso.argomento }}
                   </div>
-                  <div class="text-secondary small" *ngIf="corso.piattaforma">
+                  <div class="text-secondary small" *ngIf="corso.piattaforma?.nome">
                     <i class="fas fa-laptop me-1"></i>
-                    {{ corso.piattaforma }}
+                    {{ corso.piattaforma.nome }}
                   </div>
                 </div>
               </div>
@@ -180,9 +180,9 @@
                 <i class="fas fa-tag me-1"></i>
                 {{ corsoSelezionato.argomento }}
               </div>
-              <div class="col-12 text-muted small" *ngIf="corsoSelezionato.piattaforma">
+              <div class="col-12 text-muted small" *ngIf="corsoSelezionato.piattaforma?.nome">
                 <i class="fas fa-laptop me-1"></i>
-                {{ corsoSelezionato.piattaforma }}
+                {{ corsoSelezionato.piattaforma.nome }}
               </div>
               <div class="col-12 text-muted small" *ngIf="corsoSelezionato.durata">
                 <i class="fas fa-clock me-1"></i>
