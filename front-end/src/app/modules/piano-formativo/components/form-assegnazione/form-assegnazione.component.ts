@@ -21,7 +21,7 @@ export class FormAssegnazioneComponent implements OnInit {
   dipendenti: IDipendenti[] = [];
   corsi: ICorsi[] = [];
   submitted = false;
-  
+
   // Per la ricerca dipendenti
   dipendentiFiltrati: IDipendenti[] = [];
   showDipendentiDropdown = false;
@@ -41,7 +41,8 @@ export class FormAssegnazioneComponent implements OnInit {
       dipendenteId: ['', Validators.required],
       corsoId: ['', Validators.required],
       searchDipendente: [''],
-      searchCorso: ['']
+      searchCorso: [''],
+      obbligatorio: [false]
     });
   }
 
@@ -51,15 +52,11 @@ export class FormAssegnazioneComponent implements OnInit {
   }
 
   private loadData() {
-    console.log('🔄 Caricamento dati iniziato...');
-    
     // Carica dipendenti
     this.dipendentiService.getListaDipendenti().subscribe({
       next: (dipendenti) => {
-        console.log('👥 Dipendenti ricevuti:', dipendenti);
         this.dipendenti = dipendenti.filter(d => d.attivo);
         this.dipendentiFiltrati = [...this.dipendenti];
-        console.log('👥 Dipendenti filtrati (attivi):', this.dipendenti.length);
       },
       error: (error) => {
         console.error('❌ Errore caricamento dipendenti:', error);
@@ -67,29 +64,16 @@ export class FormAssegnazioneComponent implements OnInit {
     });
 
     // Carica corsi
-    console.log('🎓 Tentativo caricamento corsi...');
     this.corsiService.getListaCorsi().subscribe({
       next: (corsi) => {
-        console.log('🎓 Corsi ricevuti dal service:', corsi);
-        console.log('🎓 Numero corsi ricevuti:', corsi?.length);
-        
         if (corsi && corsi.length > 0) {
           // RIMOSSO IL FILTRO PER ORA - prendiamo tutti i corsi
           this.corsi = corsi;
           this.corsiFiltrati = [...this.corsi];
-          
-          console.log('🎓 Tutti i corsi caricati:', this.corsi.length);
-          console.log('🎓 Primo corso:', this.corsi[0]);
-          console.log('🎓 Proprietà primo corso:', Object.keys(this.corsi[0]));
-        } else {
-          console.warn('⚠️ Nessun corso ricevuto o array vuoto');
         }
       },
       error: (error) => {
         console.error('❌ Errore caricamento corsi:', error);
-      },
-      complete: () => {
-        console.log('✅ Caricamento corsi completato');
       }
     });
   }
@@ -121,32 +105,19 @@ export class FormAssegnazioneComponent implements OnInit {
   }
 
   filtraCorsi(searchTerm: string) {
-    console.log('🔍 Ricerca corsi con termine:', searchTerm);
-    console.log('🔍 Corsi totali disponibili:', this.corsi.length);
-    
     if (!searchTerm) {
       this.corsiFiltrati = [...this.corsi];
-      console.log('🔍 Nessun termine di ricerca, mostro tutti i corsi:', this.corsiFiltrati.length);
       return;
     }
 
     const term = searchTerm.toLowerCase();
     this.corsiFiltrati = this.corsi.filter(c => {
-      // Proviamo con tutte le proprietà possibili
       const matchNome = c.nome?.toLowerCase().includes(term);
       const matchArgomento = c.argomento?.toLowerCase().includes(term);
       const matchPiattaforma = c.piattaforma?.nome?.toLowerCase().includes(term);
       
-      const match = matchNome || matchArgomento || matchPiattaforma;
-      
-      if (match) {
-        console.log('🎯 Corso trovato:', c.nome || c.nome, {matchNome, matchArgomento, matchPiattaforma});
-      }
-      
-      return match;
+      return matchNome || matchArgomento || matchPiattaforma;
     });
-    
-    console.log('🔍 Corsi filtrati trovati:', this.corsiFiltrati.length);
   }
 
   selezionaDipendente(dipendente: IDipendenti) {
@@ -166,9 +137,8 @@ export class FormAssegnazioneComponent implements OnInit {
     });
     this.showCorsiDropdown = false;
   }
-
+  
   onSubmit() {
-    this.submitted = true;
     if (this.form.valid && this.dipendenteSelezionato && this.corsoSelezionato) {
       const assegnazione = {
         dipendenteId: this.dipendenteSelezionato.id,
@@ -177,14 +147,7 @@ export class FormAssegnazioneComponent implements OnInit {
         stato: 'Assegnato'
       };
       
-      console.log('🎯 Emetto evento conferma con:', assegnazione);
       this.conferma.emit(assegnazione);
-    } else {
-      console.warn('⚠️ Form non valido o selezioni mancanti:', {
-        formValid: this.form.valid,
-        dipendenteSelezionato: !!this.dipendenteSelezionato,
-        corsoSelezionato: !!this.corsoSelezionato
-      });
     }
   }
 

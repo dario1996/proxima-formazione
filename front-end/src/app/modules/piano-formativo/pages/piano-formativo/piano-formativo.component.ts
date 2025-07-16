@@ -173,6 +173,7 @@ export class PianoFormativoComponent implements OnInit {
   constructor(
     private dipendentiService: DipendentiService,
     private modaleService: ModaleService,
+    private assegnazioniService: AssegnazioniService, // CAMBIATO
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
   ) {}
@@ -348,34 +349,33 @@ export class PianoFormativoComponent implements OnInit {
 
   // NUOVO: Metodo per gestire il click del pulsante "Assegna corso"
   onAssegnaCorso() {
-    console.log('🚀 Apertura modale assegnazione corso');
-    
     this.modaleService.apri({
       titolo: 'Assegna Corso',
       componente: FormAssegnazioneComponent,
       dati: {},
       onConferma: (risultato: any) => {
-        console.log('✅ Ricevuto risultato dal modale:', risultato);
         if (risultato) {
           this.assegnaCorso(risultato);
-        } else {
-          console.warn('⚠️ Nessun risultato ricevuto dal modale');
         }
       }
     });
   }
   // NUOVO: Metodo per effettuare l'assegnazione
   private assegnaCorso(assegnazione: any) {
-    // Qui chiameremo il service per l'assegnazione quando sarà pronto
-    console.log('Assegnazione da salvare:', assegnazione);
-    
-    this.toastr.success(
-      `Corso assegnato con successo al dipendente`,
-      'Successo'
-    );
-    
-    // Ricarica i dati se necessario
-    this.loadDipendenti();
+    this.assegnazioniService.assignCorsoToDipendente(
+      assegnazione.dipendenteId,
+      assegnazione.corsoId,
+      false
+    ).subscribe({
+      next: (response) => {
+        this.toastr.success('Corso assegnato con successo', 'Successo');
+        this.loadDipendenti();
+      },
+      error: (error) => {
+        console.error('❌ Errore durante l\'assegnazione:', error);
+        this.toastr.error('Errore durante l\'assegnazione del corso', 'Errore');
+      }
+    });
   }
 
   // CORRETTI: Metodi per la paginazione come in Corsi
