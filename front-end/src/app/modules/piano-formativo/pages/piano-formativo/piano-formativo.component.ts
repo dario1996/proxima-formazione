@@ -353,6 +353,7 @@ export class PianoFormativoComponent implements OnInit {
       titolo: 'Assegna Corso',
       componente: FormAssegnazioneComponent,
       dati: {},
+      dimensione: 'xxl',
       onConferma: (risultato: any) => {
         if (risultato) {
           this.assegnaCorso(risultato);

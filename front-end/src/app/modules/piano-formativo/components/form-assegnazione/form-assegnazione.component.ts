@@ -91,22 +91,43 @@ export class FormAssegnazioneComponent implements OnInit {
   }
 
   filtraDipendenti(searchTerm: string) {
-    if (!searchTerm) {
-      this.dipendentiFiltrati = [...this.dipendenti];
+    // Mostra dropdown solo se c'è un termine di ricerca
+    if (!searchTerm || searchTerm.length === 0) {
+      this.dipendentiFiltrati = [];
+      this.showDipendentiDropdown = false;
+      return;
+    }
+    // Mostra dropdown solo se c'è almeno 1 carattere
+    if (searchTerm.length < 1) {
+      this.dipendentiFiltrati = [];
+      this.showDipendentiDropdown = false;
       return;
     }
 
     const term = searchTerm.toLowerCase();
     this.dipendentiFiltrati = this.dipendenti.filter(d => 
-      `${d.nome} ${d.cognome}`.toLowerCase().includes(term) ||
+      d.nome.toLowerCase().includes(term) ||
+      d.cognome.toLowerCase().includes(term) ||
       d.email.toLowerCase().includes(term) ||
-      d.ruolo.toLowerCase().includes(term)
+      `${d.nome} ${d.cognome}`.toLowerCase().includes(term)
     );
+
+    // Mostra dropdown solo se ci sono risultati
+    this.showDipendentiDropdown = this.dipendentiFiltrati.length > 0;
   }
 
   filtraCorsi(searchTerm: string) {
-    if (!searchTerm) {
-      this.corsiFiltrati = [...this.corsi];
+    // Mostra dropdown solo se c'è un termine di ricerca
+    if (!searchTerm || searchTerm.length === 0) {
+      this.corsiFiltrati = [];
+      this.showCorsiDropdown = false;
+      return;
+    }
+
+    // Mostra dropdown solo se c'è almeno 1 carattere
+    if (searchTerm.length < 1) {
+      this.corsiFiltrati = [];
+      this.showCorsiDropdown = false;
       return;
     }
 
@@ -118,6 +139,9 @@ export class FormAssegnazioneComponent implements OnInit {
       
       return matchNome || matchArgomento || matchPiattaforma;
     });
+
+    // Mostra dropdown solo se ci sono risultati
+    this.showCorsiDropdown = this.corsiFiltrati.length > 0;
   }
 
   selezionaDipendente(dipendente: IDipendenti) {

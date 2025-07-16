@@ -1,20 +1,6 @@
-/* Sezione headers */
-.section-header {
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e9ecef;
-}
-
-.section-title {
-  color: #054b9a;
-  font-weight: 600;
-  margin: 0;
-  font-size: 1.1rem;
-}
-
 /* Form fields - eredita dallo stile esistente */
 .form-field {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-label {
@@ -30,7 +16,7 @@
 }
 
 .form-control:focus {
-  border-color: #007bff;
+  border-color: #000000;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
@@ -53,7 +39,6 @@
 }
 
 .searchable-dropdown-input {
-  cursor: pointer;
   padding-right: 3.5rem !important;
 }
 
@@ -130,26 +115,16 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.selected-item-card .card-header {
-  border-radius: 8px 8px 0 0;
-  padding: 0.75rem 1rem;
-}
-
 .selected-item-card .card-body {
-  padding: 1rem;
-}
-
-.selected-item-card .card-header.bg-primary {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
-}
-
-.selected-item-card .card-header.bg-success {
-  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+  padding: 1.25rem;
+  min-height: 200px;
 }
 
 /* Icons spacing */
 .fas {
-  margin-right: 0.25rem;
+  margin-right: 0.5rem;
+  width: 14px;
+  text-align: center;
 }
 
 /* Custom scrollbar per dropdown */
@@ -190,6 +165,27 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .selected-item-card .col-12 {
+    padding: 0.3rem 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  /* Su schermi grandi, usa più spazio verticale */
+  .selected-item-card {
+    margin-top: 2rem !important;
+  }
+  
+  .selected-item-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  .section-header {
+    margin-bottom: 2rem;
+  }
+}
+
 /* Hover effects */
 .search-dropdown-item {
   position: relative;
@@ -202,7 +198,7 @@
   top: 0;
   bottom: 0;
   width: 0;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: linear-gradient(135deg, #0F4C82 0%, #5A5BA0 100%);
   transition: width 0.2s ease;
 }
 
@@ -212,7 +208,7 @@
 
 /* Text colors per i dropdown items */
 .text-primary {
-  color: #007bff !important;
+  color: #000000 !important;
 }
 
 .text-success {
@@ -233,5 +229,6 @@
 }
 
 .small {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }

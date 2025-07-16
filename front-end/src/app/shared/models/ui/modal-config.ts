@@ -5,4 +5,5 @@ export interface IModaleConfig {
   componente: Type<any>;
   dati?: any;
   onConferma?: (formValue: any) => void;
+  dimensione?: string;
 }
