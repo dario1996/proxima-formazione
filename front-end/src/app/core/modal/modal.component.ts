@@ -81,6 +81,13 @@ export class ModalComponent implements OnDestroy {
     }
   }
 
+  onBackdropClick(event: Event) {
+    // Close modal when clicking on the backdrop (outside the modal content)
+    if (event.target === event.currentTarget) {
+      this.chiudi();
+    }
+  }
+
   ngOnDestroy() {
     this.chiudi();
   }

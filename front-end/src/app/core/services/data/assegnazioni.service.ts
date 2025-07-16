@@ -152,4 +152,11 @@ export class AssegnazioniService {
     this.httpClient.get<any>(
       `http://${this.server}:${this.port}/api/assegnazioni/stats`,
     );
+
+  // Importazione massiva di assegnazioni
+  bulkImport = (importData: any) =>
+    this.httpClient.post<any>(
+      `http://${this.server}:${this.port}/api/assegnazioni/bulk-import`,
+      importData,
+    );
 }

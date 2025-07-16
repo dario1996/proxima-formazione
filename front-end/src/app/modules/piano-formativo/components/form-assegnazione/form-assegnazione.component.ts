@@ -168,7 +168,8 @@ export class FormAssegnazioneComponent implements OnInit {
         dipendenteId: this.dipendenteSelezionato.id,
         corsoId: this.corsoSelezionato.id,
         dataAssegnazione: new Date(),
-        stato: 'Assegnato'
+        stato: 'Assegnato',
+        obbligatorio: this.form.get('obbligatorio')?.value || false
       };
       
       this.conferma.emit(assegnazione);

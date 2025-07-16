@@ -3,10 +3,11 @@ import { IAzioneDef } from '../../models/ui/azione-def';
 import { IColumnDef } from '../../models/ui/column-def';
 import { CommonModule } from '@angular/common';
 import { ViewChild, ElementRef } from '@angular/core';
+import { StatusBadgeComponent } from '../status-badge/status-badge.component';
 
 @Component({
   selector: 'app-tabella-generica',
-  imports: [CommonModule],
+  imports: [CommonModule, StatusBadgeComponent],
   templateUrl: './tabella-generica.component.html',
   styleUrl: './tabella-generica.component.css'
 })
@@ -221,5 +222,87 @@ export class TabellaGenericaComponent {
       : this.pageSize - this.paginatedData.length; // Riempi completamente se siamo vicini al pageSize
     
     return new Array(emptyRowsCount);
+  }
+
+  /**
+   * Controlla se un valore è vuoto o null e deve essere visualizzato come "-"
+   */
+  isEmptyValue(value: any): boolean {
+    return value === null || value === undefined || value === '' || 
+           (typeof value === 'string' && value.trim() === '');
+  }
+
+  /**
+   * Restituisce il valore da visualizzare, "-" se vuoto
+   */
+  getDisplayValue(value: any): string {
+    return this.isEmptyValue(value) ? '-' : value;
+  }
+
+  /**
+   * Determina se il testo deve essere troncato
+   */
+  shouldTruncate(text: string, maxLength?: number): boolean {
+    const length = maxLength || 30;
+    return text != null && text.length > length;
+  }
+
+  /**
+   * Restituisce il testo troncato
+   */
+  getTruncatedText(text: string, maxLength?: number): string {
+    const length = maxLength || 30;
+    if (!text || text.length <= length) {
+      return text;
+    }
+    return text.substring(0, length) + '...';
+  }
+
+  /**
+   * Restituisce il valore da visualizzare con eventuale troncamento
+   */
+  getDisplayValueWithTruncation(value: any, maxLength?: number): string {
+    const displayValue = this.getDisplayValue(value);
+    if (displayValue === '-') {
+      return displayValue;
+    }
+    const length = maxLength || 30;
+    return this.shouldTruncate(displayValue, length) ? 
+           this.getTruncatedText(displayValue, length) : displayValue;
+  }
+
+  /**
+   * Formatta una data in modo sicuro per la visualizzazione
+   */
+  getFormattedDate(value: any): string {
+    if (this.isEmptyValue(value)) {
+      return '-';
+    }
+    try {
+      const date = new Date(value);
+      if (isNaN(date.getTime())) {
+        return '-';
+      }
+      return date.toLocaleDateString('it-IT', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch {
+      return '-';
+    }
+  }
+
+  /**
+   * Restituisce il valore formattato della data con eventuale troncamento
+   */
+  getFormattedDateWithTruncation(value: any, maxLength?: number): string {
+    const formattedDate = this.getFormattedDate(value);
+    if (formattedDate === '-') {
+      return formattedDate;
+    }
+    const length = maxLength || 30;
+    return this.shouldTruncate(formattedDate, length) ? 
+           this.getTruncatedText(formattedDate, length) : formattedDate;
   }
 }

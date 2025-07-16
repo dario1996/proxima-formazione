@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
+import { PageTitleComponent, ButtonConfig } from '../../../../core/page-title/page-title.component';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -24,7 +24,8 @@ import { DipendentiService } from '../../../../core/services/data/dipendenti.ser
 import { CorsiService } from '../../../../core/services/data/corsi.service';
 import { forkJoin } from 'rxjs';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
-import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
+import { FilterPanelComponent } from '../../../../shared/components/filter-panel/filter-panel.component';
+import { FilterButtonComponent } from '../../../../shared/components/filter-button/filter-button.component';
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { DettaglioDipendentiComponent } from '../../../dipendenti/components/dettaglio-dipendenti/dettaglio-dipendenti.component';
 import { DisableConfirmComponent } from '../../../../core/disable-confirm/disable-confirm.component';
@@ -35,6 +36,7 @@ import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/u
 import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { FormAssegnazioneComponent } from '../../components/form-assegnazione/form-assegnazione.component';
+import { ImportAssegnazioniComponent } from '../../components/import-assegnazioni/import-assegnazioni.component';
 
 @Component({
   selector: 'app-piano-formativo',
@@ -45,7 +47,8 @@ import { FormAssegnazioneComponent } from '../../components/form-assegnazione/fo
     FormsModule,
     ReactiveFormsModule,
     TabellaGenericaComponent,
-    FiltriGenericiComponent,
+    FilterPanelComponent,
+    FilterButtonComponent,
     PaginationFooterComponent,
   ],
   templateUrl: './piano-formativo.component.html',
@@ -64,49 +67,100 @@ export class PianoFormativoComponent implements OnInit {
 
   pageSize = 20; // CORRETTO: 20 righe come in Corsi
 
+  // Filter panel state
+  isFilterPanelOpen = false;
+
   filtri: IFiltroDef[] = [
     {
-      key: 'nominativo',
+      key: 'dipendenteNome',
       label: 'Dipendente',
       type: 'text',
       placeholder: 'Cerca dipendente...',
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
+      key: 'corsoNome',
+      label: 'Corso',
+      type: 'text',
+      placeholder: 'Cerca corso...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'dataAssegnazione',
+      label: 'Data Assegnazione',
+      type: 'date',
+      placeholder: 'Seleziona data...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'statoDisplay',
+      label: 'Stato',
+      type: 'select',
+      options: [
+        { value: '', label: 'Tutti' },
+        { value: 'Da iniziare', label: 'Da iniziare' },
+        { value: 'In corso', label: 'In corso' },
+        { value: 'Terminato', label: 'Terminato' },
+        { value: 'Interrotto', label: 'Interrotto' },
+      ],
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'dataTerminaPrevista',
+      label: 'Data Termina Prevista',
+      type: 'date',
+      placeholder: 'Seleziona data...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'dataInizio',
+      label: 'Data Inizio',
+      type: 'date',
+      placeholder: 'Seleziona data...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'dataCompletamento',
+      label: 'Data Fine',
+      type: 'date',
+      placeholder: 'Seleziona data...',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
+      key: 'attestatoDisplay',
+      label: 'Attestato',
+      type: 'select',
+      options: [
+        { value: '', label: 'Tutti' },
+        { value: 'SI', label: 'SI' },
+        { value: 'NO', label: 'NO' },
+      ],
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
       key: 'email',
-      label: 'Email',
+      label: 'Email Dipendente',
       type: 'text',
       placeholder: 'Cerca email...',
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
       key: 'ruolo',
-      label: 'Ruolo',
+      label: 'Ruolo Dipendente',
       type: 'text',
       placeholder: 'Cerca ruolo...',
-      colClass: 'col-12 col-md-4 col-lg-2 mb-2',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
-      key: 'isms',
-      label: 'ISMS',
+      key: 'obbligatorio',
+      label: 'Obbligatorio',
       type: 'select',
       options: [
         { value: '', label: 'Tutti' },
-        { value: 'Si', label: 'Si' },
-        { value: 'No', label: 'No' },
+        { value: 'true', label: 'Sì' },
+        { value: 'false', label: 'No' },
       ],
-      colClass: 'col-6 col-md-3 col-lg-2 mb-2',
-    },
-    {
-      key: 'attivo',
-      label: 'Stato',
-      type: 'select',
-      options: [
-        { value: '', label: 'Tutti' },
-        { value: 'Attivo', label: 'Attivo' },
-        { value: 'Non attivo', label: 'Non attivo' },
-      ],
-      colClass: 'col-6 col-md-3 col-lg-2 mb-2',
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
   ];
   valoriFiltri: { [key: string]: any } = {};
@@ -114,18 +168,38 @@ export class PianoFormativoComponent implements OnInit {
   assegnazioni: IAssegnazione[] = [];
   formazioneDipendentiFiltrato: IAssegnazione[] = [];
 
+  // Buttons configuration for page title
+  buttons: ButtonConfig[] = [
+    {
+      text: 'Assegna corso',
+      icon: 'fas fa-plus',
+      class: 'btn-primary',
+      action: 'add'
+    },
+    {
+      text: 'Import massivo',
+      icon: 'fas fa-upload',
+      class: 'btn-secondary',
+      action: 'bulk-import'
+    }
+  ];
+
+  dipendenti: IDipendenti[] = [];
+
   columns: IColumnDef[] = [
     { 
       key: 'dipendenteNome', 
       label: 'Dipendente', 
       sortable: true, 
-      type: 'text'
+      type: 'text',
+      maxLength: 25
     },
     {
       key: 'corsoNome',
       label: 'Corso',
       sortable: true,
-      type: 'text'
+      type: 'text',
+      maxLength: 35
     },
     {
       key: 'dataAssegnazione',
@@ -138,6 +212,7 @@ export class PianoFormativoComponent implements OnInit {
       label: 'Stato',
       sortable: true,
       type: 'badge',
+      statusType: 'assegnazione'
     },
     {
       key: 'dataTerminaPrevista',
@@ -161,7 +236,8 @@ export class PianoFormativoComponent implements OnInit {
       key: 'attestatoDisplay',
       label: 'Attestato',
       sortable: true,
-      type: 'badge'
+      type: 'badge',
+      statusType: 'attestato'
     },
   ];
 
@@ -241,36 +317,89 @@ export class PianoFormativoComponent implements OnInit {
     });
   }
 
-  onFiltriChange(valori: { [key: string]: any }) {
-    this.valoriFiltri = valori;
-    this.applicaFiltri();
-  }
-
   applicaFiltri() {
     this.formazioneDipendentiFiltrato = this.assegnazioni.filter((a: IAssegnazione) => {
-      const nominativo = `${a.dipendente.nome} ${a.dipendente.cognome}`.trim().toLowerCase();
+      // Filter by Dipendente Nome
+      if (this.valoriFiltri['dipendenteNome']) {
+        const nominativo = `${a.dipendente.nome} ${a.dipendente.cognome}`.trim().toLowerCase();
+        if (!nominativo.includes(this.valoriFiltri['dipendenteNome'].toLowerCase())) {
+          return false;
+        }
+      }
 
-      if (
-        this.valoriFiltri['nominativo'] &&
-        !nominativo.includes(this.valoriFiltri['nominativo'].toLowerCase())
-      ) {
-        return false;
+      // Filter by Corso Nome
+      if (this.valoriFiltri['corsoNome']) {
+        if (!a.corso.nome.toLowerCase().includes(this.valoriFiltri['corsoNome'].toLowerCase())) {
+          return false;
+        }
       }
-      if (
-        this.valoriFiltri['email'] &&
-        !a.dipendente.email.toLowerCase().includes(this.valoriFiltri['email'].toLowerCase())
-      ) {
-        return false;
+
+      // Filter by Data Assegnazione
+      if (this.valoriFiltri['dataAssegnazione']) {
+        if (!this.compareDates(a.dataAssegnazione, this.valoriFiltri['dataAssegnazione'])) {
+          return false;
+        }
       }
-      if (
-        this.valoriFiltri['ruolo'] &&
-        !a.dipendente.ruolo.toLowerCase().includes(this.valoriFiltri['ruolo'].toLowerCase())
-      ) {
-        return false;
+
+      // Filter by Stato
+      if (this.valoriFiltri['statoDisplay']) {
+        const statoDisplay = this.getStatoDisplayLabel(a.stato);
+        if (statoDisplay !== this.valoriFiltri['statoDisplay']) {
+          return false;
+        }
       }
-      if (this.valoriFiltri['attivo'] && a.dipendente.attivo !== (this.valoriFiltri['attivo'] === 'Attivo')) {
-        return false;
+
+      // Filter by Data Termina Prevista
+      if (this.valoriFiltri['dataTerminaPrevista']) {
+        if (!this.compareDates(a.corso.dataScadenza, this.valoriFiltri['dataTerminaPrevista'])) {
+          return false;
+        }
       }
+
+      // Filter by Data Inizio
+      if (this.valoriFiltri['dataInizio']) {
+        if (!this.compareDates(a.dataInizio, this.valoriFiltri['dataInizio'])) {
+          return false;
+        }
+      }
+
+      // Filter by Data Completamento
+      if (this.valoriFiltri['dataCompletamento']) {
+        if (!this.compareDates(a.dataCompletamento, this.valoriFiltri['dataCompletamento'])) {
+          return false;
+        }
+      }
+
+      // Filter by Attestato
+      if (this.valoriFiltri['attestatoDisplay']) {
+        const attestatoDisplay = a.attestato ? 'SI' : 'NO';
+        if (attestatoDisplay !== this.valoriFiltri['attestatoDisplay']) {
+          return false;
+        }
+      }
+
+      // Filter by Email
+      if (this.valoriFiltri['email']) {
+        if (!a.dipendente.email.toLowerCase().includes(this.valoriFiltri['email'].toLowerCase())) {
+          return false;
+        }
+      }
+
+      // Filter by Ruolo
+      if (this.valoriFiltri['ruolo']) {
+        if (!a.dipendente.ruolo.toLowerCase().includes(this.valoriFiltri['ruolo'].toLowerCase())) {
+          return false;
+        }
+      }
+
+      // Filter by Obbligatorio
+      if (this.valoriFiltri['obbligatorio'] !== undefined && this.valoriFiltri['obbligatorio'] !== '') {
+        const isObbligatorio = this.valoriFiltri['obbligatorio'] === 'true';
+        if (a.obbligatorio !== isObbligatorio) {
+          return false;
+        }
+      }
+
       return true;
     });
   }
@@ -323,15 +452,40 @@ export class PianoFormativoComponent implements OnInit {
       }
     });
   }
+
+  // Metodo per gestire i click dei pulsanti nella page title
+  handleButtonClick(action: string): void {
+    switch (action) {
+      case 'add':
+        this.onAssegnaCorso();
+        break;
+      case 'bulk-import':
+        this.modaleService.apri({
+          titolo: 'Import Massivo Assegnazioni',
+          componente: ImportAssegnazioniComponent,
+          dati: {},
+          dimensione: 'xxl',
+          onConferma: () => {
+            // Refresh the table after import
+            this.loadAssegnazioni();
+          }
+        });
+        break;
+      default:
+        console.warn('Azione non riconosciuta:', action);
+    }
+  }
+
   // NUOVO: Metodo per effettuare l'assegnazione
   private assegnaCorso(assegnazione: any) {
     this.assegnazioniService.assignCorsoToDipendente(
       assegnazione.dipendenteId,
       assegnazione.corsoId,
-      false
+      assegnazione.obbligatorio || false
     ).subscribe({
       next: (response) => {
         this.toastr.success('Corso assegnato con successo', 'Successo');
+        this.loadAssegnazioni(); // Ricarica i dati per aggiornare la tabella
       },
       error: (error) => {
         console.error('❌ Errore durante l\'assegnazione:', error);
@@ -349,5 +503,50 @@ export class PianoFormativoComponent implements OnInit {
     if (this.tabellaComponent) {
       this.tabellaComponent.goToPage(page);
     }
+  }
+
+  // Filter panel methods
+  openFilterPanel() {
+    this.isFilterPanelOpen = true;
+  }
+
+  closeFilterPanel() {
+    this.isFilterPanelOpen = false;
+  }
+
+  applyFilters(filtri: { [key: string]: any }) {
+    this.valoriFiltri = filtri;
+    this.applicaFiltri();
+  }
+
+  clearFilters() {
+    this.valoriFiltri = {};
+    this.applicaFiltri();
+  }
+
+  // Get count of active filters
+  getActiveFiltersCount(): number {
+    return Object.values(this.valoriFiltri).filter(value => 
+      value !== null && value !== undefined && value !== ''
+    ).length;
+  }
+
+  // Check if there are any active filters
+  hasActiveFilters(): boolean {
+    return this.getActiveFiltersCount() > 0;
+  }
+
+  // Utility method to compare dates
+  private compareDates(date1: string | Date, date2: string | Date): boolean {
+    if (!date1 || !date2) return false;
+    
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    
+    // Reset time to compare only dates
+    d1.setHours(0, 0, 0, 0);
+    d2.setHours(0, 0, 0, 0);
+    
+    return d1.getTime() === d2.getTime();
   }
 }
