@@ -1,0 +1,552 @@
+/* ================== SIDEBAR =================== */
+.sidebar {
+  width: 85px;
+  min-width: 85px;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Espansione su hover */
+.sidebar:hover {
+  width: 260px;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.08);
+}
+
+
+/* ================== NAVIGATION =================== */
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 0;
+  overflow-y: auto;
+  padding: var(--spacing-md, 16px);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nav-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin: 2px 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #64748b;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  margin: 0 8px;
+}
+
+.nav-link:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.nav-link.active {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.nav-link span {
+  margin-left: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.sidebar:hover .nav-link span {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ================== FOOTER =================== */
+.sidebar-footer {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+}
+
+.logout-icon {
+  width: 20px;
+  height: 20px;
+  stroke: #dc2626;
+}
+
+/* ================== MOBILE =================== */
+@media (max-width: 991px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 260px;
+    min-width: 260px;
+  }
+  
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+  
+  .sidebar-toggle-btn {
+    display: flex;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1050;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 19;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@media (min-width: 992px) {
+  .sidebar-toggle-btn {
+    display: none;
+  }
+}
+
+/* ================== HEADER SIDEBAR CON LOGO =================== */
+.sidebar-header {
+  padding: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 64px;
+  overflow: hidden; /* IMPORTANTE: nasconde l'overflow */
+}
+
+/* Logo icona (visibile quando compressa) */
+.sidebar-logo-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Logo immagine (visibile quando espansa) */
+.sidebar-logo-full {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 32px;
+  width: auto;
+  max-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Quando sidebar espansa: nascondi icona, mostra immagine */
+.sidebar:hover .sidebar-logo-icon,
+.sidebar.sidebar-open .sidebar-logo-icon {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.sidebar:hover .sidebar-logo-full,
+.sidebar.sidebar-open .sidebar-logo-full {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* FORZA IL CENTRAMENTO QUANDO SIDEBAR È CHIUSA */
+.sidebar:not(.sidebar-open):not(:hover) .sidebar-header {
+  justify-content: center;
+  padding: 16px 8px; /* PADDING RIDOTTO */
+}
+
+.sidebar:not(.sidebar-open):not(:hover) .sidebar-logo-icon {
+  position: static; /* TORNA AL FLUSSO NORMALE */
+  transform: none;
+  display: block;
+  margin: 0 auto; /* CENTRATO CON MARGINI AUTO */
+}
+
+/* ================== SIDEBAR NAVIGATION =================== */
+/* Nav-link specifico per sidebar */
+.sidebar .nav-link {
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md); /* Padding fisso per evitare il salto */
+  margin: 2px 0;
+  transition: all 0.2s ease;
+  min-height: 40px; /* Altezza consistente */
+  display: flex;
+  width: 100%;
+  border-radius: var(--radius-md);
+  color: var(--color-muted-foreground);
+  text-decoration: none;
+  justify-content: flex-start; /* Sempre allineato a sinistra */
+}
+
+/* Rimuoviamo la regola che cambiava il padding su hover */
+/* .sidebar:hover .nav-link,
+.sidebar.sidebar-open .nav-link {
+  justify-content: flex-start;
+  padding: var(--spacing-sm) var(--spacing-md);
+} */
+
+.sidebar .nav-link:hover {
+  background: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+.sidebar .nav-link.active {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+/* Icone sempre nella stessa posizione */
+.sidebar .nav-link .nav-icon,
+.sidebar .nav-link i,
+.sidebar .nav-link svg {
+  width: 20px;
+  height: 20px;
+  min-width: 20px; /* Larghezza minima fissa */
+  display: flex;
+  align-items: center; /* Centrato verticalmente */
+  justify-content: center; /* Centrato orizzontalmente */
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  margin-right: 12px; /* Spazio fisso tra icona e testo */
+}
+
+/* Nascondi testo e info utente da compressa con fade */
+.sidebar .nav-link span,
+.sidebar .sidebar-user-info,
+.sidebar .sidebar-user-name,
+.sidebar .user-name-sidebar {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-left: 0;
+}
+
+/* Mostra testo e info utente da espansa con fade */
+.sidebar:hover .nav-link span,
+.sidebar.sidebar-open .nav-link span,
+.sidebar:hover .sidebar-user-info,
+.sidebar.sidebar-open .sidebar-user-info,
+.sidebar:hover .sidebar-user-name,
+.sidebar.sidebar-open .sidebar-user-name,
+.sidebar:hover .user-name-sidebar,
+.sidebar.sidebar-open .user-name-sidebar {
+  opacity: 1;
+  visibility: visible;
+  margin-left: var(--spacing-sm);
+}
+
+/* Quando la sidebar è aperta, il main-content NON cambia */
+.sidebar:hover ~ .main-content,
+.sidebar.sidebar-open ~ .main-content {
+  margin-left: var(--sidebar-collapsed-width);
+  width: calc(100vw - var(--sidebar-collapsed-width));
+}
+
+/* ================== OVERLAY =================== */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(173, 173, 173, 0.31);
+  z-index: 19;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  
+}
+
+/* Overlay visibile quando sidebar è aperta o in hover */
+.sidebar.sidebar-open ~ .sidebar-overlay,
+.sidebar:hover ~ .sidebar-overlay {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
+.sidebar-logo-icon,
+.sidebar-logo-full {
+  height: 32px;
+  width: auto;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Sempre centrato */
+  padding: var(--spacing-sm, 8px);
+  border-radius: var(--radius-md, 6px);
+  margin-bottom: var(--spacing-sm, 8px);
+  position: relative; /* Per controllo fine della posizione */
+}
+
+.sidebar.sidebar-open {
+  transform: translateX(0);
+}
+
+.sidebar-toggle-btn {
+  display: none;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  padding: 0.5em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 2em;
+  height: 2em;
+}
+
+.logout-btn .nav-icon {
+  stroke: #000000;
+  width: 2em;
+  height: 2em;
+  font-weight: bold;
+}
+
+.logout-btn:hover .logout-icon {
+  stroke: #e53935;
+}
+
+.logout-icon {
+  stroke: #000;
+  width: 2em;
+  height: 2em;
+  font-weight: bold;
+  transition: stroke 0.4s;
+  display: block;
+}
+
+/* ================== NAVIGATION =================== */
+.nav-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  margin: 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+  border-radius: 4px;
+  font-size: var(--font-size-sm, 14px);
+  font-weight: 500;
+  color: var(--color-muted-foreground, #64748b);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  gap: var(--spacing-sm, 8px);
+}
+
+.nav-link:hover {
+  background: var(--color-accent, #f1f5f9);
+  color: var(--color-foreground, #0f172a);
+}
+
+.nav-link.active {
+  background: var(--color-primary, #3b82f6);
+  color: var(--color-primary-foreground, #ffffff);
+}
+
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ================== RESPONSIVE =================== */
+@media (max-width: 991px) {
+  .sidebar-toggle-btn {
+    display: flex;
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 1050;
+    background: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    width: 31px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    transition: left 0.3s;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.sidebar-open ~ .sidebar-toggle-btn {
+    left: 238px;
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .sidebar.sidebar-open .menu-item {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.3s cubic-bezier(0.4,0,0.2,1),
+      transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .sidebar:not(.sidebar-open) .menu-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: none;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 19;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@media (min-width: 992px) {
+  .sidebar {
+    transform: translateX(0);
+    position: fixed;
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+}
+
+/* ================== AVATAR USER STYLES =================== */
+/* Override avatar component styles for sidebar */
+::ng-deep .sidebar-user .avatar-sidebar {
+  align-items: center !important;
+  justify-content: center !important; /* Sempre centrato */
+}
+
+/* Mantieni l'avatar sempre nella stessa posizione */
+::ng-deep .sidebar-user .avatar-sidebar .avatar-image,
+::ng-deep .sidebar-user .avatar-sidebar .avatar-placeholder {
+  position: relative !important;
+  margin: 0 auto !important; /* Sempre centrato */
+}
+
+/* Nascondi il nome utente quando la sidebar è chiusa */
+::ng-deep .sidebar:not(:hover):not(.sidebar-open) .sidebar-user .avatar-sidebar .user-name-sidebar {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease !important;
+}
+
+/* Mostra il nome utente quando la sidebar è espansa */
+::ng-deep .sidebar:hover .sidebar-user .avatar-sidebar .user-name-sidebar,
+::ng-deep .sidebar.sidebar-open .sidebar-user .avatar-sidebar .user-name-sidebar {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: #222222 !important; /* Colore nero */
+  font-size: 12px !important; /* Font size più piccolo */
+  font-weight: 400 !important; /* Peso normale */
+  text-shadow: none !important; /* Rimuove le ombre */
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  margin-top: 4px !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease !important;
+}
+
+::ng-deep .sidebar-footer .sidebar-user .avatar-sidebar span.user-name-sidebar {
+  color: #222222 !important; /* Assicura che il colore sia nero */
+  text-shadow: none !important; /* Rimuove completamente le ombre */
+}

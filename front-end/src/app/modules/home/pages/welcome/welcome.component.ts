@@ -1,18 +1,18 @@
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
-import { AvatarComponent } from '../../../../core/avatar/avatar.component';
 import { AuthJwtService } from '../../../../core/services/authJwt.service';
+import { SidebarComponent, MenuItem } from '../../../../shared/components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css',
-  imports: [RouterModule, AvatarComponent, NgClass, CommonModule],
+  imports: [RouterModule, CommonModule, SidebarComponent],
 })
 export class WelcomeComponent implements OnInit {
-  menuItems = [
+  menuItems: MenuItem[] = [
     {
       title: 'Dashboard',
       icon: 'fa-solid fa-tachometer-alt fa-xl',
@@ -93,20 +93,13 @@ export class WelcomeComponent implements OnInit {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  closeSidebarOnMobile() {
-    if (window.innerWidth <= 991.98) {
-      this.isSidebarOpen = false;
-    }
-  }
-
   ngOnInit(): void {
-    this.isOpen = Array(this.menuItems.length).fill(false); // inizializza tutti chiusi
+    this.isOpen = Array(this.menuItems.length).fill(false);
     this.utente = this.route.snapshot.params['userid'];
   }
 
   errore = '';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError(error: any) {
     console.log(error);
     this.errore = error.error.message;
@@ -116,14 +109,16 @@ export class WelcomeComponent implements OnInit {
     this.isOpen[index] = !this.isOpen[index];
   }
 
-  selectLink(link: any): void {
+  // Gestori per gli eventi emessi dalla sidebar
+  onLinkSelected(link: any): void {
     this.selectedLink = link;
   }
 
-  logout() {
-    // Sostituisci con il tuo servizio di logout se necessario
-    // Esempio:
-    //this.authService.logout();
+  onSidebarToggle(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  onLogout(): void {
     this.router.navigate(['/login']);
   }
 }
