@@ -750,3 +750,208 @@ app-tabella-generica {
 app-pagination-footer {
   margin: 0px 12px 0px 12px;
 }
+
+/* ================== NEUTRAL TOAST STYLES =================== */
+
+/* Toast container positioning */
+#toast-container {
+  position: fixed !important;
+  z-index: 9999 !important;
+  pointer-events: none !important;
+}
+
+/* Position variants */
+#toast-container.toast-bottom-right {
+  bottom: 24px !important;
+  right: 24px !important;
+  width: 356px !important;
+  max-width: calc(100vw - 48px) !important;
+}
+
+#toast-container.toast-bottom-left {
+  bottom: 24px !important;
+  left: 24px !important;
+  width: 356px !important;
+  max-width: calc(100vw - 48px) !important;
+}
+
+#toast-container.toast-top-right {
+  top: 24px !important;
+  right: 24px !important;
+  width: 356px !important;
+  max-width: calc(100vw - 48px) !important;
+}
+
+#toast-container.toast-top-left {
+  top: 24px !important;
+  left: 24px !important;
+  width: 356px !important;
+  max-width: calc(100vw - 48px) !important;
+}
+
+#toast-container.toast-bottom-center {
+  bottom: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 356px !important;
+  max-width: calc(100vw - 48px) !important;
+}
+
+#toast-container.toast-top-center {
+  top: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 356px !important;
+  max-width: calc(100vw - 48px) !important;
+}
+
+/* Base toast styling - Neutral and clean */
+.radix-toast {
+  background: var(--color-background) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-sm) !important;
+  padding: 16px !important;
+  margin-bottom: 12px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: auto !important;
+  max-height: none !important;
+  word-wrap: break-word !important;
+  font-size: var(--font-size-sm) !important;
+  line-height: 1.5 !important;
+  width: 100% !important;
+  pointer-events: auto !important;
+  display: block !important;
+  /* Remove all animations */
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Neutral toast variants - subtle left border only */
+.radix-toast.radix-toast-success,
+.radix-toast.radix-toast-error,
+.radix-toast.radix-toast-warning,
+.radix-toast.radix-toast-info {
+  border-left: 3px solid var(--color-muted-foreground) !important;
+}
+
+/* Remove all pseudo-elements and gradients */
+.radix-toast::before,
+.radix-toast::after {
+  display: none !important;
+}
+
+/* Toast content styling */
+.radix-toast-title {
+  font-weight: 600 !important;
+  font-size: var(--font-size-sm) !important;
+  color: var(--color-foreground) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.4 !important;
+  letter-spacing: normal !important;
+}
+
+.radix-toast-message {
+  font-size: var(--font-size-sm) !important;
+  color: var(--color-muted-foreground) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.5 !important;
+  opacity: 1 !important;
+}
+
+/* Remove all hover effects and animations */
+.radix-toast:hover {
+  box-shadow: var(--shadow-sm) !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Override ngx-toastr defaults with strong specificity */
+.toast-container .radix-toast {
+  position: relative !important;
+  box-sizing: border-box !important;
+  margin: 0 0 12px 0 !important;
+  padding: 16px !important;
+  width: 100% !important;
+  border-radius: var(--radius-md) !important;
+  background-position: initial !important;
+  background-repeat: no-repeat !important;
+  background-image: none !important;
+  box-shadow: var(--shadow-sm) !important;
+  color: var(--color-foreground) !important;
+  cursor: pointer !important;
+  display: block !important;
+  /* Remove all default ngx-toastr animations */
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Remove all default toastr icons and decorations */
+.toast-container .radix-toast:before,
+.radix-toast::before {
+  display: none !important;
+}
+
+/* Remove default toastr message and title padding */
+.radix-toast .toast-message {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.radix-toast .toast-title {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  #toast-container.toast-bottom-right,
+  #toast-container.toast-bottom-left,
+  #toast-container.toast-top-right,
+  #toast-container.toast-top-left {
+    bottom: 16px !important;
+    right: 16px !important;
+    left: 16px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+  
+  #toast-container.toast-bottom-center,
+  #toast-container.toast-top-center {
+    bottom: 16px !important;
+    left: 16px !important;
+    right: 16px !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+  
+  .radix-toast {
+    padding: 12px !important;
+    margin-bottom: 8px !important;
+  }
+}
+
+/* Focus states for accessibility - minimal */
+.radix-toast:focus-visible {
+  outline: 2px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Ensure styles work in dark mode */
+@media (prefers-color-scheme: dark) {
+  .radix-toast {
+    background: var(--color-background) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-foreground) !important;
+  }
+  
+  .radix-toast-message {
+    color: var(--color-muted-foreground) !important;
+  }
+}

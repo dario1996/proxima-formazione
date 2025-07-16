@@ -103,6 +103,16 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
       },
       error: error => {
         console.log(error);
+        // Check if the error is about no courses available - don't show toast for this
+        if (error && error.includes && error.includes('Nessun corso disponibile a sistema')) {
+          // Set empty array and don't show toast when no courses are available
+          this.corsi = [];
+          this.applicaFiltri();
+          this.cd.detectChanges();
+          this.paginationInfo.totalItems = 0;
+          return;
+        }
+        
         if (error) {
           this.toastr.warning(error);
           return;

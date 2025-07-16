@@ -198,4 +198,28 @@ export class TabellaGenericaComponent {
     });
     this.updatePagination();
   }
+
+  /**
+   * Calcola il numero di righe vuote necessarie per riempire lo spazio visibile
+   * senza creare scroll inutile
+   */
+  getEmptyRows(): any[] {
+    // Se non ci sono dati, non mostrare righe vuote
+    if (this.paginatedData.length === 0) {
+      return [];
+    }
+
+    // Se abbiamo già abbastanza dati per riempire la pagina, non aggiungere righe vuote
+    if (this.paginatedData.length >= this.pageSize) {
+      return [];
+    }
+
+    // Calcola le righe vuote per riempire meglio lo spazio disponibile
+    // Se abbiamo meno della metà dei dati, aggiungi alcune righe vuote per aspetto più pieno
+    const emptyRowsCount = this.paginatedData.length < this.pageSize / 2 
+      ? Math.min(5, this.pageSize - this.paginatedData.length) // Massimo 5 righe vuote per aspetto migliore
+      : this.pageSize - this.paginatedData.length; // Riempi completamente se siamo vicini al pageSize
+    
+    return new Array(emptyRowsCount);
+  }
 }

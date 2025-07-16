@@ -142,7 +142,7 @@ th .fa {
 .table-scroll-container {
   flex: 1 1 auto;
   min-height: 0;
-  max-height: calc(100vh - 322px); /* Altezza dinamica basata sulla viewport */
+  max-height: calc(100vh - 260px); /* AUMENTATO: ridotto da 322px a 260px per più spazio */
   overflow-y: auto; /* Scroll verticale */
   overflow-x: hidden; /* Nasconde scroll orizzontale se non necessario */
   display: flex;
@@ -156,12 +156,23 @@ th .fa {
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* Quando ci sono pochi dati, la tabella non dovrebbe forzare l'altezza completa */
+.table-scroll-container.few-records {
+  flex: 0 1 auto; /* Permette alla tabella di comprimersi quando ci sono pochi dati */
+}
+
+/* Quando non ci sono dati, la tabella dovrebbe avere una dimensione minima */
+.table-scroll-container.no-data {
+  flex: 0 1 auto;
+  min-height: 300px;
+}
+
 .table {
   border-collapse: collapse;
   table-layout: fixed;
   width: 100%;
   margin-bottom: 0;
-  height: 100%;
+  /* RIMOSSO: height: 100% - permette alla tabella di adattarsi al contenuto */
 }
 
 .table-scroll-container .pagination {
@@ -295,6 +306,10 @@ th .fa {
   background: #fff !important;
   cursor: default !important;
   pointer-events: none;
+  height: 35px !important; /* Altezza fissa per righe vuote */
+  min-height: 35px !important;
+  max-height: 35px !important;
+  padding: 0 !important; /* Rimuove padding extra */
 }
 
 .table-body tr.empty-rows:hover > td {
@@ -313,13 +328,13 @@ th .fa {
 
 @media (max-width: 1400px) {
   .table-scroll-container {
-    max-height: calc(100vh - 200px); /* Più spazio su schermi grandi */
+    max-height: calc(100vh - 180px); /* AUMENTATO: più spazio su schermi grandi */
   }
 }
 
 @media (max-width: 1200px) {
   .table-scroll-container {
-    max-height: calc(100vh - 240px);
+    max-height: calc(100vh - 200px); /* AUMENTATO: più spazio su schermi medi */
   }
 }
 
@@ -329,7 +344,7 @@ th .fa {
   /* .table-header th, .table-body td { padding: 8px; font-size: 13px; } */
   .action-buttons { gap: 2px; }
   .table-scroll-container {
-    max-height: calc(100vh - 260px);
+    max-height: calc(100vh - 220px); /* AUMENTATO: più spazio su mobile */
     overflow-x: auto; /* Permette scroll orizzontale su mobile */
   }
   
@@ -352,7 +367,7 @@ th .fa {
 
 @media (max-width: 480px) {
   .table-scroll-container {
-    max-height: calc(100vh - 280px);
+    max-height: calc(100vh - 240px); /* AUMENTATO: più spazio su mobile piccolo */
     padding: 0.5rem;
   }
 }
@@ -470,3 +485,65 @@ th .fa {
   border: none !important;
   box-shadow: none !important;
 } */
+
+/* ================== NO DATA TEMPLATE =================== */
+.no-data-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 300px;
+  padding: 40px 20px;
+}
+
+.no-data-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.no-data-icon {
+  font-size: 4rem;
+  color: #9ca3af;
+  margin-bottom: 1.5rem;
+}
+
+.no-data-icon i {
+  display: block;
+}
+
+.no-data-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+  margin-top: 0;
+}
+
+.no-data-message {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+/* Responsive per no-data template */
+@media (max-width: 768px) {
+  .no-data-container {
+    min-height: 200px;
+    padding: 30px 15px;
+  }
+  
+  .no-data-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .no-data-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .no-data-message {
+    font-size: 0.875rem;
+  }
+}

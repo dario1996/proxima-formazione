@@ -35,10 +35,21 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(BrowserAnimationsModule),
     importProvidersFrom(
       ToastrModule.forRoot({
-        positionClass: 'toast-top-right', // <-- Cambiato qui
+        positionClass: 'toast-bottom-right',
         timeOut: 4000,
-        closeButton: true,
-        progressBar: true,
+        closeButton: false,
+        progressBar: false,
+        preventDuplicates: true,
+        maxOpened: 3,
+        newestOnTop: true,
+        tapToDismiss: true,
+        toastClass: 'radix-toast',
+        titleClass: 'radix-toast-title',
+        messageClass: 'radix-toast-message',
+        enableHtml: false,
+        // Disable all animations
+        easeTime: 0,
+        easing: 'linear'
       }),
     ),
 

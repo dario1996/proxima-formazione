@@ -9,7 +9,8 @@
   position: relative;
   z-index: 1;
   border-radius: 4px;
-  padding: 5px 13px 5px 13px;
+  padding: 4px 13px 5px 13px; /* MODIFICATO: ridotto padding-top da 8px a 4px */
+  margin-top: 4px; /* MODIFICATO: ridotto margin-top da 8px a 4px */
 }
 
 /* ================== FOOTER DENTRO CONTAINER =================== */

@@ -173,12 +173,6 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
   columns: IColumnDef[] = [
     { key: 'nominativo', label: 'Nominativo', sortable: true, type: 'text' },
     {
-      key: 'email',
-      label: 'Email',
-      sortable: true,
-      type: 'text',
-    },
-    {
       key: 'reparto',
       label: 'Reparto',
       sortable: true,
