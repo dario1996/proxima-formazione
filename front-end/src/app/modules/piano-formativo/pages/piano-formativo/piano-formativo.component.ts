@@ -35,6 +35,7 @@ import { ModaleService } from '../../../../core/services/modal.service';
 import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/ui/azione-def';
 import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
+import { FormAssegnazioneComponent } from '../../components/form-assegnazione/form-assegnazione.component';
 
 @Component({
   selector: 'app-piano-formativo',
@@ -294,14 +295,6 @@ export class PianoFormativoComponent implements OnInit {
 
   gestioneAzione(e: { tipo: string; item: any }) {
     switch (e.tipo) {
-      case 'add':
-        this.modaleService.apri({
-          titolo: 'Aggiungi dipendente',
-          componente: FormDipendentiComponent,
-          dati: {},
-          onConferma: (formValue: any) => this.addDipendente(formValue),
-        });
-        break;
       case 'edit':
         this.modaleService.apri({
           titolo: 'Modifica dipendente',
@@ -351,6 +344,33 @@ export class PianoFormativoComponent implements OnInit {
       default:
         console.error('Azione non supportata:', e.tipo);
     }
+  }
+
+  // NUOVO: Metodo per gestire il click del pulsante "Assegna corso"
+  onAssegnaCorso() {
+    this.modaleService.apri({
+      titolo: 'Assegna Corso',
+      componente: FormAssegnazioneComponent,
+      dati: {},
+      onConferma: (risultato: any) => {
+        if (risultato) {
+          this.assegnaCorso(risultato);
+        }
+      }
+    });
+  }
+  // NUOVO: Metodo per effettuare l'assegnazione
+  private assegnaCorso(assegnazione: any) {
+    // Qui chiameremo il service per l'assegnazione quando sarà pronto
+    console.log('Assegnazione da salvare:', assegnazione);
+    
+    this.toastr.success(
+      `Corso assegnato con successo al dipendente`,
+      'Successo'
+    );
+    
+    // Ricarica i dati se necessario
+    this.loadDipendenti();
   }
 
   // CORRETTI: Metodi per la paginazione come in Corsi

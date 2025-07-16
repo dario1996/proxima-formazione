@@ -4,5 +4,5 @@ export interface IModaleConfig {
   titolo: string;
   componente: Type<any>;
   dati?: any;
-  onConferma?: (formValue: any) => void; // <--- accetta i dati dal figlio
+  onConferma?: (formValue: any) => void;
 }

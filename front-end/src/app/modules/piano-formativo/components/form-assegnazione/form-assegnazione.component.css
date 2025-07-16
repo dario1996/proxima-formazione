@@ -1,0 +1,237 @@
+/* Sezione headers */
+.section-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.section-title {
+  color: #054b9a;
+  font-weight: 600;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Form fields - eredita dallo stile esistente */
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+/* Search container e dropdown */
+.search-container {
+  position: relative;
+}
+
+.searchable-dropdown-input {
+  cursor: pointer;
+  padding-right: 3.5rem !important;
+}
+
+.dropdown-arrow {
+  position: absolute;
+  right: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  pointer-events: none;
+  z-index: 5;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-arrow.rotated {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  z-index: 6;
+  background-color: transparent;
+  color: #6c757d;
+}
+
+.clear-btn:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+.search-dropdown {
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  background-color: white;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 2px;
+}
+
+.search-dropdown-item {
+  border-bottom: 1px solid #f8f9fa;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.search-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.search-dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.search-dropdown-item:active {
+  background-color: #e9ecef;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Card per elementi selezionati */
+.selected-item-card .card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.selected-item-card .card-header {
+  border-radius: 8px 8px 0 0;
+  padding: 0.75rem 1rem;
+}
+
+.selected-item-card .card-body {
+  padding: 1rem;
+}
+
+.selected-item-card .card-header.bg-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+}
+
+.selected-item-card .card-header.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+}
+
+/* Icons spacing */
+.fas {
+  margin-right: 0.25rem;
+}
+
+/* Custom scrollbar per dropdown */
+.search-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .row > .col-md-6 {
+    margin-bottom: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1rem;
+  }
+  
+  .selected-item-card {
+    margin-top: 1rem !important;
+  }
+  
+  .search-dropdown {
+    max-height: 200px;
+  }
+}
+
+/* Hover effects */
+.search-dropdown-item {
+  position: relative;
+}
+
+.search-dropdown-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  transition: width 0.2s ease;
+}
+
+.search-dropdown-item:hover::before {
+  width: 3px;
+}
+
+/* Text colors per i dropdown items */
+.text-primary {
+  color: #007bff !important;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+.text-secondary {
+  color: #6c757d !important;
+}
+
+/* Font weights */
+.fw-bold {
+  font-weight: 600 !important;
+}
+
+.small {
+  font-size: 0.875rem;
+}
