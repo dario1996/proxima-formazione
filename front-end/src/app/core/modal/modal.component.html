@@ -1,5 +1,11 @@
 <div class="modal fade show d-block" *ngIf="config" style="background: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered"
+        [ngClass]="{
+            'modal-sm': config.dimensione === 'sm',
+            'modal-lg': config.dimensione === 'lg' || config.dimensione === 'xl',
+            'modal-xl': config.dimensione === 'xl',
+            'modal-xxl': config.dimensione === 'xxl'
+          }">
     <div class="modal-content">
       <div class="modal-header align-items-center">
         <h5 class="modal-title m-0">{{ config.titolo }}</h5>

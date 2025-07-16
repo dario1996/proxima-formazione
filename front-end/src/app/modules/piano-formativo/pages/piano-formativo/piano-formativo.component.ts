@@ -34,6 +34,7 @@ import { ModaleService } from '../../../../core/services/modal.service';
 import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/ui/azione-def';
 import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
+import { FormAssegnazioneComponent } from '../../components/form-assegnazione/form-assegnazione.component';
 
 @Component({
   selector: 'app-piano-formativo',
@@ -188,6 +189,7 @@ export class PianoFormativoComponent implements OnInit {
     private assegnazioniService: AssegnazioniService,
     private dipendentiService: DipendentiService,
     private modaleService: ModaleService,
+    private assegnazioniService: AssegnazioniService, // CAMBIATO
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
   ) {}
@@ -306,6 +308,38 @@ export class PianoFormativoComponent implements OnInit {
       default:
         console.error('Azione non supportata:', e.tipo);
     }
+  }
+
+  // NUOVO: Metodo per gestire il click del pulsante "Assegna corso"
+  onAssegnaCorso() {
+    this.modaleService.apri({
+      titolo: 'Assegna Corso',
+      componente: FormAssegnazioneComponent,
+      dati: {},
+      dimensione: 'xxl',
+      onConferma: (risultato: any) => {
+        if (risultato) {
+          this.assegnaCorso(risultato);
+        }
+      }
+    });
+  }
+  // NUOVO: Metodo per effettuare l'assegnazione
+  private assegnaCorso(assegnazione: any) {
+    this.assegnazioniService.assignCorsoToDipendente(
+      assegnazione.dipendenteId,
+      assegnazione.corsoId,
+      false
+    ).subscribe({
+      next: (response) => {
+        this.toastr.success('Corso assegnato con successo', 'Successo');
+        this.loadDipendenti();
+      },
+      error: (error) => {
+        console.error('❌ Errore durante l\'assegnazione:', error);
+        this.toastr.error('Errore durante l\'assegnazione del corso', 'Errore');
+      }
+    });
   }
 
   // CORRETTI: Metodi per la paginazione come in Corsi
