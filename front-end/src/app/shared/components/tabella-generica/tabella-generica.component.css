@@ -1,19 +1,14 @@
 /* GESTIONE ASPETTO TABLE*/
-.col-email {
-  white-space: normal;
-  word-break: break-word;
-  /* oppure: word-break: break-word; */
-}
-
 .table-container.loading {
   opacity: 0.6;
   pointer-events: none;
 }
 .table {
-  width: fixed;
+  width: 100%;
   border-spacing: 0;
   font-size: 14px;
   margin: 0;
+  table-layout: fixed; /* IMPORTANTE: Forza le colonne a rispettare le larghezze definite */
 }
 .table-header th {
   position: sticky;
@@ -47,6 +42,44 @@ th .fa {
   margin-left: 4px;
   font-size: 12px;
 }
+
+/* Text truncation with tooltip - SOLO PER TABELLE */
+.table-scroll-container .table-body td .truncated-text {
+  max-width: 200px;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  cursor: help;
+  display: inline-block;
+  width: 100%;
+}
+
+.table-scroll-container .table-body td .truncated-text:hover {
+  opacity: 0.8;
+}
+
+/* Assicura che tutte le celle possano essere troncate - SOLO PER TABELLE */
+.table-scroll-container .table-body td {
+  max-width: 0; /* Forza il contenuto a rispettare la larghezza della colonna */
+  overflow: hidden;
+  white-space: nowrap; /* Previene il wrapping del testo */
+  text-overflow: ellipsis; /* Mostra ... quando il testo è troppo lungo */
+  position: relative;
+}
+
+/* Responsive truncation - SOLO PER TABELLE */
+@media (max-width: 768px) {
+  .table-scroll-container .table-body td .truncated-text {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 576px) {
+  .table-scroll-container .table-body td .truncated-text {
+    max-width: 100px;
+  }
+}
+
 /* FINE */
 
 /* ================== BOTTONI AZIONI SOLO ICONA =================== */
@@ -358,9 +391,13 @@ th .fa {
     height: 40px;
   }
   
-  .table-body td {
+  .table-scroll-container .table-body td {
     padding: 4px 6px;
     font-size: 12px;
+    max-width: 0; /* Mantiene la troncatura su mobile */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
 }

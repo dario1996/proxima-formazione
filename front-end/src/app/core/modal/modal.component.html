@@ -1,20 +1,24 @@
-<div class="modal fade show d-block" *ngIf="config" style="background: rgba(0,0,0,0.5);">
+<div class="modal fade show d-block" *ngIf="config" style="background: rgba(0,0,0,0.5);" (click)="onBackdropClick($event)">
   <div class="modal-dialog modal-dialog-centered"
         [ngClass]="{
             'modal-sm': config.dimensione === 'sm',
             'modal-lg': config.dimensione === 'lg' || config.dimensione === 'xl',
             'modal-xl': config.dimensione === 'xl',
             'modal-xxl': config.dimensione === 'xxl'
-          }">
+          }"
+        (click)="$event.stopPropagation()">
     <div class="modal-content">
       <div class="modal-header align-items-center">
         <h5 class="modal-title m-0">{{ config.titolo }}</h5>
         <button
+          *ngIf="config.showCloseButton !== false"
           type="button"
-          class="btn-close position-absolute top-5 end-0 translate-middle-y me-3"
-          style="z-index:2"
+          class="btn-close"
           (click)="chiudi()"
-        ></button>
+          aria-label="Chiudi"
+        >
+          <i class="fas fa-times"></i>
+        </button>
       </div>
       <div class="modal-body">
         <ng-template #dynamicTarget></ng-template>

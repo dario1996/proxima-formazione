@@ -40,20 +40,21 @@
         </thead>
         <tbody class="table-body">
         <tr *ngFor="let row of paginatedData" class="row-clickable align-middle" (click)="rowClick.emit(row)">
-            <td *ngFor="let col of columns" [ngClass]="{'col-email': col.key === 'email'}">
+            <td *ngFor="let col of columns">
               <ng-container [ngSwitch]="col.type">
-                <span *ngSwitchCase="'badge'" class="badge"
-                      [class.bg-success]="row[col.key] === 'Attivo' || row[col.key] === 'Terminato' || row[col.key] === 'SI'"
-                      [class.bg-secondary]="row[col.key] === 'Non attivo' || row[col.key] === 'NO'"
-                      [class.bg-warning]="row[col.key] === 'In corso'"
-                      [class.bg-info]="row[col.key] === 'Da iniziare'"
-                      [class.bg-danger]="row[col.key] === 'Interrotto'">
-                  {{ row[col.key] }}
+                <app-status-badge *ngSwitchCase="'badge'" 
+                                  [value]="isEmptyValue(row[col.key]) ? '-' : row[col.key]" 
+                                  [statusType]="col.statusType || 'general'">
+                </app-status-badge>
+                <span *ngSwitchCase="'date'" 
+                      [class.truncated-text]="shouldTruncate(getFormattedDate(row[col.key]), col.maxLength)"
+                      [title]="getFormattedDate(row[col.key])">
+                  {{ getFormattedDateWithTruncation(row[col.key], col.maxLength) }}
                 </span>
-                <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>
-                <span *ngSwitchDefault>
-                  <span *ngIf="col.key === 'email'; else normalText">{{ row[col.key] }}</span>
-                  <ng-template #normalText>{{ row[col.key] ? row[col.key] : ' - ' }}</ng-template>
+                <span *ngSwitchDefault 
+                      [class.truncated-text]="shouldTruncate(getDisplayValue(row[col.key]), col.maxLength)"
+                      [title]="getDisplayValue(row[col.key])">
+                  {{ getDisplayValueWithTruncation(row[col.key], col.maxLength) }}
                 </span>
               </ng-container>
             </td>

@@ -196,6 +196,7 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
       label: 'Stato',
       sortable: true,
       type: 'badge',
+      statusType: 'dipendente'
     },
     {
       key: 'sede',
@@ -519,6 +520,7 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
           titolo: 'Dettagli dipendente',
           componente: DettaglioDipendentiComponent,
           dati: e.item,
+          showCloseButton: false,
         });
         break;
       default:

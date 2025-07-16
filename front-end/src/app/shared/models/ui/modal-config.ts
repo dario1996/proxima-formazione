@@ -6,4 +6,5 @@ export interface IModaleConfig {
   dati?: any;
   onConferma?: (formValue: any) => void;
   dimensione?: string;
+  showCloseButton?: boolean; // New option to control close button visibility
 }

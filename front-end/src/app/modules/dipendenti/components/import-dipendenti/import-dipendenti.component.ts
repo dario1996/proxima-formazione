@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
 import { DipendentiService } from '../../../../core/services/data/dipendenti.service';
+import { ImportModalComponent, ImportOption, ImportData } from '../../../../shared/components/import-modal/import-modal.component';
 import * as XLSX from 'xlsx';
 
 interface ImportResult {
@@ -13,7 +14,7 @@ interface ImportResult {
   errors: string[];
 }
 
-interface DipendentiImportData {
+interface DipendentiImportData extends ImportData {
   nominativo: string;
   dataCessazione?: string;
   isms?: string;
@@ -22,9 +23,6 @@ interface DipendentiImportData {
   sede?: string;
   community?: string;
   responsabile?: string;
-  errors?: string[];
-  isDuplicate?: boolean;
-  canUpdate?: boolean;
   existingId?: number;
   existingData?: any;
 }
@@ -32,7 +30,7 @@ interface DipendentiImportData {
 @Component({
   selector: 'app-import-dipendenti',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ImportModalComponent],
   templateUrl: './import-dipendenti.component.html',
   styleUrls: ['./import-dipendenti.component.css']
 })
@@ -45,12 +43,39 @@ export class ImportDipendentiComponent implements OnInit {
   showPreview = false;
   validationErrors: string[] = [];
   
-  importOptions = {
-    updateExisting: false,
-    skipErrors: true,
-    defaultReparto: '',
-    defaultCommerciale: ''
-  };
+  supportedFormats = ['.xlsx', '.xls'];
+  expectedHeaders = [
+    'Nominativo',
+    'Data cessazione',
+    'ISMS',
+    'Ruolo',
+    'Azienda',
+    'Sede',
+    'Community',
+    'Account/Responsabile'
+  ];
+  
+  tableColumns = [
+    { key: 'nominativo', label: 'Nominativo' },
+    { key: 'ruolo', label: 'Ruolo' },
+    { key: 'azienda', label: 'Azienda' },
+    { key: 'sede', label: 'Sede' },
+    { key: 'isms', label: 'ISMS' },
+    { key: 'dataCessazione', label: 'Data Cessazione' }
+  ];
+  
+  importOptions: ImportOption[] = [
+    {
+      key: 'updateExisting',
+      label: 'Aggiorna dipendenti esistenti',
+      value: false
+    },
+    {
+      key: 'skipErrors',
+      label: 'Salta righe con errori',
+      value: true
+    }
+  ];
   
   constructor(
     private dipendentiService: DipendentiService,
@@ -60,12 +85,34 @@ export class ImportDipendentiComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
-      this.processFile();
-    }
+  onFileSelected(file: File): void {
+    this.selectedFile = file;
+    this.processFile();
+  }
+
+  onImportOptionsChanged(options: { [key: string]: any }): void {
+    this.importOptions.forEach(option => {
+      if (options[option.key] !== undefined) {
+        option.value = options[option.key];
+      }
+    });
+  }
+
+  onImportConfirmed(): void {
+    this.importData();
+  }
+
+  onImportCancelled(): void {
+    this.modaleService.chiudi();
+  }
+
+  onResetRequested(): void {
+    this.resetImport();
+  }
+
+  private getImportOption(key: string): boolean {
+    const option = this.importOptions.find(opt => opt.key === key);
+    return option ? option.value : false;
   }
 
   private processFile(): void {
@@ -292,7 +339,7 @@ export class ImportDipendentiComponent implements OnInit {
       
       // If it's a duplicate, check if it can be updated and updateExisting is enabled
       if (d.isDuplicate) {
-        return d.canUpdate && this.importOptions.updateExisting;
+        return d.canUpdate && this.getImportOption('updateExisting');
       }
       
       // Non-duplicate valid rows
@@ -324,7 +371,7 @@ export class ImportDipendentiComponent implements OnInit {
     
     if (onlyDuplicateErrors && dipendente.isDuplicate) {
       // If it's a duplicate that can be updated and updateExisting is enabled, it's not an error
-      return !(dipendente.canUpdate && this.importOptions.updateExisting);
+      return !(dipendente.canUpdate && this.getImportOption('updateExisting'));
     }
     
     // Has other validation errors
@@ -416,12 +463,13 @@ export class ImportDipendentiComponent implements OnInit {
     this.isProcessing = false;
     
     // Reset import options to defaults
-    this.importOptions = {
-      updateExisting: false,
-      skipErrors: true,
-      defaultReparto: '',
-      defaultCommerciale: ''
-    };
+    this.importOptions.forEach(option => {
+      if (option.key === 'updateExisting') {
+        option.value = false;
+      } else if (option.key === 'skipErrors') {
+        option.value = true;
+      }
+    });
   }
 
   onImportOptionsChange(): void {

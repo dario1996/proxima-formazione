@@ -370,6 +370,19 @@
   color: white;
 }
 
+/* Filter Section */
+.filter-section {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1rem;
+  margin-left: 12px;
+}
+
+.filter-section .filter-button {
+  margin-right: 1rem;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .page-container {

@@ -6,6 +6,9 @@ import com.example.demo.entity.Dipendente;
 import com.example.demo.repository.AssegnazioneRepository;
 import com.example.demo.repository.CorsoRepository;
 import com.example.demo.repository.DipendenteRepository;
+import com.example.demo.service.AssegnazioneBulkImportService;
+import com.example.demo.dto.AssegnazioneBulkImportRequest;
+import com.example.demo.dto.AssegnazioneBulkImportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +40,9 @@ public class AssegnazioneController {
 
     @Autowired
     private CorsoRepository corsoRepository;
+
+    @Autowired
+    private AssegnazioneBulkImportService assegnazioneBulkImportService;
 
     @Operation(summary = "Assegna un corso a un dipendente", description = "Crea una nuova assegnazione collegando un dipendente specifico a un corso specifico. "
             +
@@ -369,5 +376,40 @@ public class AssegnazioneController {
 
         assegnazioneRepository.deleteById(assegnazioneId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Importazione massiva di assegnazioni",
+            description = "Importa multiple assegnazioni da file Excel. Supporta validazione, gestione errori e aggiornamento di assegnazioni esistenti.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Importazione completata",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AssegnazioneBulkImportResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+            @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    @PostMapping("/assegnazioni/bulk-import")
+    public ResponseEntity<AssegnazioneBulkImportResponse> bulkImportAssegnazioni(
+            @RequestBody AssegnazioneBulkImportRequest request) {
+
+        try {
+            AssegnazioneBulkImportResponse response = assegnazioneBulkImportService.importAssegnazioni(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // Log dell'errore
+            e.printStackTrace();
+
+            // Risposta di errore
+            AssegnazioneBulkImportResponse errorResponse = new AssegnazioneBulkImportResponse();
+            errorResponse.setTotalProcessed(0);
+            errorResponse.setSuccessCount(0);
+            errorResponse.setErrorCount(1);
+            errorResponse.setUpdatedCount(0);
+
+            List<AssegnazioneBulkImportResponse.BulkImportError> errors = new ArrayList<>();
+            errors.add(new AssegnazioneBulkImportResponse.BulkImportError(
+                    0, "Errore generale: " + e.getMessage()));
+            errorResponse.setErrors(errors);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 }
