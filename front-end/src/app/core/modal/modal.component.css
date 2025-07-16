@@ -11,6 +11,22 @@
   overflow: auto !important;
 }
 
+.modal-dialog.modal-sm {
+  max-width: 400px !important;
+}
+
+.modal-dialog.modal-lg {
+  max-width: 900px !important;
+}
+
+.modal-dialog.modal-xl {
+  max-width: 1200px !important;
+}
+
+.modal-dialog.modal-xxl {
+  max-width: 1400px !important;
+}
+
 .modal-backdrop {
   position: fixed !important;
   top: 0 !important;
@@ -28,10 +44,12 @@
 /* Ensure modal dialog is properly centered */
 .modal-dialog {
   position: relative !important;
-  width: auto !important;
+  width: calc(80vw - 5rem) !important;
   margin: 1rem auto !important;
   pointer-events: none !important;
-  max-width: 500px !important;
+  display: flex;
+  max-width: calc(100vw - 2rem) !important;
+  margin: 0px 12px 0px 12px !important;
 }
 
 .modal-dialog-centered {
@@ -40,15 +58,21 @@
   min-height: calc(100vh - 2rem) !important;
 }
 
+.modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
 .modal-content {
-  position: relative !important;
+  position: fixed !important;
   display: flex !important;
   flex-direction: column !important;
-  width: 100% !important;
+  width: 70% !important;
   pointer-events: auto !important;
-  background-color: #fff !important;
   background-clip: padding-box !important;
-  border: 1px solid #e2e8f0 !important;
   border-radius: 8px !important;
   outline: 0 !important;
   box-shadow:
@@ -60,9 +84,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  /* padding: 24px 24px 0 24px !important; */
   border-bottom: none !important;
-  background: #f8f9fa !important;
 }
 
 .modal-title {
@@ -79,8 +101,7 @@
   font-size: 20px !important;
   font-weight: 700 !important;
   line-height: 1 !important;
-  color: #71717a !important;
-  opacity: 1 !important;
+  /* color: #71717a !important; */
   padding: 4px !important;
   margin: 0 !important;
   cursor: pointer !important;
@@ -95,4 +116,14 @@
 
 .btn-close:before {
   content: '×' !important;
+}
+
+@media (max-width: 768px) {
+  .modal-dialog,
+  .modal-dialog.modal-lg,
+  .modal-dialog.modal-xl,
+  .modal-dialog.modal-xxl {
+    max-width: calc(100vw - 2rem) !important;
+    margin: 1rem !important;
+  }
 }

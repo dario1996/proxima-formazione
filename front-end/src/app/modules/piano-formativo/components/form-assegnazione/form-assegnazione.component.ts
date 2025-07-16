@@ -1,166 +1,211 @@
-import { Component, EventEmitter, inject, Output, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModaleService } from '../../../../core/services/modal.service';
-import { AssegnazioniService } from '../../../../core/services/data/assegnazioni.service';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { 
-  IAssegnazione, 
-  AssegnazioneStato, 
-  AssegnazioneUpdateRequest 
-} from '../../../../shared/models/Assegnazione';
-import { ToastrService } from 'ngx-toastr';
+import { IDipendenti } from '../../../../shared/models/Dipendenti';
+import { ICorsi } from '../../../../shared/models/Corsi';
+import { DipendentiService } from '../../../../core/services/data/dipendenti.service';
+import { CorsiService } from '../../../../core/services/data/corsi.service';
 
 @Component({
   selector: 'app-form-assegnazione',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-assegnazione.component.html',
-  styleUrl: './form-assegnazione.component.css',
+  styleUrl: './form-assegnazione.component.css'
 })
 export class FormAssegnazioneComponent implements OnInit {
+  @Input() dati: any = {};
   @Output() conferma = new EventEmitter<any>();
-  form!: FormGroup;
+
+  form: FormGroup;
+  dipendenti: IDipendenti[] = [];
+  corsi: ICorsi[] = [];
   submitted = false;
-  dati: IAssegnazione | null = null;
-  isEdit = false;
 
-  // Enum per il template
-  AssegnazioneStato = AssegnazioneStato;
+  // Per la ricerca dipendenti
+  dipendentiFiltrati: IDipendenti[] = [];
+  showDipendentiDropdown = false;
+  dipendenteSelezionato: IDipendenti | null = null;
   
-  // Opzioni per i dropdown
-  statoOptions = [
-    { value: AssegnazioneStato.DA_INIZIARE, label: 'Da iniziare' },
-    { value: AssegnazioneStato.IN_CORSO, label: 'In corso' },
-    { value: AssegnazioneStato.TERMINATO, label: 'Terminato' },
-    { value: AssegnazioneStato.INTERROTTO, label: 'Interrotto' },
-  ];
+  // Per la ricerca corsi
+  corsiFiltrati: ICorsi[] = [];
+  showCorsiDropdown = false;
+  corsoSelezionato: ICorsi | null = null;
 
-  private modaleService = inject(ModaleService);
-  private assegnazioniService = inject(AssegnazioniService);
-  private fb = inject(FormBuilder);
-  private toastr = inject(ToastrService);
+  constructor(
+    private fb: FormBuilder,
+    private dipendentiService: DipendentiService,
+    private corsiService: CorsiService
+  ) {
+    this.form = this.fb.group({
+      dipendenteId: ['', Validators.required],
+      corsoId: ['', Validators.required],
+      searchDipendente: [''],
+      searchCorso: [''],
+      obbligatorio: [false]
+    });
+  }
 
   ngOnInit() {
-    this.initForm();
-    
-    this.modaleService.config$.subscribe(config => {
-      if (config?.dati) {
-        this.dati = config.dati;
-        this.isEdit = !!this.dati?.id;
-        this.precompileForm();
+    this.loadData();
+    this.setupSearchListeners();
+  }
+
+  private loadData() {
+    // Carica dipendenti
+    this.dipendentiService.getListaDipendenti().subscribe({
+      next: (dipendenti) => {
+        this.dipendenti = dipendenti.filter(d => d.attivo);
+        this.dipendentiFiltrati = [...this.dipendenti];
+      },
+      error: (error) => {
+        console.error('❌ Errore caricamento dipendenti:', error);
+      }
+    });
+
+    // Carica corsi
+    this.corsiService.getListaCorsi().subscribe({
+      next: (corsi) => {
+        if (corsi && corsi.length > 0) {
+          // RIMOSSO IL FILTRO PER ORA - prendiamo tutti i corsi
+          this.corsi = corsi;
+          this.corsiFiltrati = [...this.corsi];
+        }
+      },
+      error: (error) => {
+        console.error('❌ Errore caricamento corsi:', error);
       }
     });
   }
 
-  initForm() {
-    this.form = this.fb.group({
-      stato: [AssegnazioneStato.DA_INIZIARE, Validators.required],
-      percentualeCompletamento: [0, [Validators.min(0), Validators.max(100)]],
-      oreCompletate: [0, [Validators.min(0)]],
-      valutazione: [null, [Validators.min(1), Validators.max(10)]],
-      noteFeedback: [''],
-      competenzeAcquisite: [''],
-      certificatoOttenuto: [false],
-      feedbackFornito: [false],
-      esito: [''],
-      fonteRichiesta: [''],
-      impattoIsms: [false],
-      attestato: [false],
-      dataInizio: [''],
-      dataCompletamento: [''],
+  private setupSearchListeners() {
+    // Listener per la ricerca dipendenti
+    this.form.get('searchDipendente')?.valueChanges.subscribe(value => {
+      this.filtraDipendenti(value);
+    });
+
+    // Listener per la ricerca corsi
+    this.form.get('searchCorso')?.valueChanges.subscribe(value => {
+      this.filtraCorsi(value);
     });
   }
 
-  precompileForm() {
-    if (this.dati && this.form) {
-      this.form.patchValue({
-        stato: this.dati.stato || AssegnazioneStato.DA_INIZIARE,
-        percentualeCompletamento: this.dati.percentualeCompletamento || 0,
-        oreCompletate: this.dati.oreCompletate || 0,
-        valutazione: this.dati.valutazione || null,
-        noteFeedback: this.dati.noteFeedback || '',
-        competenzeAcquisite: this.dati.competenzeAcquisite || '',
-        certificatoOttenuto: this.dati.certificatoOttenuto || false,
-        feedbackFornito: this.dati.feedbackFornito || false,
-        esito: this.dati.esito || '',
-        fonteRichiesta: this.dati.fonteRichiesta || '',
-        impattoIsms: this.dati.impattoIsms || false,
-        attestato: this.dati.attestato || false,
-        dataInizio: this.dati.dataInizio || '',
-        dataCompletamento: this.dati.dataCompletamento || '',
-      });
+  filtraDipendenti(searchTerm: string) {
+    // Mostra dropdown solo se c'è un termine di ricerca
+    if (!searchTerm || searchTerm.length === 0) {
+      this.dipendentiFiltrati = [];
+      this.showDipendentiDropdown = false;
+      return;
     }
-  }
-
-  onSubmit() {
-    this.confermaForm();
-  }
-
-  // This method will be called by the modal when "Conferma" is clicked
-  confermaForm() {
-    this.submitted = true;
-    if (this.form.invalid) {
+    // Mostra dropdown solo se c'è almeno 1 carattere
+    if (searchTerm.length < 1) {
+      this.dipendentiFiltrati = [];
+      this.showDipendentiDropdown = false;
       return;
     }
 
-    const formData = this.form.value;
-    const updateData: AssegnazioneUpdateRequest = {
-      stato: formData.stato,
-      percentualeCompletamento: formData.percentualeCompletamento,
-      oreCompletate: formData.oreCompletate,
-      valutazione: formData.valutazione,
-      noteFeedback: formData.noteFeedback,
-      competenzeAcquisite: formData.competenzeAcquisite,
-      certificatoOttenuto: formData.certificatoOttenuto,
-      feedbackFornito: formData.feedbackFornito,
-      esito: formData.esito,
-      fonteRichiesta: formData.fonteRichiesta,
-      impattoIsms: formData.impattoIsms,
-      attestato: formData.attestato,
-      dataInizio: formData.dataInizio || null,
-      dataCompletamento: formData.dataCompletamento || null,
-    };
+    const term = searchTerm.toLowerCase();
+    this.dipendentiFiltrati = this.dipendenti.filter(d => 
+      d.nome.toLowerCase().includes(term) ||
+      d.cognome.toLowerCase().includes(term) ||
+      d.email.toLowerCase().includes(term) ||
+      `${d.nome} ${d.cognome}`.toLowerCase().includes(term)
+    );
 
-    if (this.isEdit && this.dati?.id) {
-      console.log('Sending update request for assignment ID:', this.dati.id);
-      console.log('Update data:', updateData);
+    // Mostra dropdown solo se ci sono risultati
+    this.showDipendentiDropdown = this.dipendentiFiltrati.length > 0;
+  }
+
+  filtraCorsi(searchTerm: string) {
+    // Mostra dropdown solo se c'è un termine di ricerca
+    if (!searchTerm || searchTerm.length === 0) {
+      this.corsiFiltrati = [];
+      this.showCorsiDropdown = false;
+      return;
+    }
+
+    // Mostra dropdown solo se c'è almeno 1 carattere
+    if (searchTerm.length < 1) {
+      this.corsiFiltrati = [];
+      this.showCorsiDropdown = false;
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    this.corsiFiltrati = this.corsi.filter(c => {
+      const matchNome = c.nome?.toLowerCase().includes(term);
+      const matchArgomento = c.argomento?.toLowerCase().includes(term);
+      const matchPiattaforma = c.piattaforma?.nome?.toLowerCase().includes(term);
       
-      this.assegnazioniService.updateAssegnazione(this.dati.id, updateData).subscribe({
-        next: (response) => {
-          console.log('Update response:', response);
-          this.toastr.success('Assegnazione aggiornata con successo');
-          this.conferma.emit(response);
-        },
-        error: (error) => {
-          console.error('Component error handler triggered');
-          console.error('Full error object:', error);
-          console.error('Error status:', error?.status);
-          console.error('Error statusText:', error?.statusText);
-          console.error('Error message:', error?.message);
-          console.error('Error error:', error?.error);
-          console.error('Error type:', typeof error);
-          console.error('Error constructor name:', error?.constructor?.name);
-          
-          // Don't show the error toast for now to avoid confusion
-          // this.toastr.error('Errore durante l\'aggiornamento dell\'assegnazione');
-        }
-      });
+      return matchNome || matchArgomento || matchPiattaforma;
+    });
+
+    // Mostra dropdown solo se ci sono risultati
+    this.showCorsiDropdown = this.corsiFiltrati.length > 0;
+  }
+
+  selezionaDipendente(dipendente: IDipendenti) {
+    this.dipendenteSelezionato = dipendente;
+    this.form.patchValue({
+      dipendenteId: dipendente.id,
+      searchDipendente: `${dipendente.nome} ${dipendente.cognome}`
+    });
+    this.showDipendentiDropdown = false;
+  }
+
+  selezionaCorso(corso: ICorsi) {
+    this.corsoSelezionato = corso;
+    this.form.patchValue({
+      corsoId: corso.id,
+      searchCorso: corso.nome
+    });
+    this.showCorsiDropdown = false;
+  }
+  
+  onSubmit() {
+    if (this.form.valid && this.dipendenteSelezionato && this.corsoSelezionato) {
+      const assegnazione = {
+        dipendenteId: this.dipendenteSelezionato.id,
+        corsoId: this.corsoSelezionato.id,
+        dataAssegnazione: new Date(),
+        stato: 'Assegnato'
+      };
+      
+      this.conferma.emit(assegnazione);
     }
   }
 
-  // Metodo di utilità per verificare se un campo è invalido
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.form.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched || this.submitted));
+  clearDipendente() {
+    this.dipendenteSelezionato = null;
+    this.form.patchValue({
+      dipendenteId: '',
+      searchDipendente: ''
+    });
   }
 
-  // Metodo per ottenere il messaggio di errore per un campo
-  getFieldError(fieldName: string): string {
-    const field = this.form.get(fieldName);
-    if (field && field.errors) {
-      if (field.errors['required']) return `${fieldName} è richiesto`;
-      if (field.errors['min']) return `Valore minimo: ${field.errors['min'].min}`;
-      if (field.errors['max']) return `Valore massimo: ${field.errors['max'].max}`;
-    }
-    return '';
+  clearCorso() {
+    this.corsoSelezionato = null;
+    this.form.patchValue({
+      corsoId: '',
+      searchCorso: ''
+    });
+  }
+
+  onDipendenteBlur() {
+    // Ritarda la chiusura del dropdown per permettere il click
+    setTimeout(() => {
+      this.showDipendentiDropdown = false;
+    }, 200);
+  }
+
+  onCorsoBlur() {
+    // Ritarda la chiusura del dropdown per permettere il click
+    setTimeout(() => {
+      this.showCorsiDropdown = false;
+    }, 200);
+  }
+
+  confermaForm() {
+    this.onSubmit();
   }
 }
