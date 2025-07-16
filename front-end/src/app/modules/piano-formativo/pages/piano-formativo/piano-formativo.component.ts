@@ -189,7 +189,6 @@ export class PianoFormativoComponent implements OnInit {
     private assegnazioniService: AssegnazioniService,
     private dipendentiService: DipendentiService,
     private modaleService: ModaleService,
-    private assegnazioniService: AssegnazioniService, // CAMBIATO
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
   ) {}
@@ -333,7 +332,6 @@ export class PianoFormativoComponent implements OnInit {
     ).subscribe({
       next: (response) => {
         this.toastr.success('Corso assegnato con successo', 'Successo');
-        this.loadDipendenti();
       },
       error: (error) => {
         console.error('❌ Errore durante l\'assegnazione:', error);
