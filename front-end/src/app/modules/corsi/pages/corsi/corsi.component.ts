@@ -10,15 +10,12 @@ import { FormCorsiComponent } from '../../components/form-corsi/form-corsi.compo
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
-// AGGIUNTO: Import del PaginationFooterComponent
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
-import {
-  CORSI_COLUMNS,
-  CORSI_FILTRI,
-  CORSI_AZIONI,
-} from '../../../../shared/config/corsi.config';
+import { CORSI_COLUMNS,CORSI_FILTRI,CORSI_AZIONI} from '../../../../shared/config/corsi.config';
+import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
+import { FilterPanelComponent } from '../../../../shared/components/filter-panel/filter-panel.component';
+import { FilterButtonComponent } from '../../../../shared/components/filter-button/filter-button.component';
 
 @Component({
   selector: 'app-corsi',
@@ -26,8 +23,8 @@ import {
     ToastrModule,
     TabellaGenericaComponent,
     PageTitleComponent,
-    FiltriGenericiComponent,
-    // AGGIUNTO: PaginationFooterComponent nell'array imports
+    FilterPanelComponent,
+    FilterButtonComponent,
     PaginationFooterComponent,
   ],
   templateUrl: './corsi.component.html',
@@ -46,13 +43,15 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   private tabellaComponent!: TabellaGenericaComponent; // AGGIUNTO
 
   pageSize = 20; // FISSO: Sempre 20 righe
+  // Filter panel state
+  isFilterPanelOpen = false;
   corsi: ICorsi[] = [];
   corsiFiltrati: ICorsi[] = [];
   piattaforme: IPiattaforma[] = [];
 
   columns = CORSI_COLUMNS;
-  filtri = CORSI_FILTRI;
   actions = CORSI_AZIONI;
+  filtri = CORSI_FILTRI;
 
   valoriFiltri: { [key: string]: any } = {};
 
@@ -95,12 +94,12 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
       next: data => {
         this.corsi = data.map((c: any) => ({
           ...c,
-          piattaformaNome: c.piattaforma?.nome || '',
-        }));
-        this.applicaFiltri();
-        this.cd.detectChanges();
-        this.paginationInfo.totalItems = this.corsi.length;
-      },
+            piattaformaNome: c.piattaforma?.nome || 'Non specificata',
+        impattoIsmsLabel: c.impattoIsms ? 'Si' : 'No'
+      }));
+      this.corsiFiltrati = [...this.corsi];
+      this.applicaFiltri();
+    },
       error: error => {
         console.log(error);
         // Check if the error is about no courses available - don't show toast for this
@@ -216,36 +215,75 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
     }
   }
 
+  // Filter panel methods
+  openFilterPanel() {
+    this.isFilterPanelOpen = true;
+  }
+
+  closeFilterPanel() {
+    this.isFilterPanelOpen = false;
+  }
+
+    // Get count of active filters
+  getActiveFiltersCount(): number {
+    return Object.values(this.valoriFiltri).filter(value => 
+      value !== null && value !== undefined && value !== ''
+    ).length;
+  }
+
+  // Check if there are any active filters
+  hasActiveFilters(): boolean {
+    return this.getActiveFiltersCount() > 0;
+  }
+
+  applyFilters(filtri: { [key: string]: any }) {
+    this.valoriFiltri = filtri;
+    this.applicaFiltri();
+  }
+
+  clearFilters() {
+    this.valoriFiltri = {};
+    this.applicaFiltri();
+  }
+
+
   onFiltriChange(valori: { [key: string]: any }) {
     this.valoriFiltri = valori;
     this.applicaFiltri();
   }
 
-  applicaFiltri() {
-    this.corsiFiltrati = this.corsi.filter(c => {
-      if (
-        this.valoriFiltri['nome'] &&
-        !c.nome.includes(this.valoriFiltri['nome'].toLowerCase())
-      ) {
+  applicaFiltri(): void {
+  this.corsiFiltrati = this.corsi.filter(c => {
+    // Filtro nome corso
+    if (this.valoriFiltri['nome'] && 
+        !c.nome.toLowerCase().includes(this.valoriFiltri['nome'].toLowerCase())) {
+      return false;
+    }
+    
+    // Filtro argomento
+    if (this.valoriFiltri['argomento'] && 
+        !c.argomento.toLowerCase().includes(this.valoriFiltri['argomento'].toLowerCase())) {
+      return false;
+    }
+    
+    // Filtro impatto ISMS
+    if (this.valoriFiltri['impattoIsms'] !== undefined && 
+        this.valoriFiltri['impattoIsms'] !== '') {
+      const filtroValue = this.valoriFiltri['impattoIsms'] === 'true';
+      if (c.impattoIsms !== filtroValue) {
         return false;
       }
-      if (
-        this.valoriFiltri['argomento'] &&
-        !c.argomento
-          .toLowerCase()
-          .includes(this.valoriFiltri['argomento'].toLowerCase())
-      ) {
-        return false;
-      }
-      if (
-        this.valoriFiltri['piattaforma'] &&
-        c.piattaforma?.id != this.valoriFiltri['piattaforma']
-      ) {
-        return false;
-      }
-      return true;
-    });
-  }
+    }
+    
+    // Filtro piattaforma
+    if (this.valoriFiltri['piattaforma'] && 
+        c.piattaforma?.id.toString() !== this.valoriFiltri['piattaforma']) {
+      return false;
+    }
+    
+    return true;
+  });
+}
 
   setPiattaformaFilterOptions() {
     const piattaformaOptions = [

@@ -282,7 +282,7 @@ public class StagingDataProcessingService {
 
             // If 100% complete, mark as completed
             if (record.getPercentageComplete().compareTo(BigDecimal.valueOf(100)) >= 0) {
-                assegnazione.setStato(Assegnazione.StatoAssegnazione.COMPLETATO);
+                assegnazione.setStato(Assegnazione.StatoAssegnazione.TERMINATO);
                 if (record.getCompletionDate() != null) {
                     assegnazione.setDataCompletamento(record.getCompletionDate());
                 }
@@ -312,7 +312,7 @@ public class StagingDataProcessingService {
         // Mark as completed if completion date is set
         if (record.getCompletionDate() != null) {
             assegnazione.setDataCompletamento(record.getCompletionDate());
-            assegnazione.setStato(Assegnazione.StatoAssegnazione.COMPLETATO);
+            assegnazione.setStato(Assegnazione.StatoAssegnazione.TERMINATO);
             assegnazione.setCertificatoOttenuto(true);
         }
 

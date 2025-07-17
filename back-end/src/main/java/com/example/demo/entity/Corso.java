@@ -32,6 +32,9 @@ public class Corso {
     @Column(name = "formati_richiedenti", length = 255)
     private String formatiRichiedenti;
 
+    @Column(name = "impatto_isms", nullable = false)
+    private Boolean impattoIsms = false;
+
     @Column(precision = 5, scale = 2)
     private BigDecimal durata; // In ore
 
@@ -177,6 +180,14 @@ public class Corso {
 
     public void setFormatiRichiedenti(String formatiRichiedenti) {
         this.formatiRichiedenti = formatiRichiedenti;
+    }
+
+    public Boolean getImpattoIsms() {
+        return impattoIsms;
+    }
+    
+    public void setImpattoIsms(Boolean impattoIsms) {
+        this.impattoIsms = impattoIsms;
     }
 
     public BigDecimal getDurata() {

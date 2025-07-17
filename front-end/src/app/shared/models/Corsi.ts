@@ -7,6 +7,7 @@ export interface ICorsi {
     argomento: string;
     modulo: string;
     formatiRichiedenti: string;
+    impattoIsms: boolean;
     durata: number;
     dataInizio: string;
     dataFine: string;
@@ -23,5 +24,7 @@ export interface ICorsi {
     feedbackRichiesto: boolean;
     dataCreazione: string;
     dataModifica: string;
-    piattaforma: IPiattaforma
+    piattaforma: IPiattaforma;
+    piattaformaNome?: string;
+    impattoIsmsLabel?: string; // Per visualizzare "Si" o "No"
 }

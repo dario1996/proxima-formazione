@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="009-01" author="vincenzo">
+        <comment>Add impatto_isms column to corsi table</comment>
+        
+        <addColumn tableName="corsi">
+            <column name="impatto_isms" type="BOOLEAN" defaultValueBoolean="false" afterColumn="formati_richiedenti">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        
+        <rollback>
+            <dropColumn tableName="corsi" columnName="impatto_isms"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

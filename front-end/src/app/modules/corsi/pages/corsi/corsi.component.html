@@ -9,11 +9,24 @@
   </div>
   
   <div class="page-content" #pageContentInner>
-    <app-filtri-generici
+    <!-- Filter Button -->
+    <div class="filter-section mb-3">
+      <app-filter-button
+        [activeFiltersCount]="getActiveFiltersCount()"
+        [hasActiveFilters]="hasActiveFilters()"
+        (onClick)="openFilterPanel()">
+      </app-filter-button>
+    </div>
+
+    <!-- Filter Panel -->
+    <app-filter-panel
       [filtri]="filtri"
       [valori]="valoriFiltri"
-      (valoriChange)="onFiltriChange($event)">
-    </app-filtri-generici>
+      [isOpen]="isFilterPanelOpen"
+      (close)="closeFilterPanel()"
+      (applyFilters)="applyFilters($event)"
+      (clearFilters)="clearFilters()">
+    </app-filter-panel>
     
     <app-tabella-generica 
       [data]="corsiFiltrati" 
