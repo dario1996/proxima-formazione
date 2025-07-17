@@ -1,11 +1,8 @@
 package com.example.demo.controller;
-
 import com.example.demo.entity.Piattaforma;
-import com.example.demo.exceptions.BindingException;
 import com.example.demo.exceptions.NotFoundException;
 import com.example.demo.repository.PiattaformaRepository;
 import com.example.demo.services.PiattaformeService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,13 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

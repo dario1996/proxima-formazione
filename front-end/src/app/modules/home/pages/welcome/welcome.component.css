@@ -155,7 +155,7 @@
 }
 
 .nav-link.active {
-  background: var(--color-primary);
+  background: #0F4C82;
   color: var(--color-primary-foreground);
 }
 
