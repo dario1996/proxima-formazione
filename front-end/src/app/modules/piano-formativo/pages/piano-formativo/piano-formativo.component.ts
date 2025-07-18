@@ -92,6 +92,17 @@ export class PianoFormativoComponent implements OnInit {
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
+    key: 'impattoIsmsDisplay',
+    label: 'Impatto ISMS',
+    type: 'select',
+    options: [
+      { value: '', label: 'Tutti' },
+      { value: 'SI', label: 'SI' },
+      { value: 'NO', label: 'NO' },
+    ],
+    colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
       key: 'statoDisplay',
       label: 'Stato',
       type: 'select',
@@ -207,11 +218,24 @@ export class PianoFormativoComponent implements OnInit {
       type: 'date',
     },
     {
+      key: 'impattoIsmsDisplay',  // ← CAMBIATO: da impattoIsms a impattoIsmsDisplay
+      label: 'Impatto ISMS',
+      sortable: true,
+      type: 'badge',             // ← CAMBIATO: da 'text' a 'badge' per una migliore visualizzazione
+      statusType: 'impatto'      // ← AGGIUNTO: tipo di badge personalizzato
+    },
+    {
       key: 'statoDisplay',
       label: 'Stato',
       sortable: true,
       type: 'badge',
       statusType: 'assegnazione'
+    },
+    {
+      key: 'percentualeCompletamento',
+      label: 'Percentuale Completamento',
+      sortable: true,
+      type: 'text',
     },
     {
       key: 'dataTerminaPrevista',
@@ -230,6 +254,12 @@ export class PianoFormativoComponent implements OnInit {
       label: 'Data Fine',
       sortable: true,
       type: 'date',
+    },
+    {
+      key:'esito',
+      label: 'Esito',
+      sortable: true,
+      type: 'text',
     },
     {
       key: 'attestatoDisplay',
@@ -309,6 +339,7 @@ export class PianoFormativoComponent implements OnInit {
           corsoNome: a.corso.nome,
           dataTerminaPrevista: a.corso.dataScadenza,
           attestatoDisplay: a.attestato ? 'SI' : 'NO',
+          impattoIsmsDisplay: a.impattoIsms ? 'SI' : 'NO',
           statoDisplay: this.getStatoDisplayLabel(a.stato)
         }));
         this.applicaFiltri();
@@ -342,6 +373,14 @@ export class PianoFormativoComponent implements OnInit {
       // Filter by Data Assegnazione
       if (this.valoriFiltri['dataAssegnazione']) {
         if (!this.compareDates(a.dataAssegnazione, this.valoriFiltri['dataAssegnazione'])) {
+          return false;
+        }
+      }
+
+      // Filter by Impatto ISMS
+      if (this.valoriFiltri['impattoIsmsDisplay']) {
+        const impattoDisplay = a.impattoIsms ? 'SI' : 'NO';
+        if (impattoDisplay !== this.valoriFiltri['impattoIsmsDisplay']) {
           return false;
         }
       }
@@ -422,14 +461,18 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   gestioneAzione(e: { tipo: string; item: any }) {
+    console.log('gestioneAzione chiamata:', e);
     switch (e.tipo) {
       case 'edit':
+        console.log('Aprendo modal di modifica per:', e.item);
         this.modaleService.apri({
           titolo: 'Modifica assegnazione',
           componente: FormModificaAssegnazioneComponent,
           dati: e.item,
-          onConferma: (formValue: any) =>
-            this.updateAssegnazione(e.item.id, formValue),
+          onConferma: (formValue: any) => {  // ✅ CORRETTO: onConferma (come corsi)
+            console.log('onConferma ricevuto:', formValue);
+            this.updateAssegnazione(e.item.id, formValue);
+          }
         });
         break;
       case 'delete':
@@ -444,7 +487,7 @@ export class PianoFormativoComponent implements OnInit {
               e.item.corsoNome +
               '"?',
           },
-          onConferma: () => this.deleteAssegnazione(e.item.id),
+          onConferma: () => this.deleteAssegnazione(e.item.id),  // ✅ CORRETTO: onConferma (come corsi)
         });
         break;
       default:
@@ -453,21 +496,30 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   updateAssegnazione(id: number, assegnazioneData: any) {
-  // Converti i dati del form nel formato richiesto dal service
+    console.log('Dati ricevuti dal form:', assegnazioneData);
+  
+    // Converti i dati del form nel formato richiesto dal service
     const updateData = {
       stato: assegnazioneData.stato,
+      dataAssegnazione: assegnazioneData.dataAssegnazione || null,
+      impattoIsms: assegnazioneData.impattoIsms || false,
+      percentualeCompletamento: assegnazioneData.percentualeCompletamento || 0,
       dataInizio: assegnazioneData.dataInizio || null,
       dataCompletamento: assegnazioneData.dataCompletamento || null,
-      attestato: assegnazioneData.attestato === 'true' || assegnazioneData.attestato === true,
-      obbligatorio: assegnazioneData.obbligatorio === 'true' || assegnazioneData.obbligatorio === true
+      esito: assegnazioneData.esito || null,
+      attestato: assegnazioneData.attestato || false
     };
+
+    console.log('Dati inviati al servizio:', updateData);
+
     this.assegnazioniService.updateAssegnazione(id, updateData).subscribe({
       next: () => {
         this.loadAssegnazioni();
         this.toastr.success('Assegnazione modificata con successo');
         this.modaleService.chiudi();
       },
-      error: () => {
+      error: (error) => {
+        console.error('Errore durante l\'aggiornamento:', error);
         this.toastr.error('Errore durante la modifica dell\'assegnazione');
       },
     });
@@ -584,4 +636,5 @@ export class PianoFormativoComponent implements OnInit {
     
     return d1.getTime() === d2.getTime();
   }
+  
 }

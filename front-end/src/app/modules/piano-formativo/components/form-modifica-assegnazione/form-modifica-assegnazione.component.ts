@@ -1,6 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { ModaleService } from '../../../../core/services/modal.service';
 
 @Component({
   selector: 'app-form-modifica-assegnazione',
@@ -10,24 +16,97 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./form-modifica-assegnazione.component.css']
 })
 export class FormModificaAssegnazioneComponent implements OnInit {
-  @Input() datiIniziali: any = {};
-  assegnazioneForm!: FormGroup;
+  @Output() conferma = new EventEmitter<any>();  // ✅ CORRETTO: conferma (come form-corsi)
+  form!: FormGroup;
+  submitted = false;
+  dati: any;
 
-  constructor(private fb: FormBuilder) {}
+  private modaleService = inject(ModaleService);
+
+  statiDisponibili = [
+    { value: 'DA_INIZIARE', label: 'Da iniziare' },
+    { value: 'IN_CORSO', label: 'In corso' },
+    { value: 'TERMINATO', label: 'Terminato' },
+    { value: 'INTERROTTO', label: 'Interrotto' }
+  ];
 
   ngOnInit() {
-    this.assegnazioneForm = this.fb.group({
-      // Solo i campi modificabili che sono visibili nella tabella
-      stato: [this.mapStatoFromDisplay(this.datiIniziali.statoDisplay) || 'DA_INIZIARE', Validators.required],
-      dataInizio: [this.formatDateForInput(this.datiIniziali.dataInizio)],
-      dataCompletamento: [this.formatDateForInput(this.datiIniziali.dataCompletamento)],
-      attestato: [this.datiIniziali.attestato || false],
-      obbligatorio: [this.datiIniziali.obbligatorio || false]
+    console.log('FormModificaAssegnazioneComponent ngOnInit');
+    
+    this.modaleService.config$.subscribe(config => {
+      if (config?.dati) {
+        this.dati = config.dati;
+        console.log('Dati ricevuti dal modale:', this.dati);
+        
+        if (this.form) {
+          this.form.patchValue({
+            dataAssegnazione: this.formatDateForInput(this.dati.dataAssegnazione),
+            impattoIsms: this.dati.impattoIsms || false,
+            stato: this.mapStatoFromDisplay(this.dati.statoDisplay) || 'DA_INIZIARE',
+            percentualeCompletamento: this.dati.percentualeCompletamento || 0,
+            dataTerminaPrevista: this.formatDateForInput(this.dati.dataTerminaPrevista),
+            dataInizio: this.formatDateForInput(this.dati.dataInizio),
+            dataCompletamento: this.formatDateForInput(this.dati.dataCompletamento),
+            esito: this.dati.esito || '',
+            attestato: this.dati.attestato || false
+          });
+        }
+      }
+    });
+    
+    this.initForm();
+  }
+
+  initForm() {
+    this.form = new FormBuilder().group({
+      dataAssegnazione: [
+        this.formatDateForInput(this.dati?.dataAssegnazione),
+        []
+      ],
+      impattoIsms: [
+        this.dati?.impattoIsms || false,
+        []
+      ],
+      stato: [
+        this.mapStatoFromDisplay(this.dati?.statoDisplay) || 'DA_INIZIARE',
+        [Validators.required]
+      ],
+      percentualeCompletamento: [
+        this.dati?.percentualeCompletamento || 0,
+        [Validators.min(0), Validators.max(100)]
+      ],
+      dataTerminaPrevista: [
+        this.formatDateForInput(this.dati?.dataTerminaPrevista),
+        []
+      ],
+      dataInizio: [
+        this.formatDateForInput(this.dati?.dataInizio),
+        []
+      ],
+      dataCompletamento: [
+        this.formatDateForInput(this.dati?.dataCompletamento),
+        []
+      ],
+      esito: [
+        this.dati?.esito || '',
+        []
+      ],
+      attestato: [
+        this.dati?.attestato || false,
+        []
+      ]
     });
   }
-    mapStatoFromDisplay(statoDisplay: any): any {
-        throw new Error('Method not implemented.');
-    }
+
+  mapStatoFromDisplay(statoDisplay: string): string {
+    const mappingStato: { [key: string]: string } = {
+      'Da iniziare': 'DA_INIZIARE',
+      'In corso': 'IN_CORSO', 
+      'Terminato': 'TERMINATO',
+      'Interrotto': 'INTERROTTO'
+    };
+    return mappingStato[statoDisplay] || 'DA_INIZIARE';
+  }
 
   private formatDateForInput(dateValue: any): string {
     if (!dateValue) return '';
@@ -41,17 +120,16 @@ export class FormModificaAssegnazioneComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.assegnazioneForm.valid) {
-      return this.assegnazioneForm.value;
+    this.submitted = true;
+    if (this.form.invalid) {
+      console.log('Form non valido:', this.form.errors);
+      return;
     }
-    return null;
+    console.log('Form valido, emetto conferma:', this.form.value);
+    this.conferma.emit(this.form.value);  // ✅ CORRETTO: conferma.emit (come form-corsi)
   }
 
-  get isValid(): boolean {
-    return this.assegnazioneForm.valid;
-  }
-
-  get formValue(): any {
-    return this.assegnazioneForm.value;
+  confermaForm() {  // ✅ CORRETTO: confermaForm (come form-corsi)
+    this.onSubmit();
   }
 }
