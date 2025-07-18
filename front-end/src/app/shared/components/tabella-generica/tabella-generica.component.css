@@ -300,16 +300,6 @@ th .fa {
   color: #3b3b3b;
 }
 
-.page-item.active .page-link,
-.page-link.active {
-  background: #000000;
-  color: #fff;
-  font-weight: 700;
-  cursor: default;
-  pointer-events: none;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-}
-
 .page-item.disabled .page-link,
 .page-link:disabled {
   color: #cbd5e1;
@@ -417,21 +407,38 @@ th .fa {
 
 .action-buttons .btn-outline-danger *,
 .action-buttons .btn-danger * {
-  color: #dc2626 !important;
+  color: #de8a8a !important;
 }
+
+.action-buttons .btn-outline-danger:hover *,
+.action-buttons .btn-danger:hover * {
+  color: #ff5353 !important;
+}
+
 .action-buttons .btn-outline-warning *,
 .action-buttons .btn-warning * {
-  color: #ffc107 !important; /* Bootstrap warning */
+  color: #de8a8a !important;
+}
+
+.action-buttons .btn-outline-warning:hover *,
+.action-buttons .btn-warning:hover * {
+  color: #ff5353 !important;
 }
 
 .action-buttons .btn-outline-primary *,
 .action-buttons .btn-primary * {
-  color: #0d6efd !important; /* Bootstrap primary */
+  color: #0d6efd !important;
 }
 
+/* Tasto modifica in tabella-generica-component*/
 .action-buttons .btn-outline-secondary *,
 .action-buttons .btn-secondary * {
-  color: #6c757d !important; /* Bootstrap secondary */
+  color: #a4a4a4 !important;
+}
+
+.action-buttons .btn-outline-secondary:hover *,
+.action-buttons .btn-secondary:hover * {
+  color: #000000 !important;
 }
 
 /* ================== BADGE PERSONALIZZATI =================== */

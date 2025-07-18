@@ -1,0 +1,124 @@
+<form [formGroup]="assegnazioneForm" (ngSubmit)="onSubmit()">
+    
+    <!-- Informazioni non modificabili -->
+    <div class="form-row mb-3">
+    <div class="form-field">
+        <label class="form-label">Dipendente</label>
+        <input type="text" class="form-control" [value]="datiIniziali.dipendenteNome" readonly>
+    </div>
+    
+    <div class="form-field">
+        <label class="form-label">Corso</label>
+        <input type="text" class="form-control" [value]="datiIniziali.corsoNome" readonly>
+    </div>
+    </div>
+
+    <!-- Campi modificabili -->
+    <div class="form-row">
+    <div class="form-field">
+        <label class="form-label">Stato</label>
+        <select class="form-select" formControlName="stato">
+        <option value="DA_INIZIARE">Da Iniziare</option>
+        <option value="IN_CORSO">In Corso</option>
+        <option value="TERMINATO">Terminato</option>
+        <option value="INTERROTTO">Interrotto</option>
+        </select>
+    </div>
+    
+    <div class="form-field">
+        <label class="form-label">Percentuale Completamento (%)</label>
+        <input type="number" class="form-control" formControlName="percentualeCompletamento" 
+                min="0" max="100" placeholder="0-100">
+    </div>
+    </div>
+    
+    <div class="form-row">
+    <div class="form-field">
+        <label class="form-label">Data Inizio</label>
+        <input type="date" class="form-control" formControlName="dataInizio">
+    </div>
+    
+    <div class="form-field">
+        <label class="form-label">Data Completamento</label>
+        <input type="date" class="form-control" formControlName="dataCompletamento">
+    </div>
+    </div>
+    
+    <div class="form-row">
+    <div class="form-field">
+        <label class="form-label">Ore Completate</label>
+        <input type="number" class="form-control" formControlName="oreCompletate" 
+                min="0" placeholder="Ore completate">
+    </div>
+    
+    <div class="form-field">
+        <label class="form-label">Valutazione</label>
+        <input type="number" class="form-control" formControlName="valutazione" 
+                min="1" max="10" placeholder="1-10">
+    </div>
+    </div>
+
+    <div class="form-field">
+    <label class="form-label">Note e Feedback</label>
+    <textarea class="form-control" formControlName="noteFeedback" 
+                rows="3" placeholder="Note e feedback sul corso..."></textarea>
+    </div>
+
+    <div class="form-field">
+    <label class="form-label">Competenze Acquisite</label>
+    <textarea class="form-control" formControlName="competenzeAcquisite" 
+                rows="2" placeholder="Competenze acquisite..."></textarea>
+    </div>
+
+    <div class="form-row">
+    <div class="form-field">
+        <label class="form-label">Esito</label>
+        <select class="form-select" formControlName="esito">
+        <option value="">Seleziona esito</option>
+        <option value="SUPERATO">Superato</option>
+        <option value="NON_SUPERATO">Non Superato</option>
+        <option value="IN_CORSO">In Corso</option>
+        </select>
+    </div>
+    
+    <div class="form-field">
+        <label class="form-label">Fonte Richiesta</label>
+        <input type="text" class="form-control" formControlName="fonteRichiesta" 
+                placeholder="Fonte della richiesta">
+    </div>
+    </div>
+
+    <!-- Checkbox -->
+    <div class="form-row">
+    <div class="form-field">
+        <div class="form-check">
+        <input type="checkbox" class="form-check-input" formControlName="certificatoOttenuto" id="certificato">
+        <label class="form-check-label" for="certificato">Certificato Ottenuto</label>
+        </div>
+    </div>
+    
+    <div class="form-field">
+        <div class="form-check">
+        <input type="checkbox" class="form-check-input" formControlName="impattoIsms" id="isms">
+        <label class="form-check-label" for="isms">Impatto ISMS</label>
+        </div>
+    </div>
+    </div>
+
+    <div class="form-row">
+    <div class="form-field">
+        <div class="form-check">
+        <input type="checkbox" class="form-check-input" formControlName="attestato" id="attestato">
+        <label class="form-check-label" for="attestato">Attestato</label>
+        </div>
+    </div>
+    
+    <div class="form-field">
+        <div class="form-check">
+        <input type="checkbox" class="form-check-input" formControlName="feedbackFornito" id="feedback">
+        <label class="form-check-label" for="feedback">Feedback Fornito</label>
+        </div>
+    </div>
+    </div>
+
+</form>

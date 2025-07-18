@@ -27,8 +27,6 @@ import { TabellaGenericaComponent } from '../../../../shared/components/tabella-
 import { FilterPanelComponent } from '../../../../shared/components/filter-panel/filter-panel.component';
 import { FilterButtonComponent } from '../../../../shared/components/filter-button/filter-button.component';
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
-import { DettaglioDipendentiComponent } from '../../../dipendenti/components/dettaglio-dipendenti/dettaglio-dipendenti.component';
-import { DisableConfirmComponent } from '../../../../core/disable-confirm/disable-confirm.component';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
@@ -37,6 +35,7 @@ import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { FormAssegnazioneComponent } from '../../components/form-assegnazione/form-assegnazione.component';
 import { ImportAssegnazioniComponent } from '../../components/import-assegnazioni/import-assegnazioni.component';
+import { FormModificaAssegnazioneComponent } from '../../components/form-modifica-assegnazione/form-modifica-assegnazione.component';
 
 @Component({
   selector: 'app-piano-formativo',
@@ -243,6 +242,12 @@ export class PianoFormativoComponent implements OnInit {
 
   azioni: IAzioneDef[] = [
     {
+      label: 'Modifica',
+      icon: 'fa fa-pen',
+      action: AzioneType.Edit,
+      color: AzioneColor.Secondary, // Stesso colore della modifica dei corsi
+    },
+    {
       label: 'Elimina',
       icon: 'fa fa-trash',
       action: AzioneType.Delete,
@@ -418,6 +423,15 @@ export class PianoFormativoComponent implements OnInit {
 
   gestioneAzione(e: { tipo: string; item: any }) {
     switch (e.tipo) {
+      case 'edit':
+        this.modaleService.apri({
+          titolo: 'Modifica assegnazione',
+          componente: FormModificaAssegnazioneComponent,
+          dati: e.item,
+          onConferma: (formValue: any) =>
+            this.updateAssegnazione(e.item.id, formValue),
+        });
+        break;
       case 'delete':
         this.modaleService.apri({
           titolo: 'Conferma eliminazione',
@@ -437,6 +451,27 @@ export class PianoFormativoComponent implements OnInit {
         console.error('Azione non supportata:', e.tipo);
     }
   }
+
+  updateAssegnazione(id: number, assegnazioneData: any) {
+  // Converti i dati del form nel formato richiesto dal service
+    const updateData = {
+      stato: assegnazioneData.stato,
+      dataInizio: assegnazioneData.dataInizio || null,
+      dataCompletamento: assegnazioneData.dataCompletamento || null,
+      attestato: assegnazioneData.attestato === 'true' || assegnazioneData.attestato === true,
+      obbligatorio: assegnazioneData.obbligatorio === 'true' || assegnazioneData.obbligatorio === true
+    };
+    this.assegnazioniService.updateAssegnazione(id, updateData).subscribe({
+      next: () => {
+        this.loadAssegnazioni();
+        this.toastr.success('Assegnazione modificata con successo');
+        this.modaleService.chiudi();
+      },
+      error: () => {
+        this.toastr.error('Errore durante la modifica dell\'assegnazione');
+      },
+    });
+}
 
   // NUOVO: Metodo per gestire il click del pulsante "Assegna corso"
   onAssegnaCorso() {
