@@ -17,6 +17,10 @@ public class AssegnazioneBulkImportItem {
     @Schema(description = "Nome del corso", example = "Angular Fundamentals", required = true)
     private String corso;
 
+    @Size(max = 200, message = "L'argomento non può superare 200 caratteri")
+    @Schema(description = "Argomento del corso (dalla colonna Macro-argomenti)", example = "Sviluppo Software")
+    private String argomento;
+
     @Schema(description = "Data di inizio (formato ISO: YYYY-MM-DD)", example = "2025-01-01")
     private String dataInizio;
 
@@ -63,6 +67,14 @@ public class AssegnazioneBulkImportItem {
 
     public void setCorso(String corso) {
         this.corso = corso;
+    }
+
+    public String getArgomento() {
+        return argomento;
+    }
+
+    public void setArgomento(String argomento) {
+        this.argomento = argomento;
     }
 
     public String getDataInizio() {
@@ -118,6 +130,7 @@ public class AssegnazioneBulkImportItem {
         return "AssegnazioneBulkImportItem{" +
                 "nominativo='" + nominativo + '\'' +
                 ", corso='" + corso + '\'' +
+                ", argomento='" + argomento + '\'' +
                 ", dataInizio='" + dataInizio + '\'' +
                 ", dataCompletamento='" + dataCompletamento + '\'' +
                 ", stato='" + stato + '\'' +

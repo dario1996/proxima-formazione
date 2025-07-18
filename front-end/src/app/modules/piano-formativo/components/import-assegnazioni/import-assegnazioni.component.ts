@@ -17,6 +17,7 @@ interface ImportResult {
 interface AssegnazioniImportData {
   nominativo: string;
   corso: string;
+  macroArgomenti?: string;
   dataInizio?: string;
   dataCompletamento?: string;
   stato?: string;
@@ -48,7 +49,7 @@ export class ImportAssegnazioniComponent implements OnInit {
   
   // Standardized properties for ImportModalComponent
   supportedFormats = ['.xlsx', '.xls'];
-  expectedHeaders = ['Nominativo', 'Corso', 'Data Inizio', 'Data Completamento', 'Stato', 'Esito', 'Fonte Richiesta', 'Impatto ISMS'];
+  expectedHeaders = ['Nominativo', 'Corso', 'Macro-argomenti', 'Data Inizio', 'Data Completamento', 'Stato', 'Esito', 'Fonte Richiesta', 'Impatto ISMS'];
   
   importOptions: ImportOption[] = [
     {
@@ -60,12 +61,18 @@ export class ImportAssegnazioniComponent implements OnInit {
       key: 'skipErrors',
       label: 'Continua in caso di errori',
       value: true
+    },
+    {
+      key: 'creaCorsiMancanti',
+      label: 'Crea automaticamente i corsi mancanti',
+      value: true
     }
   ];
   
   tableColumns = [
     { key: 'nominativo', label: 'Nominativo' },
     { key: 'corso', label: 'Corso' },
+    { key: 'macroArgomenti', label: 'Macro-argomenti' },
     { key: 'dataInizio', label: 'Data Inizio' },
     { key: 'dataCompletamento', label: 'Data Completamento' },
     { key: 'stato', label: 'Stato' },
@@ -128,6 +135,7 @@ export class ImportAssegnazioniComponent implements OnInit {
         const expectedHeaders = [
           'Nominativo',
           'Corso',
+          'Macro-argomenti',
           'Data inizio',
           'Data fine',
           'Stato',
@@ -142,12 +150,16 @@ export class ImportAssegnazioniComponent implements OnInit {
           return;
         }
 
+        console.log('Excel headers found:', headers);
+        console.log('Expected headers:', expectedHeaders);
+
         // Process data rows
         this.previewData = [];
         for (let i = 1; i < jsonData.length; i++) {
           const row = jsonData[i] as any[];
           if (row.length === 0 || !row[0]) continue; // Skip empty rows
 
+          console.log(`Processing row ${i}:`, row);
           const assegnazione = this.mapRowToAssegnazione(row, headers);
           this.previewData.push(assegnazione);
         }
@@ -186,16 +198,26 @@ export class ImportAssegnazioniComponent implements OnInit {
       errors: []
     };
 
+    console.log('Mapping row:', row);
+    console.log('Headers:', headers);
+
     headers.forEach((header, index) => {
       if (!header) return;
       
       const value = row[index] ? String(row[index]).trim() : '';
       const headerLower = header.toLowerCase();
 
+      console.log(`Processing header "${header}" (index ${index}) with value "${value}"`);
+
       if (headerLower.includes('nominativo')) {
         assegnazione.nominativo = value;
+        console.log('Set nominativo:', value);
       } else if (headerLower.includes('corso')) {
         assegnazione.corso = value;
+        console.log('Set corso:', value);
+      } else if (headerLower.includes('macro-argomenti')) {
+        assegnazione.macroArgomenti = value;
+        console.log('Set macroArgomenti:', value);
       } else if (headerLower.includes('data inizio')) {
         assegnazione.dataInizio = value;
       } else if (headerLower.includes('data fine')) {
@@ -211,6 +233,7 @@ export class ImportAssegnazioniComponent implements OnInit {
       }
     });
 
+    console.log('Final mapped assegnazione:', assegnazione);
     return assegnazione;
   }
 
@@ -314,6 +337,7 @@ export class ImportAssegnazioniComponent implements OnInit {
       assegnazioni: validAssegnazioni.map(a => ({
         nominativo: a['nominativo'],
         corso: a['corso'],
+        argomento: (a['macroArgomenti'] && a['macroArgomenti'].trim()) || null,
         dataInizio: a['dataInizio'] || null,
         dataCompletamento: a['dataCompletamento'] || null,
         stato: a['stato'] || null,
@@ -323,9 +347,15 @@ export class ImportAssegnazioniComponent implements OnInit {
       })),
       options: {
         updateExisting: this.getImportOption('updateExisting'),
-        skipErrors: this.getImportOption('skipErrors')
+        skipErrors: this.getImportOption('skipErrors'),
+        creaCorsiMancanti: this.getImportOption('creaCorsiMancanti')
       }
     };
+
+    // Debug logging
+    console.log('Import data being sent:', JSON.stringify(importData, null, 2));
+    console.log('First assegnazione sample:', importData.assegnazioni[0]);
+    console.log('Sample macroArgomenti from preview data:', validAssegnazioni[0]['macroArgomenti']);
 
     this.assegnazioniService.bulkImport(importData).subscribe({
       next: (response: any) => {

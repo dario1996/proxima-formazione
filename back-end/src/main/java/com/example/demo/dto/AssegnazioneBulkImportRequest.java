@@ -53,6 +53,9 @@ public class AssegnazioneBulkImportRequest {
         @Schema(description = "Se aggiornare le assegnazioni esistenti in caso di duplicati", example = "false")
         private boolean updateExisting = false;
 
+        @Schema(description = "Se creare automaticamente i corsi mancanti durante l'importazione", example = "false")
+        private boolean creaCorsiMancanti = false;
+
         // Costruttori
         public BulkImportOptions() {
         }
@@ -72,6 +75,14 @@ public class AssegnazioneBulkImportRequest {
 
         public void setUpdateExisting(boolean updateExisting) {
             this.updateExisting = updateExisting;
+        }
+
+        public boolean isCreaCorsiMancanti() {
+            return creaCorsiMancanti;
+        }
+
+        public void setCreaCorsiMancanti(boolean creaCorsiMancanti) {
+            this.creaCorsiMancanti = creaCorsiMancanti;
         }
     }
 

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 @Tag(name = "Assegnazioni", description = "Gestione delle assegnazioni corsi ai dipendenti")
+@Slf4j
 public class AssegnazioneController {
 
     @Autowired
@@ -391,10 +393,22 @@ public class AssegnazioneController {
             @RequestBody AssegnazioneBulkImportRequest request) {
 
         try {
+            // Debug logging per tracciare la richiesta ricevuta
+            log.info("Bulk import request received with {} items", request.getAssegnazioni().size());
+            log.debug("Bulk import options: {}", request.getOptions());
+            
+            // Log dei primi elementi per debug
+            if (!request.getAssegnazioni().isEmpty()) {
+                var firstItem = request.getAssegnazioni().get(0);
+                log.debug("First item sample: nominativo={}, corso={}, argomento={}", 
+                         firstItem.getNominativo(), firstItem.getCorso(), firstItem.getArgomento());
+            }
+            
             AssegnazioneBulkImportResponse response = assegnazioneBulkImportService.importAssegnazioni(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             // Log dell'errore
+            log.error("Error during bulk import", e);
             e.printStackTrace();
 
             // Risposta di errore

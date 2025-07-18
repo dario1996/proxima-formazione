@@ -64,8 +64,6 @@ export class PianoFormativoComponent implements OnInit {
   
   private tabellaComponent!: TabellaGenericaComponent;
 
-  pageSize = 20; // CORRETTO: 20 righe come in Corsi
-
   // Filter panel state
   isFilterPanelOpen = false;
 
@@ -262,7 +260,7 @@ export class PianoFormativoComponent implements OnInit {
     pages: [] as number[],
     displayedItems: 0,
     totalItems: 0,
-    pageSize: 20,
+    pageSize: 20, // Will be updated by TabellaGenericaComponent
     entityName: 'assegnazioni'
   };
 

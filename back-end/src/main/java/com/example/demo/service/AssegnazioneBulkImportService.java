@@ -6,12 +6,15 @@ import com.example.demo.dto.AssegnazioneBulkImportResponse;
 import com.example.demo.entity.Assegnazione;
 import com.example.demo.entity.Dipendente;
 import com.example.demo.entity.Corso;
+import com.example.demo.entity.Piattaforma;
 import com.example.demo.repository.AssegnazioneRepository;
 import com.example.demo.repository.DipendenteRepository;
 import com.example.demo.repository.CorsoRepository;
+import com.example.demo.repository.PiattaformaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -19,6 +22,7 @@ import java.util.*;
 
 @Service
 @Transactional
+@Slf4j
 public class AssegnazioneBulkImportService {
 
     @Autowired
@@ -29,6 +33,9 @@ public class AssegnazioneBulkImportService {
 
     @Autowired
     private CorsoRepository corsoRepository;
+
+    @Autowired
+    private PiattaformaRepository piattaformaRepository;
 
     private static final DateTimeFormatter[] DATE_FORMATTERS = {
             DateTimeFormatter.ofPattern("dd/MM/yyyy"),
@@ -64,7 +71,7 @@ public class AssegnazioneBulkImportService {
 
             try {
                 // Valida l'item
-                List<String> validationErrors = validateItem(item, dipendentiMap, corsiMap);
+                List<String> validationErrors = validateItem(item, dipendentiMap, corsiMap, options);
                 
                 if (!validationErrors.isEmpty()) {
                     errorCount++;
@@ -148,8 +155,13 @@ public class AssegnazioneBulkImportService {
      */
     private List<String> validateItem(AssegnazioneBulkImportItem item, 
                                      Map<String, Dipendente> dipendentiMap, 
-                                     Map<String, Corso> corsiMap) {
+                                     Map<String, Corso> corsiMap,
+                                     AssegnazioneBulkImportRequest.BulkImportOptions options) {
         List<String> errors = new ArrayList<>();
+
+        // Debug logging per tracciare i dati ricevuti
+        log.debug("Validating item: nominativo={}, corso={}, argomento={}", 
+                 item.getNominativo(), item.getCorso(), item.getArgomento());
 
         // Valida nominativo
         if (item.getNominativo() == null || item.getNominativo().trim().isEmpty()) {
@@ -161,8 +173,23 @@ public class AssegnazioneBulkImportService {
         // Valida corso
         if (item.getCorso() == null || item.getCorso().trim().isEmpty()) {
             errors.add("Il corso è obbligatorio");
-        } else if (findCorso(item.getCorso(), corsiMap) == null) {
-            errors.add("Corso non trovato: " + item.getCorso());
+        } else {
+            Corso corso = findCorso(item.getCorso(), corsiMap);
+            if (corso == null) {
+                if (options.isCreaCorsiMancanti()) {
+                    // Crea automaticamente il corso mancante
+                    try {
+                        log.info("Creating missing course '{}' with argomento '{}'", item.getCorso(), item.getArgomento());
+                        corso = createMissingCorso(item.getCorso(), item.getArgomento());
+                        corsiMap.put(corso.getNome().toLowerCase(), corso);
+                        log.info("Corso creato automaticamente durante l'importazione: {}", corso.getNome());
+                    } catch (Exception e) {
+                        errors.add("Errore nella creazione automatica del corso '" + item.getCorso() + "': " + e.getMessage());
+                    }
+                } else {
+                    errors.add("Corso non trovato: " + item.getCorso());
+                }
+            }
         }
 
         // Valida date
@@ -393,5 +420,44 @@ public class AssegnazioneBulkImportService {
                     throw new IllegalArgumentException("Stato non riconosciuto: " + statoString);
                 }
         }
+    }
+
+    /**
+     * Crea un nuovo corso con i dati minimi necessari
+     */
+    private Corso createMissingCorso(String nomeCorso, String argomento) {
+        log.info("Creazione automatica del corso: {} con argomento: {}", nomeCorso, argomento);
+        
+        // Trova una piattaforma di default (prende la prima attiva disponibile)
+        Piattaforma piattaformaDefault = piattaformaRepository.findByAttivaTrue()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Nessuna piattaforma attiva disponibile per creare il corso"));
+        
+        // Crea il nuovo corso con valori di default
+        Corso corso = new Corso();
+        corso.setNome(nomeCorso.trim());
+        corso.setPiattaforma(piattaformaDefault);
+        corso.setStato(Corso.StatoCorso.PIANIFICATO);
+        
+        // Usa l'argomento se fornito, altrimenti un valore di default
+        if (argomento != null && !argomento.trim().isEmpty()) {
+            corso.setArgomento(argomento.trim());
+        } else {
+            corso.setArgomento("Corso creato automaticamente durante importazione");
+        }
+        
+        corso.setCategoria("Generale");
+        corso.setDurata(java.math.BigDecimal.ZERO); // Durata 0, da aggiornare manualmente
+        corso.setCertificazioneRilasciata(false);
+        corso.setFeedbackRichiesto(false);
+        
+        // Salva il corso
+        corso = corsoRepository.save(corso);
+        
+        log.info("Corso creato con successo: {} (ID: {}, Piattaforma: {}, Argomento: {})", 
+                corso.getNome(), corso.getId(), piattaformaDefault.getNome(), corso.getArgomento());
+        
+        return corso;
     }
 }

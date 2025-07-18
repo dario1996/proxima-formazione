@@ -10,7 +10,7 @@ import { FormCorsiComponent } from '../../components/form-corsi/form-corsi.compo
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { FiltriGenericiComponent } from '../../../../shared/components/filtri-generici/filtri-generici.component';
+import { AdvancedFiltersComponent } from '../../../../shared/components/advanced-filters/advanced-filters.component';
 // AGGIUNTO: Import del PaginationFooterComponent
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
@@ -26,7 +26,7 @@ import {
     ToastrModule,
     TabellaGenericaComponent,
     PageTitleComponent,
-    FiltriGenericiComponent,
+    AdvancedFiltersComponent,
     // AGGIUNTO: PaginationFooterComponent nell'array imports
     PaginationFooterComponent,
   ],
@@ -45,7 +45,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   
   private tabellaComponent!: TabellaGenericaComponent; // AGGIUNTO
 
-  pageSize = 20; // FISSO: Sempre 20 righe
   corsi: ICorsi[] = [];
   corsiFiltrati: ICorsi[] = [];
   piattaforme: IPiattaforma[] = [];
@@ -63,7 +62,7 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
     pages: [] as number[],
     displayedItems: 0,
     totalItems: 0,
-    pageSize: 20,
+    pageSize: 20, // Will be updated by TabellaGenericaComponent
     entityName: 'corsi'
   };
 
@@ -218,6 +217,11 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
 
   onFiltriChange(valori: { [key: string]: any }) {
     this.valoriFiltri = valori;
+    // Note: No immediate filter application - filters are applied only when the user clicks "Apply" in the panel
+  }
+
+  onFiltersApplied(valori: { [key: string]: any }) {
+    this.valoriFiltri = valori;
     this.applicaFiltri();
   }
 
@@ -225,7 +229,7 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
     this.corsiFiltrati = this.corsi.filter(c => {
       if (
         this.valoriFiltri['nome'] &&
-        !c.nome.includes(this.valoriFiltri['nome'].toLowerCase())
+        !c.nome.toLowerCase().includes(this.valoriFiltri['nome'].toLowerCase())
       ) {
         return false;
       }
@@ -236,6 +240,18 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
           .includes(this.valoriFiltri['argomento'].toLowerCase())
       ) {
         return false;
+      }
+      // Filter by ISMS - using any type to access potentially dynamic property
+      if (this.valoriFiltri['isms']) {
+        const ismsValue = (c as any).isms ? (c as any).isms.trim() : null;
+        const filterValue = this.valoriFiltri['isms'];
+        
+        if (filterValue === 'Si' && ismsValue !== 'Si') {
+          return false;
+        }
+        if (filterValue === 'No' && ismsValue !== 'No') {
+          return false;
+        }
       }
       if (
         this.valoriFiltri['piattaforma'] &&

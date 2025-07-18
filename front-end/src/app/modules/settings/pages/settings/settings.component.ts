@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
 import { IPiattaforma } from '../../../../shared/models/Piattaforma';
@@ -8,184 +8,216 @@ import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
 import { FormPiattaformeComponent } from '../../components/form-piattaforme/form-piattaforme.component';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
-import { RouterModule } from '@angular/router';
-import { PiattaformeComponent } from "../../components/piattaforme/piattaforme.component";
-import { NavTabsComponent, NavTab } from '../../../../shared/components/nav-tabs/nav-tabs.component';
-import { CorsiComponent } from "../../../corsi/pages/corsi/corsi.component";
+import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
+import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
+import { IColumnDef } from '../../../../shared/models/ui/column-def';
+import {
+  IAzioneDef,
+  AzioneType,
+  AzioneColor,
+} from '../../../../shared/models/ui/azione-def';
 
+interface TabItem {
+  id: string;
+  label: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, RouterModule, PiattaformeComponent, NavTabsComponent],
+  imports: [
+    CommonModule, 
+    PageTitleComponent, 
+    TabellaGenericaComponent,
+    PaginationFooterComponent
+  ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
 })
 export class SettingsComponent implements OnInit {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
-  selectedTab = 'piattaforme';
-  buttonText: string = '';
+  @ViewChild(TabellaGenericaComponent) tabellaComponent!: TabellaGenericaComponent;
+
+  // Tab management
+  activeTab = 'piattaforme';
+  tabs: TabItem[] = [
+    { id: 'piattaforme', label: 'Piattaforme', icon: 'fa fa-desktop' },
+    // Ready for future tabs
+    // { id: 'corsi', label: 'Stati Corsi', icon: 'fa fa-flag' },
+    // { id: 'sedi', label: 'Sedi', icon: 'fa fa-building' },
+    // { id: 'ruoli', label: 'Ruoli', icon: 'fa fa-users-cog' }
+  ];
+
+  // Platforms data
   piattaforme: IPiattaforma[] = [];
-  piattaformeLoaded = false;
-  closeModalSignal = 0;
-  pageSize = 10;
-  rowHeight = 53;
-  settingsTabs: NavTab[] = [
-    { id: 'piattaforme', label: 'Piattaforme', icon: 'fa fa-desktop', active: true },
-    { id: 'stato_corsi', label: 'Corsi', icon: 'fa fa-flag' },
-    { id: 'sedi', label: 'Sedi', icon: 'fa fa-building' },
-    { id: 'ruoli', label: 'Ruoli Dipendenti', icon: 'fa fa-users-cog' }
+
+  // Pagination info
+  paginationInfo = {
+    currentPage: 1,
+    totalPages: 1,
+    pages: [] as number[],
+    displayedItems: 0,
+    totalItems: 0,
+    pageSize: 20, // Will be updated by TabellaGenericaComponent
+    entityName: 'piattaforme'
+  };
+
+  // Table configuration
+  columns: IColumnDef[] = [
+    { key: 'nome', label: 'Nome', sortable: true, type: 'text' },
+    { key: 'descrizione', label: 'Descrizione', sortable: true, type: 'text' },
+    { key: 'urlSito', label: 'URL Sito', sortable: true, type: 'text' },
+    { key: 'attiva', label: 'Stato', sortable: true, type: 'badge' },
+  ];
+
+  actions: IAzioneDef[] = [
+    {
+      label: 'Modifica',
+      icon: 'fa fa-pen',
+      action: AzioneType.Edit,
+      color: AzioneColor.Secondary,
+    },
+    {
+      label: 'Elimina',
+      icon: 'fa fa-trash',
+      action: AzioneType.Delete,
+      color: AzioneColor.Danger,
+    },
   ];
 
   constructor(
     private piattaformeService: PiattaformeService,
     private modaleService: ModaleService,
     private toastr: ToastrService,
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.onTabClick(this.selectedTab);
+    this.loadPiattaforme();
   }
 
   ngAfterViewInit() {
-    this.updatePageSize();
-    window.addEventListener('resize', this.updatePageSize.bind(this));
+    // Removed dynamic page size calculation for consistent UX
   }
 
-  onTabClick(tab: string) {
-      this.selectedTab = tab;
-      this.settingsTabs.forEach(t => t.active = t.id === tab);
-      
-      switch (tab) {
-        case 'piattaforme':
-          this.buttonText = 'Nuova piattaforma';
-          break;
-        case 'stato_corsi':
-          this.buttonText = 'Nuovo stato corso';
-          break;
-        case 'sedi':
-          this.buttonText = 'Nuova sede';
-          break;
-        case 'ruoli':
-          this.buttonText = 'Nuovo ruolo dipendente';
-          break;
-        default:
-          this.buttonText = '';
-      }
+  // Tab management
+  setActiveTab(tabId: string) {
+    this.activeTab = tabId;
+    if (tabId === 'piattaforme') {
+      this.loadPiattaforme();
     }
+  }
 
+  // Data loading
   private loadPiattaforme() {
     this.piattaformeService.getListaPiattaforme().subscribe({
       next: data => {
+        console.log('📊 Loading piattaforme:', data.length, 'items');
         this.piattaforme = data.map((p: any) => ({
           ...p,
-          attiva: p.attiva ? 'Attivo' : 'Non attivo', // <-- qui la trasformazione
+          attiva: p.attiva ? 'Attivo' : 'Non attivo',
         }));
+        this.cd.detectChanges();
       },
       error: err => {
+        console.error('❌ Error loading piattaforme:', err);
         this.piattaforme = [];
-        this.piattaformeLoaded = false;
       },
     });
   }
 
-  addPiattaforma(piattaformaData: IPiattaforma) {
-    this.piattaformeService.addPiattaforma(piattaformaData).subscribe({
-      next: this.onSuccess,
-      error: this.handleError,
+  // Platform CRUD operations
+  addPiattaforma() {
+    this.modaleService.apri({
+      titolo: 'Aggiungi Piattaforma',
+      componente: FormPiattaformeComponent,
+      dati: {},
+      onConferma: (formValue: any) => {
+        const piattaformaToSave = {
+          ...formValue,
+          attiva: formValue.attiva === 'true' || formValue.attiva === true
+        };
+        
+        this.piattaformeService.addPiattaforma(piattaformaToSave).subscribe({
+          next: this.onSuccess,
+          error: this.handleError,
+        });
+      },
     });
   }
 
-  updatePiattaforma(id: number, piattaformaData: IPiattaforma) {
-    this.piattaformeService.editPiattaforma(id, piattaformaData).subscribe({
-      next: this.onSuccess,
-      error: this.handleError,
+  editPiattaforma(piattaforma: IPiattaforma) {
+    this.modaleService.apri({
+      titolo: 'Modifica Piattaforma',
+      componente: FormPiattaformeComponent,
+      dati: piattaforma,
+      onConferma: (formValue: any) => {
+        const piattaformaToSave = {
+          ...formValue,
+          attiva: formValue.attiva === 'true' || formValue.attiva === true
+        };
+        
+        this.piattaformeService.editPiattaforma(piattaforma.id, piattaformaToSave).subscribe({
+          next: this.onSuccess,
+          error: this.handleError,
+        });
+      },
     });
   }
 
-  deletePiattaforma(id: number) {
-    this.piattaformeService.deletePiattaforma(id).subscribe({
-      next: this.onSuccess,
-      error: this.handleError,
+  deletePiattaforma(piattaforma: IPiattaforma) {
+    this.modaleService.apri({
+      titolo: 'Conferma eliminazione',
+      componente: DeleteConfirmComponent,
+      dati: {
+        messaggio: `Vuoi davvero eliminare la piattaforma "${piattaforma.nome}"?`,
+      },
+      onConferma: () => {
+        this.piattaformeService.deletePiattaforma(piattaforma.id).subscribe({
+          next: this.onSuccess,
+          error: this.handleError,
+        });
+      },
     });
   }
 
-  onAction(event: { tab: string; type: string; payload?: IPiattaforma }) {
-    switch (event.tab) {
-      case 'piattaforme':
-        switch (event.type) {
-          case 'add':
-            // if (event.payload) {
-            // }
-            // this.piattaformeService.addPiattaforma(event.payload).subscribe({
-            //   next: this.onSuccess,
-            //   error: this.handleError,
-            // });
-
-            this.modaleService.apri({
-              titolo: 'Aggiungi Piattaforma',
-              componente: FormPiattaformeComponent,
-              dati: {}, // campi vuoti
-              onConferma: (formValue: any) => this.addPiattaforma(formValue),
-            });
-            break;
-          case 'edit':
-            // if (event.payload) {
-            //   this.piattaformeService
-            //     .editPiattaforma(event.payload.id, event.payload)
-            //     .subscribe({
-            //       next: this.onSuccess,
-            //       error: this.handleError,
-            //     });
-            //   break;
-            // }
-            this.modaleService.apri({
-              titolo: 'Modifica Piattaforma',
-              componente: FormPiattaformeComponent,
-              dati: event.payload,
-              onConferma: (formValue: any) => {
-                if (event.payload?.id !== undefined) {
-                  this.updatePiattaforma(event.payload.id, formValue);
-                } else {
-                  this.toastr.error('ID piattaforma non valido', 'Errore');
-                }
-              },
-            });
-            break;
-          case 'delete':
-            this.modaleService.apri({
-              titolo: 'Conferma eliminazione',
-              componente: DeleteConfirmComponent,
-              dati: {
-                messaggio:
-                  'Vuoi davvero eliminare la piattaforma "' + event.payload?.nome + '"?',
-              },
-              onConferma: () => {
-                if (event.payload?.id !== undefined) {
-                  this.deletePiattaforma(event.payload.id);
-                } else {
-                  this.toastr.error('ID piattaforma non valido', 'Errore');
-                }
-              },
-            });
-            break;
-          default:
-            console.warn('Azione piattaforme non gestita:', event.type);
-        }
+  // Table action handling
+  onTabellaAzione(event: { tipo: string; item: IPiattaforma }) {
+    switch (event.tipo) {
+      case AzioneType.Edit:
+        this.editPiattaforma(event.item);
         break;
-      // altri case per altre tab (es: sedi, ruoli, ecc.)
+      case AzioneType.Delete:
+        this.deletePiattaforma(event.item);
+        break;
       default:
-        console.warn('Tab non gestita:', event.tab);
+        console.warn('Azione non gestita:', event.tipo);
     }
   }
 
+  // Pagination methods
+  aggiornaPaginazione(paginationData: any) {
+    console.log('🔄 Pagination data received:', paginationData);
+    this.paginationInfo = { ...paginationData };
+  }
+
+  cambiaPagina(page: number) {
+    console.log('📄 Changing to page:', page);
+    if (this.tabellaComponent) {
+      this.tabellaComponent.goToPage(page);
+    }
+  }
+
+  // Success/Error handlers
   onSuccess = (response: ApiMsg) => {
+    console.log('✅ Operation successful:', response);
     this.toastr.success(
       response.message || 'Operazione completata con successo!',
       'Successo',
     );
     this.loadPiattaforme();
-    this.closeModalSignal++; // cambia valore per notificare il figlio
+    this.modaleService.chiudi();
   };
 
   handleError = (error: any) => {
@@ -193,21 +225,6 @@ export class SettingsComponent implements OnInit {
       error?.error?.message || 'Si è verificato un errore!',
       'Errore',
     );
-    console.log(error);
+    console.error('❌ Operation error:', error);
   };
-
-  updatePageSize() {
-    if (!this.pageContentInner) return;
-    const containerHeight = this.pageContentInner.nativeElement.clientHeight;
-    const headerHeight = 37.5;
-    const footerHeight = 50;
-    const available = containerHeight - headerHeight - footerHeight;
-    this.pageSize = Math.max(1, Math.floor(available / this.rowHeight));
-  }
-
-    onTabChange(tab: NavTab) {
-    this.onTabClick(tab.id);
-  }
-
-
 }
