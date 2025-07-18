@@ -1,124 +1,113 @@
-<form [formGroup]="assegnazioneForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
     
     <!-- Informazioni non modificabili -->
-    <div class="form-row mb-3">
-    <div class="form-field">
-        <label class="form-label">Dipendente</label>
-        <input type="text" class="form-control" [value]="datiIniziali.dipendenteNome" readonly>
-    </div>
-    
-    <div class="form-field">
-        <label class="form-label">Corso</label>
-        <input type="text" class="form-control" [value]="datiIniziali.corsoNome" readonly>
-    </div>
+    <div class="row mb-3">
+        <div class="col-md-6 form-field">
+            <label class="form-label">Dipendente</label>
+            <input type="text" class="form-control" [value]="dati?.dipendenteNome || 'N/A'" readonly>
+        </div>
+
+        <div class="col-md-6 form-field">
+            <label class="form-label">Corso</label>
+            <input type="text" class="form-control" [value]="dati?.corsoNome || 'N/A'" readonly>
+        </div>
     </div>
 
     <!-- Campi modificabili -->
-    <div class="form-row">
-    <div class="form-field">
-        <label class="form-label">Stato</label>
-        <select class="form-select" formControlName="stato">
-        <option value="DA_INIZIARE">Da Iniziare</option>
-        <option value="IN_CORSO">In Corso</option>
-        <option value="TERMINATO">Terminato</option>
-        <option value="INTERROTTO">Interrotto</option>
-        </select>
-    </div>
-    
-    <div class="form-field">
-        <label class="form-label">Percentuale Completamento (%)</label>
-        <input type="number" class="form-control" formControlName="percentualeCompletamento" 
-                min="0" max="100" placeholder="0-100">
-    </div>
-    </div>
-    
-    <div class="form-row">
-    <div class="form-field">
-        <label class="form-label">Data Inizio</label>
-        <input type="date" class="form-control" formControlName="dataInizio">
-    </div>
-    
-    <div class="form-field">
-        <label class="form-label">Data Completamento</label>
-        <input type="date" class="form-control" formControlName="dataCompletamento">
-    </div>
-    </div>
-    
-    <div class="form-row">
-    <div class="form-field">
-        <label class="form-label">Ore Completate</label>
-        <input type="number" class="form-control" formControlName="oreCompletate" 
-                min="0" placeholder="Ore completate">
-    </div>
-    
-    <div class="form-field">
-        <label class="form-label">Valutazione</label>
-        <input type="number" class="form-control" formControlName="valutazione" 
-                min="1" max="10" placeholder="1-10">
-    </div>
+    <div class="row">
+        <div class="col-md-6 form-field">
+            <label for="dataAssegnazione" class="form-label">Data Assegnazione</label>
+            <input id="dataAssegnazione" type="date" class="form-control" formControlName="dataAssegnazione"
+                   [ngClass]="{ 'is-invalid': submitted && form.controls['dataAssegnazione'].invalid }">
+            <div *ngIf="submitted && form.controls['dataAssegnazione'].invalid" class="invalid-feedback">
+                Data assegnazione non valida.
+            </div>
+        </div>
+        
     </div>
 
-    <div class="form-field">
-    <label class="form-label">Note e Feedback</label>
-    <textarea class="form-control" formControlName="noteFeedback" 
-                rows="3" placeholder="Note e feedback sul corso..."></textarea>
-    </div>
-
-    <div class="form-field">
-    <label class="form-label">Competenze Acquisite</label>
-    <textarea class="form-control" formControlName="competenzeAcquisite" 
-                rows="2" placeholder="Competenze acquisite..."></textarea>
-    </div>
-
-    <div class="form-row">
-    <div class="form-field">
-        <label class="form-label">Esito</label>
-        <select class="form-select" formControlName="esito">
-        <option value="">Seleziona esito</option>
-        <option value="SUPERATO">Superato</option>
-        <option value="NON_SUPERATO">Non Superato</option>
-        <option value="IN_CORSO">In Corso</option>
-        </select>
-    </div>
-    
-    <div class="form-field">
-        <label class="form-label">Fonte Richiesta</label>
-        <input type="text" class="form-control" formControlName="fonteRichiesta" 
-                placeholder="Fonte della richiesta">
-    </div>
-    </div>
-
-    <!-- Checkbox -->
-    <div class="form-row">
-    <div class="form-field">
-        <div class="form-check">
-        <input type="checkbox" class="form-check-input" formControlName="certificatoOttenuto" id="certificato">
-        <label class="form-check-label" for="certificato">Certificato Ottenuto</label>
+    <div class="row mt-3">
+        <div class="col-md-6 form-field">
+            <label for="stato" class="form-label">Stato</label>
+            <select id="stato" class="form-select" formControlName="stato"
+                    [ngClass]="{ 'is-invalid': submitted && form.controls['stato'].invalid }">
+                <option value="DA_INIZIARE">Da iniziare</option>
+                <option value="IN_CORSO">In corso</option>
+                <option value="TERMINATO">Terminato</option>
+                <option value="INTERROTTO">Interrotto</option>
+            </select>
+            <div *ngIf="submitted && form.controls['stato'].invalid" class="invalid-feedback">
+                Lo stato è obbligatorio.
+            </div>
+        </div>
+        
+        <div class="col-md-6 form-field">
+            <label for="percentualeCompletamento" class="form-label">Percentuale Completamento (%)</label>
+            <input id="percentualeCompletamento" type="number" class="form-control" formControlName="percentualeCompletamento" 
+                   min="0" max="100" placeholder="0-100"
+                   [ngClass]="{ 'is-invalid': submitted && form.controls['percentualeCompletamento'].invalid }">
+            <div *ngIf="submitted && form.controls['percentualeCompletamento'].invalid" class="invalid-feedback">
+                La percentuale deve essere tra 0 e 100.
+            </div>
         </div>
     </div>
     
-    <div class="form-field">
-        <div class="form-check">
-        <input type="checkbox" class="form-check-input" formControlName="impattoIsms" id="isms">
-        <label class="form-check-label" for="isms">Impatto ISMS</label>
+    <div class="row mt-3">
+        <div class="col-md-6 form-field">
+            <label for="dataTerminaPrevista" class="form-label">Data Termina Prevista</label>
+            <input id="dataTerminaPrevista" type="date" class="form-control" formControlName="dataTerminaPrevista" readonly>
+            <small class="form-text text-muted">Questo campo viene dal corso e non è modificabile</small>
         </div>
-    </div>
-    </div>
-
-    <div class="form-row">
-    <div class="form-field">
-        <div class="form-check">
-        <input type="checkbox" class="form-check-input" formControlName="attestato" id="attestato">
-        <label class="form-check-label" for="attestato">Attestato</label>
+        
+        <div class="col-md-6 form-field">
+            <label for="dataInizio" class="form-label">Data Inizio</label>
+            <input id="dataInizio" type="date" class="form-control" formControlName="dataInizio"
+                   [ngClass]="{ 'is-invalid': submitted && form.controls['dataInizio'].invalid }">
+            <div *ngIf="submitted && form.controls['dataInizio'].invalid" class="invalid-feedback">
+                Data inizio non valida.
+            </div>
         </div>
     </div>
     
-    <div class="form-field">
-        <div class="form-check">
-        <input type="checkbox" class="form-check-input" formControlName="feedbackFornito" id="feedback">
-        <label class="form-check-label" for="feedback">Feedback Fornito</label>
+    <div class="row mt-3">
+        <div class="col-md-6 form-field">
+            <label for="dataCompletamento" class="form-label">Data Completamento</label>
+            <input id="dataCompletamento" type="date" class="form-control" formControlName="dataCompletamento"
+                   [ngClass]="{ 'is-invalid': submitted && form.controls['dataCompletamento'].invalid }">
+            <div *ngIf="submitted && form.controls['dataCompletamento'].invalid" class="invalid-feedback">
+                Data completamento non valida.
+            </div>
+        </div>
+        
+        <div class="col-md-6 form-field">
+            <label for="esito" class="form-label">Esito</label>
+            <select id="esito" class="form-select" formControlName="esito"
+                    [ngClass]="{ 'is-invalid': submitted && form.controls['esito'].invalid }">
+                <option value="">Seleziona esito</option>
+                <option value="SUPERATO">Superato</option>
+                <option value="NON_SUPERATO">Non Superato</option>
+                <option value="IN_CORSO">In Corso</option>
+            </select>
+            <div *ngIf="submitted && form.controls['esito'].invalid" class="invalid-feedback">
+                Seleziona un esito valido.
+            </div>
         </div>
     </div>
+    
+    <div class="col-md-6 form-field">
+        <div class="form-check mt-4">
+            <input type="checkbox" class="form-check-input" formControlName="impattoIsms" id="impattoIsms">
+            <label class="form-check-label" for="impattoIsms">Impatto ISMS</label>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6 form-field">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="attestato" id="attestato">
+                <label class="form-check-label" for="attestato">Attestato</label>
+            </div>
+        </div>
     </div>
 
 </form>
