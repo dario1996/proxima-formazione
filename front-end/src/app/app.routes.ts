@@ -45,7 +45,7 @@ export const routes: Routes = [
           ).then(m => m.PianoFormativoComponent),
       },
       {
-        path: 'settings',
+        path: 'impostazioni',
         loadComponent: () =>
           import('./modules/settings/pages/settings/settings.component').then(
             m => m.SettingsComponent,
