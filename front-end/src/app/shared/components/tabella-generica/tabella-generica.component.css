@@ -96,6 +96,37 @@ th .fa {
   align-items: center;
 }
 
+/* Switch styling for toggle actions */
+.action-buttons .form-check.form-switch {
+  margin: 0;
+  padding: 0;
+  min-height: auto;
+}
+
+.action-buttons .form-check.form-switch .form-check-input {
+  width: 2.5em;
+  height: 1.25em;
+  margin: 0;
+  cursor: pointer;
+  background-color: #e2e3e5; /* Same as status-badge-secondary background */
+  border: 1px solid #d6d8db; /* Same as status-badge-secondary border */
+  transition: all 0.2s ease-in-out;
+}
+
+.action-buttons .form-check.form-switch .form-check-input:checked {
+  background-color: #d4edda; /* Same as status-badge-success background */
+  border-color: #c3e6cb; /* Same as status-badge-success border */
+}
+
+.action-buttons .form-check.form-switch .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(21, 87, 36, 0.25); /* Using success color with opacity */
+  border-color: #c3e6cb;
+}
+
+.action-buttons .form-check.form-switch .form-check-label {
+  cursor: pointer;
+}
+
 /* Rimuovi completamente lo stile bottone */
 .action-buttons .btn {
   background: transparent !important;

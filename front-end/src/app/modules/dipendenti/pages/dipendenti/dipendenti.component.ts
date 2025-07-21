@@ -29,6 +29,7 @@ import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import {
   AzioneColor,
   AzioneType,
+  AzioneRenderType,
   IAzioneDef,
 } from '../../../../shared/models/ui/azione-def';
 import { ModaleService } from '../../../../core/services/modal.service';
@@ -230,10 +231,9 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
       color: AzioneColor.Danger,
     },
     {
-      label: 'Disattiva',
-      icon: 'fa fa-user-slash',
+      label: 'Attiva/Disattiva',
       action: AzioneType.Disable,
-      color: AzioneColor.Warning,
+      renderType: AzioneRenderType.Switch,
     },
   ];
 
@@ -464,6 +464,25 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     }
   }
 
+  gestioneSwitchToggle(event: { action: string; item: any; currentState: boolean }) {
+    const { action, item, currentState } = event;
+    
+    if (action === 'disable') {
+      const newState = !currentState;
+      const actionText = newState ? 'attivare' : 'disattivare';
+      const statusText = newState ? 'attivo' : 'non attivo';
+      
+      this.modaleService.apri({
+        titolo: `Conferma ${actionText === 'attivare' ? 'attivazione' : 'disattivazione'}`,
+        componente: DisableConfirmComponent,
+        dati: {
+          messaggio: `Vuoi davvero ${actionText} il dipendente "${item.nome} ${item.cognome}"? Lo stato diventerà "${statusText}".`,
+        },
+        onConferma: () => this.toggleDipendenteStatus(item.id),
+      });
+    }
+  }
+
   gestioneAzione(e: { tipo: string; item: any }) {
     switch (e.tipo) {
       case 'add':
@@ -499,19 +518,8 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
         });
         break;
       case 'disable':
-        this.modaleService.apri({
-          titolo: 'Conferma disattivazione',
-          componente: DisableConfirmComponent,
-          dati: {
-            messaggio:
-              'Vuoi davvero disattivare il dipendente "' +
-              e.item.nome +
-              ' ' +
-              e.item.cognome +
-              '"?',
-          },
-          onConferma: () => this.toggleDipendenteStatus(e.item.id),
-        });
+        // For switch toggle, directly call the service without confirmation modal
+        this.toggleDipendenteStatus(e.item.id);
         break;
       case 'view':
         this.modaleService.apri({

@@ -60,14 +60,37 @@
             </td>
             <td *ngIf="azioni.length" class="actions-cell" (click)="$event.stopPropagation()">
                 <div class="action-buttons">
-                    <button *ngFor="let azione of azioni" type="button" class="btn btn-sm" [ngClass]="{
+                    <ng-container *ngFor="let azione of azioni">
+                        <!-- Switch rendering for toggle actions -->
+                        <div *ngIf="azione.renderType === 'switch'" class="form-check form-switch d-inline-block me-2">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                [id]="'switch-' + azione.action + '-' + row.id"
+                                [checked]="getSwitchState(azione, row)"
+                                (click)="onSwitchToggle(azione.action, row, $event)"
+                                role="switch">
+                            <label 
+                                class="form-check-label" 
+                                [for]="'switch-' + azione.action + '-' + row.id"
+                                [title]="azione.label">
+                            </label>
+                        </div>
+                        <!-- Button rendering for standard actions -->
+                        <button *ngIf="!azione.renderType || azione.renderType === 'button'" 
+                                type="button" 
+                                class="btn btn-sm" 
+                                [ngClass]="{
                                     'btn-primary': azione.color === 'primary',
                                     'btn-danger': azione.color === 'danger',
                                     'btn-secondary': azione.color === 'secondary',
                                     'btn-warning': azione.color === 'warning'
-                                }" (click)="onAzione(azione.action, row)">
-                        <i *ngIf="azione.icon" [class]="azione.icon"></i>
-                    </button>
+                                }" 
+                                [title]="azione.label"
+                                (click)="onAzione(azione.action, row)">
+                            <i *ngIf="azione.icon" [class]="azione.icon"></i>
+                        </button>
+                    </ng-container>
                 </div>
             </td>
         </tr>

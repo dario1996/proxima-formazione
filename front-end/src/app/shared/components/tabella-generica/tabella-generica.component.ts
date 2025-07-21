@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { IAzioneDef } from '../../models/ui/azione-def';
+import { IAzioneDef, AzioneRenderType } from '../../models/ui/azione-def';
 import { IColumnDef } from '../../models/ui/column-def';
 import { CommonModule } from '@angular/common';
 import { ViewChild, ElementRef } from '@angular/core';
@@ -22,6 +22,7 @@ export class TabellaGenericaComponent {
   // Output events
   @Output() action = new EventEmitter<{ tipo: string; item: any }>();
   @Output() rowClick = new EventEmitter<any>();
+  @Output() switchToggle = new EventEmitter<{ action: string; item: any; currentState: boolean }>();
   @Output() paginationInfo = new EventEmitter<{
     currentPage: number;
     totalPages: number;
@@ -169,6 +170,30 @@ export class TabellaGenericaComponent {
 
   onAzione(tipo: string, item: any) {
     this.action.emit({ tipo, item });
+  }
+
+  onSwitchToggle(tipo: string, item: any, event: any) {
+    // Prevent the actual switch toggle - we'll handle it after confirmation
+    event.preventDefault();
+    
+    // Get current state
+    const currentState = this.getSwitchState({ action: tipo } as IAzioneDef, item);
+    
+    // Emit switch toggle event for parent component to handle confirmation
+    this.switchToggle.emit({ 
+      action: tipo, 
+      item: item,
+      currentState: currentState
+    });
+  }
+
+  getSwitchState(azione: IAzioneDef, item: any): boolean {
+    // For disable action, the switch should be ON when the item is ACTIVE
+    if (azione.action === 'disable') {
+      return item.attivo === 'Attivo' || item.attivo === true;
+    }
+    // Default behavior for other switch actions
+    return false;
   }
   
   onRowClick(row: any) {

@@ -29,6 +29,7 @@
           [azioni]="azioni"
           [entityName]="'dipendenti'"
           (action)="gestioneAzione($event)"
+          (switchToggle)="gestioneSwitchToggle($event)"
           (rowClick)="gestioneAzione({tipo: 'view', item: $event})"
           (paginationInfo)="aggiornaPaginazione($event)">
         </app-tabella-generica>

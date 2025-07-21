@@ -13,9 +13,15 @@ export enum AzioneType {
   View = 'view'
 }
 
+export enum AzioneRenderType {
+  Button = 'button',
+  Switch = 'switch'
+}
+
 export interface IAzioneDef {
   label: string;
   icon?: string;
   action: AzioneType; // ora usa l'enum
   color?: AzioneColor; // ora usa l'enum
+  renderType?: AzioneRenderType; // nuovo tipo di rendering
 }
