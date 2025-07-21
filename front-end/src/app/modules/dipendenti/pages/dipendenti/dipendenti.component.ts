@@ -177,7 +177,13 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
       sortable: true,
       type: 'text',
     },
-    { key: 'isms', label: 'ISMS', sortable: true, type: 'text' },
+    { 
+      key: 'isms', 
+      label: 'ISMS', 
+      sortable: true, 
+      type: 'text',
+      forceUppercase: true // Force SI/NO to be uppercase
+    },
     {
       key: 'ruolo',
       label: 'Ruolo',
@@ -202,6 +208,7 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
       label: 'Sede',
       sortable: true,
       type: 'text',
+      forceUppercase: true
     },
     {
       key: 'community',

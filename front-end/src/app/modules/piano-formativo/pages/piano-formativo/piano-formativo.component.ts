@@ -258,6 +258,7 @@ export class PianoFormativoComponent implements OnInit {
       label: 'Esito',
       sortable: true,
       type: 'text',
+      forceUppercase: true // Force SI/NO values to uppercase
     },
     {
       key: 'attestatoDisplay',

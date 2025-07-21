@@ -263,10 +263,164 @@ export class TabellaGenericaComponent {
   }
 
   /**
-   * Restituisce il valore da visualizzare, "-" se vuoto
+   * Formatta il testo in camel case corretto
+   */
+  formatToCamelCase(text: string): string {
+    if (!text || typeof text !== 'string') {
+      return text;
+    }
+
+    // Handle common abbreviations and special cases
+    const specialCases: { [key: string]: string } = {
+      'hr': 'HR',
+      'it': 'IT',
+      'ai': 'AI',
+      'iot': 'IoT',
+      'api': 'API',
+      'ui': 'UI',
+      'ux': 'UX',
+      'ceo': 'CEO',
+      'cto': 'CTO',
+      'cfo': 'CFO',
+      'isms': 'ISMS',
+      'gdpr': 'GDPR',
+      'iso': 'ISO',
+      'srl': 'S.r.l.',
+      'spa': 'S.p.A.',
+      'snc': 'S.n.c.',
+      'sas': 'S.a.s.',
+    };
+
+    // Handle Yes/No and categorical values that should remain uppercase
+    const uppercaseValues: { [key: string]: string } = {
+      'si': 'SI',
+      'no': 'NO',
+      'yes': 'YES',
+      'ok': 'OK',
+      'ko': 'KO',
+      'n/a': 'N/A',
+      'tbd': 'TBD',
+      'asap': 'ASAP',
+      'faq': 'FAQ',
+      'pdf': 'PDF',
+      'csv': 'CSV',
+      'xml': 'XML',
+      'json': 'JSON',
+      'sql': 'SQL',
+      'http': 'HTTP',
+      'https': 'HTTPS',
+      'ftp': 'FTP',
+      'ssh': 'SSH',
+      'vpn': 'VPN',
+      'dns': 'DNS',
+      'ip': 'IP',
+      'tcp': 'TCP',
+      'udp': 'UDP',
+      'url': 'URL',
+      'uri': 'URI',
+      'api': 'API',
+      'rest': 'REST',
+      'soap': 'SOAP',
+      'oauth': 'OAuth',
+      'jwt': 'JWT',
+      'sso': 'SSO',
+      'ldap': 'LDAP',
+      'ad': 'AD',
+      'db': 'DB',
+      'crm': 'CRM',
+      'erp': 'ERP',
+      'bi': 'BI',
+      'kpi': 'KPI',
+      'roi': 'ROI',
+      'rfi': 'RFI',
+      'rfp': 'RFP',
+      'sla': 'SLA',
+      'nda': 'NDA'
+    };
+
+    // Check if the entire text (trimmed and lowercased) is a special uppercase value
+    const trimmedLower = text.trim().toLowerCase();
+    if (uppercaseValues[trimmedLower]) {
+      return uppercaseValues[trimmedLower];
+    }
+
+    return text
+      .toLowerCase()
+      .split(/[\s_-]+/) // Split on spaces, underscores, or hyphens
+      .map(word => {
+        if (word.length === 0) return word;
+        
+        // Check if it's a special case (abbreviation)
+        const lowerWord = word.toLowerCase();
+        if (specialCases[lowerWord]) {
+          return specialCases[lowerWord];
+        }
+        
+        // Check if it's an uppercase value
+        if (uppercaseValues[lowerWord]) {
+          return uppercaseValues[lowerWord];
+        }
+        
+        // Standard camel case
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(' ');
+  }
+
+  /**
+   * Restituisce il valore da visualizzare, "-" se vuoto, formattato in camel case se testo
    */
   getDisplayValue(value: any): string {
-    return this.isEmptyValue(value) ? '-' : value;
+    if (this.isEmptyValue(value)) {
+      return '-';
+    }
+    
+    // If it's a string, apply camel case formatting
+    if (typeof value === 'string') {
+      return this.formatToCamelCase(value);
+    }
+    
+    return value;
+  }
+
+  /**
+   * Restituisce il valore da visualizzare per una colonna specifica, 
+   * rispettando le impostazioni della colonna per il camel case
+   */
+  getDisplayValueForColumn(value: any, column: IColumnDef): string {
+    if (this.isEmptyValue(value)) {
+      return '-';
+    }
+    
+    // If forceUppercase is enabled for this column, return uppercase
+    if (column.forceUppercase && typeof value === 'string') {
+      return value.toUpperCase();
+    }
+    
+    // If camel case is disabled for this column, return as-is
+    if (column.disableCamelCase) {
+      return value;
+    }
+    
+    // If it's a string, apply camel case formatting
+    if (typeof value === 'string') {
+      return this.formatToCamelCase(value);
+    }
+    
+    return value;
+  }
+
+  /**
+   * Restituisce il valore da visualizzare con eventuale troncamento per una colonna specifica
+   */
+  getDisplayValueWithTruncationForColumn(value: any, column: IColumnDef): string {
+    const displayValue = this.getDisplayValueForColumn(value, column);
+    if (displayValue === '-') {
+      return displayValue;
+    }
+    const length = column.maxLength || 30;
+    return this.shouldTruncate(displayValue, length) ? 
+           this.getTruncatedText(displayValue, length) : displayValue;
   }
 
   /**
