@@ -240,8 +240,8 @@ public class AssegnazioneController {
             @Parameter(description = "Impatto ISMS") @RequestParam(required = false) Boolean impattoIsms,
             @Parameter(description = "Attestato") @RequestParam(required = false) Boolean attestato,
             @Parameter(description = "Data inizio") @RequestParam(required = false) String dataInizio,
-            @Parameter(description = "Data completamento") @RequestParam(required = false) String dataCompletamento) {
-
+            @Parameter(description = "Data completamento") @RequestParam(required = false) String dataCompletamento,
+            @Parameter(description = "Data termine prevista") @RequestParam(required = false) String dataTerminePrevista) {
         Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
         if (!optionalAssegnazione.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -345,6 +345,15 @@ public class AssegnazioneController {
                     assegnazione.setDataInizio(LocalDate.parse(dataInizio));
                 } catch (Exception e) {
                     return ResponseEntity.badRequest().body("Formato data inizio non valido: " + dataInizio);
+                }
+            }
+
+                        // Aggiorna data inizio se fornita
+            if (dataTerminePrevista != null && !dataTerminePrevista.isEmpty()) {
+                try {
+                    assegnazione.setDataTerminePrevista(LocalDate.parse(dataTerminePrevista));
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("Formato data termine prevista non valido: " + dataTerminePrevista);
                 }
             }
 

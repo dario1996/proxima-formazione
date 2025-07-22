@@ -80,6 +80,8 @@ export class AssegnazioniService {
       params.competenzeAcquisite = updateData.competenzeAcquisite;
     if (updateData.certificatoOttenuto !== undefined)
       params.certificatoOttenuto = updateData.certificatoOttenuto.toString();
+    if (updateData.dataTerminePrevista !== undefined)
+      params.dataTerminePrevista = updateData.dataTerminePrevista;
     if (updateData.esito !== undefined)
       params.esito = updateData.esito;
     if (updateData.fonteRichiesta !== undefined)

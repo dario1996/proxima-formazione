@@ -502,6 +502,7 @@ export class PianoFormativoComponent implements OnInit {
       dataAssegnazione: assegnazioneData.dataAssegnazione || null,
       impattoIsms: assegnazioneData.impattoIsms || false,
       percentualeCompletamento: assegnazioneData.percentualeCompletamento || 0,
+      dataTerminePrevista: assegnazioneData.dataTerminePrevista || null,
       dataInizio: assegnazioneData.dataInizio || null,
       dataCompletamento: assegnazioneData.dataCompletamento || null,
       esito: assegnazioneData.esito || null,

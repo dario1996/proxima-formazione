@@ -54,4 +54,5 @@ export interface AssegnazioneUpdateRequest {
   attestato?: boolean;
   dataInizio?: string;
   dataCompletamento?: string;
+  dataTerminePrevista?: string;
 }
