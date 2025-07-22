@@ -45,7 +45,7 @@
 }
 
 .form-control.is-invalid, .form-select.is-invalid {
-  border-color: #dc3545;
+  border-color: none;
 }
 
 .container-fluid {
@@ -166,7 +166,7 @@
 
 .clear-btn {
   position: absolute;
-  right: 0.5rem;
+  right: 0px;
   top: 50%;
   transform: translateY(-50%);
   border: none;
@@ -179,8 +179,7 @@
 }
 
 .clear-btn:hover {
-  background-color: #6c757d;
-  color: white;
+  color: rgb(57, 57, 57);
 }
 
 .search-dropdown {
@@ -219,12 +218,12 @@
 .selected-item-card .card {
   border: 1px solid #dee2e6;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .selected-item-card .card-body {
   padding: 1.25rem;
-  min-height: 200px;
+  min-height: auto;
 }
 
 /* Icons spacing */
@@ -338,4 +337,57 @@
 .small {
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+/* Stili per l'accordion dipendente */
+.transition-transform {
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Ruota la freccia quando l'accordion è aperto */
+.btn[aria-expanded="true"] .transition-transform {
+  transform: rotate(180deg);
+}
+
+/* Rimuovi il focus outline dal bottone dell'accordion */
+.btn-link:focus {
+  box-shadow: none;
+}
+
+/* Mantieni il colore del testo del bottone */
+.btn-link {
+  color: inherit !important;
+}
+
+.btn-link:hover {
+  color: inherit !important;
+}
+
+/* Aggiorna gli stili esistenti per l'accordion */
+.selected-item-card .card-body {
+  padding: 1.25rem;
+  /* RIMUOVI: min-height: 200px; */
+  /* AGGIUNGI: */
+  min-height: auto;
+}
+
+/* Migliora la compattezza dell'accordion */
+.selected-item-card {
+  margin-top: 1rem !important;
+}
+
+.selected-item-card .card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  /* AGGIUNGI: */
+  overflow: hidden;
+}
+
+/* Contenuto accordion più compatto */
+.collapse .card-body {
+  padding: 0.75rem 1.25rem;
+}
+
+.collapse .row.g-2 > .col-12 {
+  padding: 0.15rem 0;
 }

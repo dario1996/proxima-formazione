@@ -32,17 +32,21 @@ export class FormAssegnazioneComponent implements OnInit {
   showCorsiDropdown = false;
   corsoSelezionato: ICorsi | null = null;
 
+  // Cambia da singolo a array
+  dipendentiSelezionati: IDipendenti[] = [];
+
   constructor(
     private fb: FormBuilder,
     private dipendentiService: DipendentiService,
     private corsiService: CorsiService
   ) {
     this.form = this.fb.group({
-      dipendenteId: ['', Validators.required],
+      dipendentiIds: [[], Validators.required], // Array di IDs
       corsoId: ['', Validators.required],
       searchDipendente: [''],
       searchCorso: [''],
-      obbligatorio: [false]
+      obbligatorio: [false],
+      dataTerminePrevista: ['']
     });
   }
 
@@ -162,17 +166,37 @@ export class FormAssegnazioneComponent implements OnInit {
     this.showCorsiDropdown = false;
   }
   
+  aggiungiDipendente(dipendente: IDipendenti) {
+    // Controlla se già selezionato
+    if (!this.dipendentiSelezionati.find(d => d.id === dipendente.id)) {
+      this.dipendentiSelezionati.push(dipendente);
+      this.aggiornaDipendentiIds();
+    }
+    
+    // Reset campo ricerca
+    this.form.get('searchDipendente')?.setValue('');
+    this.showDipendentiDropdown = false;
+  }
+
+  rimuoviDipendente(index: number) {
+    this.dipendentiSelezionati.splice(index, 1);
+    this.aggiornaDipendentiIds();
+  }
+
+  private aggiornaDipendentiIds() {
+    const ids = this.dipendentiSelezionati.map(d => d.id);
+    this.form.get('dipendentiIds')?.setValue(ids);
+  }
+
   onSubmit() {
-    if (this.form.valid && this.dipendenteSelezionato && this.corsoSelezionato) {
-      const assegnazione = {
-        dipendenteId: this.dipendenteSelezionato.id,
-        corsoId: this.corsoSelezionato.id,
-        dataAssegnazione: new Date(),
-        stato: 'Assegnato',
-        obbligatorio: this.form.get('obbligatorio')?.value || false
+    if (this.form.valid) {
+      const formData = {
+        dipendentiIds: this.form.value.dipendentiIds,
+        corsoId: this.form.value.corsoId,
+        obbligatorio: this.form.value.obbligatorio,
+        dataTerminePrevista: this.form.value.dataTerminePrevista
       };
-      
-      this.conferma.emit(assegnazione);
+      this.conferma.emit(formData);
     }
   }
 
@@ -208,5 +232,16 @@ export class FormAssegnazioneComponent implements OnInit {
 
   confermaForm() {
     this.onSubmit();
+  }
+
+  onSearchDipendente(event: any) {
+    const searchTerm = event.target.value;
+    if (searchTerm.length >= 2) {
+      this.filtraDipendenti(searchTerm);
+      this.showDipendentiDropdown = true;
+    } else {
+      this.dipendentiFiltrati = [];
+      this.showDipendentiDropdown = false;
+    }
   }
 }

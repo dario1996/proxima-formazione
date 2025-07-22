@@ -1,91 +1,78 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="row g-4"> <!-- Aggiunto g-4 per più spazio tra le colonne -->
-    <!-- Sezione Dipendente - Sinistra -->
-    <div class="col-md-6">      
+  <div class="row mt-3"> <!-- Aggiunto g-4 per più spazio tra le colonne -->
+    <!-- Sezione Dipendente - Con multiselezione -->
+    <div class="col-md-6 form-field">      
       <div class="form-field">
         <label for="searchDipendente" class="form-label">Cerca Dipendente</label>
-        <!-- Campo ricerca dipendente -->
         <div class="search-container">
           <input 
-            id="searchDipendente" 
             type="text" 
-            class="form-control searchable-dropdown-input" 
+            id="searchDipendente"
+            class="form-control searchable-dropdown-input"
             formControlName="searchDipendente"
             placeholder="Digita nome, cognome o email"
-            (blur)="onDipendenteBlur()"
-            [ngClass]="{ 'is-invalid': form.get('dipendenteId')?.invalid && form.get('dipendenteId')?.touched }" />
-                    
-          <button 
-            *ngIf="dipendenteSelezionato" 
-            type="button" 
-            class="btn btn-outline-secondary clear-btn"
-            (click)="clearDipendente()">
-            <i class="fas fa-times"></i>
-          </button>
+            (input)="onSearchDipendente($event)"
+            (focus)="showDipendentiDropdown = true">
           
-          <!-- Dropdown dipendenti - ora appare solo con risultati di ricerca -->
-          <div *ngIf="showDipendentiDropdown && dipendentiFiltrati.length > 0" 
-               class="search-dropdown position-absolute w-100">
-            <div *ngFor="let dipendente of dipendentiFiltrati.slice(0, 10)" 
-                 class="search-dropdown-item p-3 cursor-pointer"
-                 (mousedown)="selezionaDipendente(dipendente)">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div class="flex-grow-1">
-                      <div class="fw-bold text-primary">
-                        {{ dipendente.nome }} {{ dipendente.cognome }}
-                      </div>
-                      <div class="text-muted small">{{ dipendente.email }}</div>
-                      <div class="text-secondary small">{{ dipendente.ruolo }}</div>
-                    </div>
-                  </div>
+          <!-- Dropdown dipendenti disponibili -->
+          <div class="search-dropdown position-absolute w-100" 
+               *ngIf="showDipendentiDropdown && dipendentiFiltrati.length > 0">
+            <div class="search-dropdown-item p-2 cursor-pointer" 
+                 *ngFor="let dipendente of dipendentiFiltrati"
+                 (click)="aggiungiDipendente(dipendente)">
+              <div class="fw-bold">{{ dipendente.nome }} {{ dipendente.cognome }}</div>
+              <small class="text-muted">{{ dipendente.email }} • {{ dipendente.ruolo }}</small>
             </div>
           </div>
-          
-          <!-- Messaggio quando non ci sono risultati -->
-          <div *ngIf="form.get('searchDipendente')?.value?.length >= 2 && dipendentiFiltrati.length === 0" 
-               class="search-dropdown position-absolute w-100">
-            <div class="search-dropdown-item p-3 text-muted">
-              <i class="fas fa-search me-2"></i>
-              Nessun dipendente trovato
-            </div>
-          </div>
-        </div>
-        
-        <div *ngIf="form.get('dipendenteId')?.invalid && form.get('dipendenteId')?.touched" 
-             class="invalid-feedback">
-          Seleziona un dipendente.
         </div>
       </div>
       
-      <!-- Dettagli dipendente selezionato - Layout migliorato -->
-      <div *ngIf="dipendenteSelezionato" class="selected-item-card mt-4"> <!-- Aumentato mt-4 -->
+      <!-- Lista dipendenti selezionati -->
+      <div *ngFor="let dipendente of dipendentiSelezionati; let i = index" 
+           class="selected-item-card mt-3">
         <div class="card">
-          <div class="card-header">
-            <h6 class="mb-0">
-              <i class="fas fa-user me-2"></i>
-              Dipendente Selezionato
-            </h6>
+          <!-- Header accordion con rimozione -->
+          <div class="card-header p-0 d-flex align-items-center">
+            <button 
+              class="btn btn-link w-100 text-start p-3 text-decoration-none d-flex justify-content-between align-items-center"
+              type="button" 
+              data-bs-toggle="collapse" 
+              [attr.data-bs-target]="'#collapse-dipendente-' + dipendente.id"
+              [attr.aria-expanded]="false">
+              
+              <div class="d-flex align-items-center">
+                <i class="fas fa-user me-2"></i>
+                <strong>{{ dipendente.nome }} {{ dipendente.cognome }}</strong>
+              </div>
+              <i class="fas fa-chevron-down transition-transform"></i>
+            </button>
+            
+            <!-- Bottone rimozione -->
+            <button 
+              type="button" 
+              class="btn btn-outline-danger btn-sm me-2"
+              (click)="rimuoviDipendente(i)"
+              title="Rimuovi dipendente">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
-          <div class="card-body">
-            <div class="row g-2"> <!-- Aggiunto g-2 per spazio tra righe -->
-              <div class="col-12">
-                <strong>{{ dipendenteSelezionato.nome }} {{ dipendenteSelezionato.cognome }}</strong>
-              </div>
-              <div class="col-12 text-muted">
-                <i class="fas fa-envelope"></i>
-                {{ dipendenteSelezionato.email }}
-              </div>
-              <div class="col-12 text-muted">
-                <i class="fas fa-briefcase"></i>
-                {{ dipendenteSelezionato.ruolo }}
-              </div>
-              <div class="col-12 text-muted" *ngIf="dipendenteSelezionato.reparto">
-                <i class="fas fa-building"></i>
-                {{ dipendenteSelezionato.reparto }}
-              </div>
-              <div class="col-12 text-muted" *ngIf="dipendenteSelezionato.isms">
-                <i class="fas fa-shield-alt"></i>
-                ISMS: {{ dipendenteSelezionato.isms }}
+          
+          <!-- Contenuto accordion -->
+          <div class="collapse" [id]="'collapse-dipendente-' + dipendente.id">
+            <div class="card-body">
+              <div class="row g-2">
+                <div class="col-12 text-muted">
+                  <i class="fas fa-envelope"></i>
+                  {{ dipendente.email }}
+                </div>
+                <div class="col-12 text-muted">
+                  <i class="fas fa-briefcase"></i>
+                  {{ dipendente.ruolo }}
+                </div>
+                <div class="col-12 text-muted" *ngIf="dipendente.reparto">
+                  <i class="fas fa-building"></i>
+                  {{ dipendente.reparto }}
+                </div>
               </div>
             </div>
           </div>
@@ -93,8 +80,8 @@
       </div>
     </div>
     
-    <!-- Sezione Corso - Destra -->
-    <div class="col-md-6">      
+    <!-- Sezione Corso - Più larga -->
+    <div class="col-md-5">      
       <div class="form-field">
         <label for="searchCorso" class="form-label">Cerca Corso</label>
         <!-- Campo ricerca corso -->
@@ -190,22 +177,34 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  
-  <!-- Opzione Corso Obbligatorio - Più spaziosa -->
-  <div class="row mt-4"> <!-- Aumentato mt-4 -->
-    <div class="col-12">
-      <div class="form-check rounded"> <!-- Aggiunto background e padding -->
-        <input 
-          class="form-check-input" 
-          type="checkbox" 
-          id="obbligatorio"
-          formControlName="obbligatorio">
-        <label class="form-check-label fw-semibold" for="obbligatorio"> <!-- Aggiunto fw-semibold -->
-          <i class="fas text-warning"></i>
-          Corso obbligatorio
-        </label>
+      
+      <!-- Selezione Data termine prevista -->
+      <div class="row mb-3 mt-3">
+        <div class="col-md-6 form-field">      
+          <label for="dataTerminePrevista" class="form-label">Data termine prevista</label>
+          <input 
+            class="form-control" 
+            type="date" 
+            id="dataTerminePrevista"
+            formControlName="dataTerminePrevista">
+        </div>
+      </div>
+      
+      <!-- Opzione Corso Obbligatorio - Compatto -->
+      <div class="row mb-3"> <!-- Cambiato da mt-4 a mb-3 per compattare -->
+        <div class="col-12"> <!-- Cambiato da col-md-6 a col-12 per occupare tutta la larghezza -->
+          <div class="form-check"> <!-- Rimosso 'rounded' per essere più compatto -->
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="obbligatorio"
+              formControlName="obbligatorio">
+            <label class="form-check-label fw-semibold" for="obbligatorio">
+              <i class="fas fa-exclamation-triangle text-warning me-1"></i> <!-- Aggiunta icona specifica -->
+              Corso obbligatorio
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   </div>

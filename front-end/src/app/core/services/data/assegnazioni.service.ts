@@ -159,4 +159,16 @@ export class AssegnazioniService {
       `http://${this.server}:${this.port}/api/assegnazioni/bulk-import`,
       importData,
     );
+
+  // AGGIUNGI questo metodo alla fine della classe AssegnazioniService
+  createMultipleAssegnazioni = (data: {
+    dipendentiIds: number[];
+    corsoId: number;
+    obbligatorio: boolean;
+    dataTerminePrevista?: string;
+  }) =>
+    this.httpClient.post<IAssegnazione[]>(
+      `http://${this.server}:${this.port}/api/assegnazioni/assegnazioneMultipla`,
+      data
+    );
 }
