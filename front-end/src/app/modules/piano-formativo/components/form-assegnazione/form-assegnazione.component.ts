@@ -35,14 +35,17 @@ export class FormAssegnazioneComponent implements OnInit {
   // Cambia da singolo a array
   dipendentiSelezionati: IDipendenti[] = [];
 
+  // Aggiungi per la multiselezione corsi
+  corsiSelezionati: ICorsi[] = [];
+  
   constructor(
     private fb: FormBuilder,
     private dipendentiService: DipendentiService,
     private corsiService: CorsiService
   ) {
     this.form = this.fb.group({
-      dipendentiIds: [[], Validators.required], // Array di IDs
-      corsoId: ['', Validators.required],
+      dipendentiIds: [[], Validators.required],
+      corsiIds: [[], Validators.required], // AGGIUNGI: Array di corsi
       searchDipendente: [''],
       searchCorso: [''],
       obbligatorio: [false],
@@ -88,10 +91,10 @@ export class FormAssegnazioneComponent implements OnInit {
       this.filtraDipendenti(value);
     });
 
-    // Listener per la ricerca corsi
-    this.form.get('searchCorso')?.valueChanges.subscribe(value => {
-      this.filtraCorsi(value);
-    });
+    // RIMUOVI: questo listener perché ora usi onSearchCorso
+    // this.form.get('searchCorso')?.valueChanges.subscribe(value => {
+    //   this.filtraCorsi(value);
+    // });
   }
 
   filtraDipendenti(searchTerm: string) {
@@ -121,14 +124,12 @@ export class FormAssegnazioneComponent implements OnInit {
   }
 
   filtraCorsi(searchTerm: string) {
-    // Mostra dropdown solo se c'è un termine di ricerca
     if (!searchTerm || searchTerm.length === 0) {
       this.corsiFiltrati = [];
       this.showCorsiDropdown = false;
       return;
     }
 
-    // Mostra dropdown solo se c'è almeno 1 carattere
     if (searchTerm.length < 1) {
       this.corsiFiltrati = [];
       this.showCorsiDropdown = false;
@@ -143,9 +144,6 @@ export class FormAssegnazioneComponent implements OnInit {
       
       return matchNome || matchArgomento || matchPiattaforma;
     });
-
-    // Mostra dropdown solo se ci sono risultati
-    this.showCorsiDropdown = this.corsiFiltrati.length > 0;
   }
 
   selezionaDipendente(dipendente: IDipendenti) {
@@ -158,24 +156,68 @@ export class FormAssegnazioneComponent implements OnInit {
   }
 
   selezionaCorso(corso: ICorsi) {
-    this.corsoSelezionato = corso;
-    this.form.patchValue({
-      corsoId: corso.id,
-      searchCorso: corso.nome
-    });
+    // Se siamo in modalità compatibilità con il vecchio sistema
+    if (this.corsiSelezionati.length === 0) {
+      this.corsoSelezionato = corso;
+      this.form.patchValue({
+        corsoId: corso.id,
+        searchCorso: corso.nome
+      });
+    }
+    
+    // Aggiungi alla multiselezione
+    this.aggiungiCorso(corso);
     this.showCorsiDropdown = false;
   }
   
   aggiungiDipendente(dipendente: IDipendenti) {
-    // Controlla se già selezionato
-    if (!this.dipendentiSelezionati.find(d => d.id === dipendente.id)) {
-      this.dipendentiSelezionati.push(dipendente);
-      this.aggiornaDipendentiIds();
+    // Se ci sono già più corsi, blocca la multiselezione dipendenti
+    if (this.corsiSelezionati.length > 1) {
+      // Rimuovi dipendenti esistenti e aggiungi solo questo
+      this.dipendentiSelezionati = [dipendente];
+    } else {
+      // Controlla se già selezionato
+      if (!this.dipendentiSelezionati.find(d => d.id === dipendente.id)) {
+        this.dipendentiSelezionati.push(dipendente);
+        
+        // Se ora abbiamo più dipendenti, riduci corsi a massimo 1
+        if (this.dipendentiSelezionati.length > 1 && this.corsiSelezionati.length > 1) {
+          this.corsiSelezionati = this.corsiSelezionati.slice(0, 1);
+          this.aggiornaCorsiIds();
+        }
+      }
     }
+    
+    this.aggiornaDipendentiIds();
     
     // Reset campo ricerca
     this.form.get('searchDipendente')?.setValue('');
     this.showDipendentiDropdown = false;
+  }
+
+  aggiungiCorso(corso: ICorsi) {
+    // Se ci sono già più dipendenti, blocca la multiselezione corsi
+    if (this.dipendentiSelezionati.length > 1) {
+      // Rimuovi corsi esistenti e aggiungi solo questo
+      this.corsiSelezionati = [corso];
+    } else {
+      // Controlla se già selezionato
+      if (!this.corsiSelezionati.find(c => c.id === corso.id)) {
+        this.corsiSelezionati.push(corso);
+        
+        // Se ora abbiamo più corsi, riduci dipendenti a massimo 1
+        if (this.corsiSelezionati.length > 1 && this.dipendentiSelezionati.length > 1) {
+          this.dipendentiSelezionati = this.dipendentiSelezionati.slice(0, 1);
+          this.aggiornaDipendentiIds();
+        }
+      }
+    }
+    
+    this.aggiornaCorsiIds();
+    
+    // Reset campo ricerca
+    this.form.get('searchCorso')?.setValue('');
+    this.showCorsiDropdown = false;
   }
 
   rimuoviDipendente(index: number) {
@@ -183,16 +225,26 @@ export class FormAssegnazioneComponent implements OnInit {
     this.aggiornaDipendentiIds();
   }
 
+  rimuoviCorso(index: number) {
+    this.corsiSelezionati.splice(index, 1);
+    this.aggiornaCorsiIds();
+  }
+
   private aggiornaDipendentiIds() {
     const ids = this.dipendentiSelezionati.map(d => d.id);
     this.form.get('dipendentiIds')?.setValue(ids);
+  }
+
+  private aggiornaCorsiIds() {
+    const ids = this.corsiSelezionati.map(c => c.id);
+    this.form.get('corsiIds')?.setValue(ids);
   }
 
   onSubmit() {
     if (this.form.valid) {
       const formData = {
         dipendentiIds: this.form.value.dipendentiIds,
-        corsoId: this.form.value.corsoId,
+        corsiIds: this.form.value.corsiIds, // AGGIUNGI
         obbligatorio: this.form.value.obbligatorio,
         dataTerminePrevista: this.form.value.dataTerminePrevista
       };
@@ -234,14 +286,98 @@ export class FormAssegnazioneComponent implements OnInit {
     this.onSubmit();
   }
 
+  // MIGLIORA: Gestione del focus per i dipendenti
+  onDipendenteFocus() {
+    if (this.isPossibileAggiungereDipendenti) {
+      this.showDipendentiDropdown = true;
+    }
+  }
+
+  // MIGLIORA: Gestione del focus per i corsi  
+  onCorsoFocus() {
+    if (this.isPossibileAggiungereCorsi) {
+      this.showCorsiDropdown = true;
+    }
+  }
+
+  // MIGLIORA: Gestione della ricerca dipendenti
   onSearchDipendente(event: any) {
     const searchTerm = event.target.value;
-    if (searchTerm.length >= 2) {
+    
+    if (searchTerm.length >= 1) {
       this.filtraDipendenti(searchTerm);
-      this.showDipendentiDropdown = true;
+      this.showDipendentiDropdown = true; // Sempre true quando si cerca
     } else {
       this.dipendentiFiltrati = [];
       this.showDipendentiDropdown = false;
     }
+  }
+
+  // Gestione ricerca corsi
+  onSearchCorso(event: any) {
+    const searchTerm = event.target.value;
+    
+    if (searchTerm.length >= 1) {
+      this.filtraCorsi(searchTerm);
+      this.showCorsiDropdown = true; // Sempre true quando si cerca
+    } else {
+      this.corsiFiltrati = [];
+      this.showCorsiDropdown = false;
+    }
+  }
+
+  // MODIFICA: Permettere sempre la ricerca, ma limitare la selezione
+  get isPossibileAggiungereCorsi(): boolean {
+    // Sempre possibile cercare, ma limitare la selezione se necessario
+    return true;
+  }
+
+  get isPossibileAggiungereDipendenti(): boolean {
+    // Sempre possibile cercare, ma limitare la selezione se necessario
+    return true;
+  }
+
+  // AGGIUNGI: Nuovi getter per controllare se è possibile SELEZIONARE
+  get isPossibileSelezionareCorsi(): boolean {
+    return this.dipendentiSelezionati.length <= 1;
+  }
+
+  get isPossibileSelezionareDipendenti(): boolean {
+    return this.corsiSelezionati.length <= 1;
+  }
+
+  // MODIFICA: Mostra dropdown basato solo sui risultati filtrati
+  get shouldShowCorsiDropdown(): boolean {
+    return this.showCorsiDropdown && 
+           (this.corsiFiltrati.length > 0 || this.showCorsiBloccoMessage);
+  }
+
+  get shouldShowDipendentiDropdown(): boolean {
+    return this.showDipendentiDropdown && 
+           (this.dipendentiFiltrati.length > 0 || this.showDipendentiBloccoMessage);
+  }
+
+  // AGGIORNA: Messaggi di blocco più specifici
+  get showDipendentiBloccoMessage(): boolean {
+    return this.showDipendentiDropdown && 
+           this.dipendentiFiltrati.length > 0 && 
+           !this.isPossibileSelezionareDipendenti;
+  }
+
+  get showCorsiBloccoMessage(): boolean {
+    return this.showCorsiDropdown && 
+           this.corsiFiltrati.length > 0 && 
+           !this.isPossibileSelezionareCorsi;
+  }
+
+  get messaggioLimitazione(): string {
+    // Mostra il messaggio solo se ci sono effettivamente limitazioni attive
+    if (this.dipendentiSelezionati.length > 1 && this.corsiSelezionati.length > 0) {
+      return `Hai selezionato ${this.dipendentiSelezionati.length} dipendenti. Puoi selezionare solo 1 corso.`;
+    }
+    if (this.corsiSelezionati.length > 1 && this.dipendentiSelezionati.length > 0) {
+      return `Hai selezionato ${this.corsiSelezionati.length} corsi. Puoi selezionare solo 1 dipendente.`;
+    }
+    return '';
   }
 }

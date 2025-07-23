@@ -447,71 +447,60 @@ public class AssegnazioneController {
     @PostMapping("/assegnazioni/assegnazioneMultipla")
     public ResponseEntity<?> createMultipleAssegnazioni(@RequestBody CreateMultipleAssegnazioniRequest request) {
         try {
-            log.info("Ricevuta richiesta di assegnazione multipla per {} dipendenti al corso {}", 
-                     request.getDipendentiIds().size(), request.getCorsoId());
-            
-            // Verifica esistenza corso
-            Optional<Corso> corso = corsoRepository.findById(request.getCorsoId());
-            if (!corso.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Corso non trovato con ID: " + request.getCorsoId());
-            }
-            
             List<Assegnazione> assegnazioniCreate = new ArrayList<>();
             List<String> errori = new ArrayList<>();
             
+            // Logica per gestire N:M assegnazioni
             for (Long dipendenteId : request.getDipendentiIds()) {
-                try {
-                    // Verifica esistenza dipendente
-                    Optional<Dipendente> dipendente = dipendenteRepository.findById(dipendenteId);
-                    if (!dipendente.isPresent()) {
-                        errori.add("Dipendente non trovato con ID: " + dipendenteId);
-                        continue;
-                    }
-                    
-                    // Verifica se l'assegnazione esiste già
-                    if (assegnazioneRepository.existsByDipendenteIdAndCorsoId(dipendenteId, request.getCorsoId())) {
-                        errori.add("Assegnazione già esistente per dipendente " + dipendenteId + " e corso " + request.getCorsoId());
-                        continue;
-                    }
-                    
-                    // Crea nuova assegnazione
-                    Assegnazione assegnazione = new Assegnazione();
-                    assegnazione.setDipendente(dipendente.get());
-                    assegnazione.setCorso(corso.get());
-                    assegnazione.setStato(Assegnazione.StatoAssegnazione.DA_INIZIARE);
-                    assegnazione.setDataAssegnazione(LocalDate.now());
-                    assegnazione.setObbligatorio(request.isObbligatorio());
-                    assegnazione.setImpattoIsms(request.isObbligatorio());
-                    
-                    // Imposta data termine prevista se fornita
-                    if (request.getDataTerminePrevista() != null && !request.getDataTerminePrevista().isEmpty()) {
-                        try {
-                            assegnazione.setDataTerminePrevista(LocalDate.parse(request.getDataTerminePrevista()));
-                        } catch (Exception e) {
-                            log.warn("Formato data termine prevista non valido: {}", request.getDataTerminePrevista());
+                for (Long corsoId : request.getCorsiIds()) {
+                    try {
+                        // Verifica esistenza dipendente e corso
+                        Optional<Dipendente> dipendente = dipendenteRepository.findById(dipendenteId);
+                        Optional<Corso> corso = corsoRepository.findById(corsoId);
+                        
+                        if (!dipendente.isPresent() || !corso.isPresent()) {
+                            continue;
                         }
+                        
+                        // Verifica duplicati
+                        if (assegnazioneRepository.existsByDipendenteIdAndCorsoId(dipendenteId, corsoId)) {
+                            errori.add("Assegnazione già esistente per dipendente " + dipendenteId + " e corso " + corsoId);
+                            continue;
+                        }
+                        
+                        // Crea assegnazione
+                        Assegnazione assegnazione = new Assegnazione();
+                        assegnazione.setDipendente(dipendente.get());
+                        assegnazione.setCorso(corso.get());
+                        assegnazione.setStato(Assegnazione.StatoAssegnazione.DA_INIZIARE);
+                        assegnazione.setDataAssegnazione(LocalDate.now());
+                        assegnazione.setObbligatorio(request.isObbligatorio());
+                        assegnazione.setImpattoIsms(request.isObbligatorio());
+                        
+                        if (request.getDataTerminePrevista() != null && !request.getDataTerminePrevista().isEmpty()) {
+                            try {
+                                assegnazione.setDataTerminePrevista(LocalDate.parse(request.getDataTerminePrevista()));
+                            } catch (Exception e) {
+                                log.warn("Formato data termine prevista non valido: {}", request.getDataTerminePrevista());
+                            }
+                        }
+                        
+                        Assegnazione savedAssegnazione = assegnazioneRepository.save(assegnazione);
+                        assegnazioniCreate.add(savedAssegnazione);
+                        
+                    } catch (Exception e) {
+                        errori.add("Errore durante la creazione dell'assegnazione per dipendente " + dipendenteId + " e corso " + corsoId + ": " + e.getMessage());
                     }
-                    
-                    Assegnazione savedAssegnazione = assegnazioneRepository.save(assegnazione);
-                    assegnazioniCreate.add(savedAssegnazione);
-                    
-                } catch (Exception e) {
-                    errori.add("Errore durante la creazione dell'assegnazione per dipendente " + dipendenteId + ": " + e.getMessage());
                 }
             }
             
-            // Prepara la risposta
+            // Prepara risposta
             MultipleAssegnazionResponse response = new MultipleAssegnazionResponse();
             response.setAssegnazioniCreate(assegnazioniCreate);
             response.setErrori(errori);
-            response.setTotaleRichieste(request.getDipendentiIds().size());
+            response.setTotaleRichieste(request.getDipendentiIds().size() * request.getCorsiIds().size());
             response.setTotaleCreate(assegnazioniCreate.size());
             response.setTotaleErrori(errori.size());
-            
-            if (assegnazioniCreate.isEmpty()) {
-                return ResponseEntity.badRequest().body(response);
-            }
             
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
             

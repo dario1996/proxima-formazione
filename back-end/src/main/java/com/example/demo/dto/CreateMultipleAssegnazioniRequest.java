@@ -4,7 +4,7 @@ import java.util.List;
 
 public class CreateMultipleAssegnazioniRequest {
     private List<Long> dipendentiIds;
-    private Long corsoId;
+    private List<Long> corsiIds;  // AGGIUNGI
     private boolean obbligatorio;
     private String dataTerminePrevista;
     
@@ -20,12 +20,12 @@ public class CreateMultipleAssegnazioniRequest {
         this.dipendentiIds = dipendentiIds;
     }
     
-    public Long getCorsoId() {
-        return corsoId;
+    public List<Long> getCorsiIds() {  // AGGIUNGI
+        return corsiIds;
     }
     
-    public void setCorsoId(Long corsoId) {
-        this.corsoId = corsoId;
+    public void setCorsiIds(List<Long> corsiIds) {  // AGGIUNGI
+        this.corsiIds = corsiIds;
     }
     
     public boolean isObbligatorio() {

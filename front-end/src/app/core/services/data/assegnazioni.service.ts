@@ -165,7 +165,7 @@ export class AssegnazioniService {
   // AGGIUNGI questo metodo alla fine della classe AssegnazioniService
   createMultipleAssegnazioni = (data: {
     dipendentiIds: number[];
-    corsoId: number;
+    corsiIds: number[];  // AGGIUNGI
     obbligatorio: boolean;
     dataTerminePrevista?: string;
   }) =>
