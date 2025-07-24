@@ -43,6 +43,10 @@ public class AssegnazioneBulkImportItem {
     @Schema(description = "Impatto ISMS", example = "Si")
     private String impattoIsms;
 
+    @Size(max = 100, message = "Il campo non può superare 100 caratteri")
+    @Schema(description = "Modalità", example = "Linkedin")
+    private String modalita;
+
     // Costruttori
     public AssegnazioneBulkImportItem() {
     }
@@ -125,6 +129,14 @@ public class AssegnazioneBulkImportItem {
         this.impattoIsms = impattoIsms;
     }
 
+    public String getModalita() {
+        return modalita;
+    }
+
+    public void setModalita(String modalita) {
+        this.modalita = modalita;
+    }
+
     @Override
     public String toString() {
         return "AssegnazioneBulkImportItem{" +
@@ -137,6 +149,7 @@ public class AssegnazioneBulkImportItem {
                 ", esito='" + esito + '\'' +
                 ", fonteRichiesta='" + fonteRichiesta + '\'' +
                 ", impattoIsms='" + impattoIsms + '\'' +
+                ", modalita='" + modalita + '\'' +
                 '}';
     }
 }

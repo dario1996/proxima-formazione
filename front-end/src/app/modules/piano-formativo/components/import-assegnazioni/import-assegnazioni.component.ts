@@ -28,6 +28,7 @@ interface AssegnazioniImportData {
   esito?: string;
   fonteRichiesta?: string;
   impattoIsms?: string;
+  modalita?: string;
   errors?: string[];
   isDuplicate?: boolean;
   canUpdate?: boolean;
@@ -63,6 +64,7 @@ export class ImportAssegnazioniComponent implements OnInit {
     'Esito',
     'Fonte Richiesta',
     'Impatto ISMS',
+    'Modalità',
   ];
 
   importOptions: ImportOption[] = [
@@ -156,6 +158,7 @@ export class ImportAssegnazioniComponent implements OnInit {
           'Esito',
           'Fonte richiesta',
           'Impatto ISMS',
+          'Modalità',
         ];
 
         // Validate headers
@@ -254,6 +257,8 @@ export class ImportAssegnazioniComponent implements OnInit {
         assegnazione.fonteRichiesta = value;
       } else if (headerLower.includes('impatto isms')) {
         assegnazione.impattoIsms = value;
+      } else if (headerLower.includes('modalità') || headerLower.includes('modalita')) {
+        assegnazione.modalita = value;
       }
     });
 
@@ -384,6 +389,7 @@ export class ImportAssegnazioniComponent implements OnInit {
         esito: a['esito'] || null,
         fonteRichiesta: a['fonteRichiesta'] || null,
         impattoIsms: a['impattoIsms'] || null,
+        modalita: a['modalita'] || null,
       })),
       options: {
         updateExisting: this.getImportOption('updateExisting'),
