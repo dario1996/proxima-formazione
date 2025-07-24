@@ -4,7 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
 import { AssegnazioniService } from '../../../../core/services/data/assegnazioni.service';
-import { ImportModalComponent, ImportOption, ImportData } from '../../../../shared/components/import-modal/import-modal.component';
+import {
+  ImportModalComponent,
+  ImportOption,
+  ImportData,
+} from '../../../../shared/components/import-modal/import-modal.component';
 import * as XLSX from 'xlsx';
 
 interface ImportResult {
@@ -36,39 +40,49 @@ interface AssegnazioniImportData {
   standalone: true,
   imports: [CommonModule, FormsModule, ImportModalComponent],
   templateUrl: './import-assegnazioni.component.html',
-  styleUrls: ['./import-assegnazioni.component.css']
+  styleUrls: ['./import-assegnazioni.component.css'],
 })
 export class ImportAssegnazioniComponent implements OnInit {
   @Output() importCompleted = new EventEmitter<void>();
-  
+
   selectedFile: File | null = null;
   isProcessing = false;
   previewData: ImportData[] = [];
   showPreview = false;
   validationErrors: string[] = [];
-  
+
   // Standardized properties for ImportModalComponent
   supportedFormats = ['.xlsx', '.xls'];
-  expectedHeaders = ['Nominativo', 'Corso', 'Macro-argomenti', 'Data Inizio', 'Data Completamento', 'Stato', 'Esito', 'Fonte Richiesta', 'Impatto ISMS'];
-  
+  expectedHeaders = [
+    'Nominativo',
+    'Corso',
+    'Macro-argomenti',
+    'Data Inizio',
+    'Data Completamento',
+    'Stato',
+    'Esito',
+    'Fonte Richiesta',
+    'Impatto ISMS',
+  ];
+
   importOptions: ImportOption[] = [
     {
       key: 'updateExisting',
       label: 'Aggiorna assegnazioni esistenti',
-      value: false
+      value: false,
     },
     {
       key: 'skipErrors',
       label: 'Continua in caso di errori',
-      value: true
+      value: true,
     },
     {
       key: 'creaCorsiMancanti',
       label: 'Crea automaticamente i corsi mancanti',
-      value: true
-    }
+      value: true,
+    },
   ];
-  
+
   tableColumns = [
     { key: 'nominativo', label: 'Nominativo' },
     { key: 'corso', label: 'Corso' },
@@ -78,13 +92,13 @@ export class ImportAssegnazioniComponent implements OnInit {
     { key: 'stato', label: 'Stato' },
     { key: 'esito', label: 'Esito' },
     { key: 'fonteRichiesta', label: 'Fonte Richiesta' },
-    { key: 'impattoIsms', label: 'Impatto ISMS' }
+    { key: 'impattoIsms', label: 'Impatto ISMS' },
   ];
 
   constructor(
     private assegnazioniService: AssegnazioniService,
     private toastr: ToastrService,
-    private modaleService: ModaleService
+    private modaleService: ModaleService,
   ) {}
 
   ngOnInit(): void {
@@ -117,7 +131,7 @@ export class ImportAssegnazioniComponent implements OnInit {
     this.validationErrors = [];
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       try {
         const data = e.target?.result;
         const workbook = XLSX.read(data, { type: 'buffer' });
@@ -141,7 +155,7 @@ export class ImportAssegnazioniComponent implements OnInit {
           'Stato',
           'Esito',
           'Fonte richiesta',
-          'Impatto ISMS'
+          'Impatto ISMS',
         ];
 
         // Validate headers
@@ -168,9 +182,10 @@ export class ImportAssegnazioniComponent implements OnInit {
         this.checkDuplicates();
         this.showPreview = true;
         this.isProcessing = false;
-
       } catch (error) {
-        this.validationErrors.push('Errore durante la lettura del file: ' + error);
+        this.validationErrors.push(
+          'Errore durante la lettura del file: ' + error,
+        );
         this.isProcessing = false;
       }
     };
@@ -178,50 +193,59 @@ export class ImportAssegnazioniComponent implements OnInit {
     reader.readAsArrayBuffer(this.selectedFile);
   }
 
-  private validateHeaders(headers: string[], expectedHeaders: string[]): boolean {
-    const missingHeaders = expectedHeaders.filter(expected => 
-      !headers.some(header => header?.toLowerCase().includes(expected.toLowerCase()))
+  private validateHeaders(
+    headers: string[],
+    expectedHeaders: string[],
+  ): boolean {
+    const missingHeaders = expectedHeaders.filter(
+      expected =>
+        !headers.some(header =>
+          header?.toLowerCase().includes(expected.toLowerCase()),
+        ),
     );
 
     if (missingHeaders.length > 0) {
-      this.validationErrors.push(`Intestazioni mancanti: ${missingHeaders.join(', ')}`);
+      this.validationErrors.push(
+        `Intestazioni mancanti: ${missingHeaders.join(', ')}`,
+      );
       return false;
     }
 
     return true;
   }
 
-  private mapRowToAssegnazione(row: any[], headers: string[]): AssegnazioniImportData {
+  private mapRowToAssegnazione(
+    row: any[],
+    headers: string[],
+  ): AssegnazioniImportData {
     const assegnazione: AssegnazioniImportData = {
       nominativo: '',
       corso: '',
-      errors: []
+      errors: [],
     };
-
-    console.log('Mapping row:', row);
-    console.log('Headers:', headers);
 
     headers.forEach((header, index) => {
       if (!header) return;
-      
       const value = row[index] ? String(row[index]).trim() : '';
       const headerLower = header.toLowerCase();
 
-      console.log(`Processing header "${header}" (index ${index}) with value "${value}"`);
-
       if (headerLower.includes('nominativo')) {
         assegnazione.nominativo = value;
-        console.log('Set nominativo:', value);
       } else if (headerLower.includes('corso')) {
         assegnazione.corso = value;
-        console.log('Set corso:', value);
       } else if (headerLower.includes('macro-argomenti')) {
         assegnazione.macroArgomenti = value;
-        console.log('Set macroArgomenti:', value);
       } else if (headerLower.includes('data inizio')) {
-        assegnazione.dataInizio = value;
-      } else if (headerLower.includes('data fine')) {
-        assegnazione.dataCompletamento = value;
+        assegnazione.dataInizio = /^\d+$/.test(value)
+          ? this.excelSerialToDateString(value) || value
+          : value;
+      } else if (
+        headerLower.includes('data fine') ||
+        headerLower.includes('data completamento')
+      ) {
+        assegnazione.dataCompletamento = /^\d+$/.test(value)
+          ? this.excelSerialToDateString(value) || value
+          : value;
       } else if (headerLower.includes('stato')) {
         assegnazione.stato = value;
       } else if (headerLower.includes('esito')) {
@@ -233,7 +257,6 @@ export class ImportAssegnazioniComponent implements OnInit {
       }
     });
 
-    console.log('Final mapped assegnazione:', assegnazione);
     return assegnazione;
   }
 
@@ -251,30 +274,46 @@ export class ImportAssegnazioniComponent implements OnInit {
       }
 
       // Validate dates
-      if (assegnazione['dataInizio'] && !this.isValidDate(assegnazione['dataInizio'])) {
+      if (
+        assegnazione['dataInizio'] &&
+        !this.isValidDate(assegnazione['dataInizio'])
+      ) {
         assegnazione.errors!.push('Formato data inizio non valido');
       }
 
-      if (assegnazione['dataCompletamento'] && !this.isValidDate(assegnazione['dataCompletamento'])) {
+      if (
+        assegnazione['dataCompletamento'] &&
+        !this.isValidDate(assegnazione['dataCompletamento'])
+      ) {
         assegnazione.errors!.push('Formato data completamento non valido');
       }
 
       // Validate ISMS impact
-      if (assegnazione['impattoIsms'] && !this.isValidBoolean(assegnazione['impattoIsms'])) {
-        assegnazione.errors!.push('Impatto ISMS deve essere Sì, Si, No, true o false');
+      if (
+        assegnazione['impattoIsms'] &&
+        !this.isValidBoolean(assegnazione['impattoIsms'])
+      ) {
+        assegnazione.errors!.push(
+          'Impatto ISMS deve essere Sì, Si, No, true o false',
+        );
       }
     });
   }
 
   private isValidDate(dateString: string): boolean {
     if (!dateString) return true;
-    
+
     const formats = [
       /^\d{1,2}\/\d{1,2}\/\d{4}$/,
       /^\d{1,2}-\d{1,2}-\d{4}$/,
-      /^\d{4}-\d{2}-\d{2}$/
+      /^\d{4}-\d{2}-\d{2}$/,
     ];
-    
+
+    // Se è un seriale Excel, accetta solo se convertibile in data
+    if (/^\d+$/.test(dateString)) {
+      return !!this.excelSerialToDateString(dateString);
+    }
+
     return formats.some(format => format.test(dateString));
   }
 
@@ -287,10 +326,11 @@ export class ImportAssegnazioniComponent implements OnInit {
   private checkDuplicates(): void {
     // Mark potential duplicates based on nominativo + corso
     const seen = new Map<string, ImportData>();
-    
+
     this.previewData.forEach(assegnazione => {
-      const key = `${assegnazione['nominativo']}-${assegnazione['corso']}`.toLowerCase();
-      
+      const key =
+        `${assegnazione['nominativo']}-${assegnazione['corso']}`.toLowerCase();
+
       if (seen.has(key)) {
         assegnazione.isDuplicate = true;
         seen.get(key)!.isDuplicate = true;
@@ -324,7 +364,7 @@ export class ImportAssegnazioniComponent implements OnInit {
 
   performImport(): void {
     const validAssegnazioni = this.getValidAssegnazioni();
-    
+
     if (validAssegnazioni.length === 0) {
       this.toastr.error('Nessuna assegnazione valida da importare');
       return;
@@ -343,19 +383,22 @@ export class ImportAssegnazioniComponent implements OnInit {
         stato: a['stato'] || null,
         esito: a['esito'] || null,
         fonteRichiesta: a['fonteRichiesta'] || null,
-        impattoIsms: a['impattoIsms'] || null
+        impattoIsms: a['impattoIsms'] || null,
       })),
       options: {
         updateExisting: this.getImportOption('updateExisting'),
         skipErrors: this.getImportOption('skipErrors'),
-        creaCorsiMancanti: this.getImportOption('creaCorsiMancanti')
-      }
+        creaCorsiMancanti: this.getImportOption('creaCorsiMancanti'),
+      },
     };
 
     // Debug logging
     console.log('Import data being sent:', JSON.stringify(importData, null, 2));
     console.log('First assegnazione sample:', importData.assegnazioni[0]);
-    console.log('Sample macroArgomenti from preview data:', validAssegnazioni[0]['macroArgomenti']);
+    console.log(
+      'Sample macroArgomenti from preview data:',
+      validAssegnazioni[0]['macroArgomenti'],
+    );
 
     this.assegnazioniService.bulkImport(importData).subscribe({
       next: (response: any) => {
@@ -363,32 +406,34 @@ export class ImportAssegnazioniComponent implements OnInit {
       },
       error: (error: any) => {
         this.isProcessing = false;
-        this.toastr.error('Errore durante l\'importazione: ' + error.message);
-      }
+        this.toastr.error("Errore durante l'importazione: " + error.message);
+      },
     });
   }
 
   private handleImportResponse(response: any): void {
     this.isProcessing = false;
-    
+
     const { successCount, errorCount, updatedCount, totalProcessed } = response;
-    
+
     if (successCount > 0) {
-      this.toastr.success(`${successCount} assegnazioni importate con successo`);
+      this.toastr.success(
+        `${successCount} assegnazioni importate con successo`,
+      );
     }
-    
+
     if (updatedCount > 0) {
       this.toastr.info(`${updatedCount} assegnazioni aggiornate`);
     }
-    
+
     if (errorCount > 0) {
       this.toastr.warning(`${errorCount} assegnazioni con errori`);
     }
 
     // Show detailed errors if any
     if (response.errors && response.errors.length > 0) {
-      const errorMessages = response.errors.map((error: any) => 
-        `Riga ${error.row}: ${error.message}`
+      const errorMessages = response.errors.map(
+        (error: any) => `Riga ${error.row}: ${error.message}`,
       );
       this.validationErrors = errorMessages;
     }
@@ -423,5 +468,16 @@ export class ImportAssegnazioniComponent implements OnInit {
 
   onResetRequested(): void {
     this.resetImport();
+  }
+
+  private excelSerialToDateString(serial: string | number): string | null {
+    const n = Number(serial);
+    if (isNaN(n) || n < 1) return null;
+    const date = new Date(Math.round((n - 25569) * 86400 * 1000));
+    if (date.getFullYear() < 1900) return null;
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 }

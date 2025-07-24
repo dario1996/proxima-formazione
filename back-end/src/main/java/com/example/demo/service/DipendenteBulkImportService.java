@@ -161,8 +161,8 @@ public class DipendenteBulkImportService {
 
         // Validazione ISMS
         if (item.getIsms() != null && !item.getIsms().trim().isEmpty()) {
-            if (!item.getIsms().equals("Si") && !item.getIsms().equals("No")) {
-                response.addError(rowIndex, "isms", "ISMS deve essere 'Si' o 'No'", item.getIsms());
+            if (!item.getIsms().equals("SI") && !item.getIsms().equals("NO")) {
+                response.addError(rowIndex, "isms", "ISMS deve essere 'SI' o 'NO'", item.getIsms());
                 valid = false;
             }
         }
@@ -173,7 +173,7 @@ public class DipendenteBulkImportService {
                 response.addError(rowIndex, "dataCessazione", "Formato data non valido", item.getDataCessazione());
                 valid = false;
             }
-        }
+        }   
 
         return valid;
     }
