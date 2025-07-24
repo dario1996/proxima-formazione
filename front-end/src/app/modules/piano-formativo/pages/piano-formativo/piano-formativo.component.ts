@@ -114,8 +114,8 @@ export class PianoFormativoComponent implements OnInit {
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
-      key: 'dataTerminaPrevista',
-      label: 'Data Termina Prevista',
+      key: 'dataTerminePrevista',
+      label: 'Data Termine Prevista',
       type: 'date',
       placeholder: 'Seleziona data...',
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
@@ -236,8 +236,8 @@ export class PianoFormativoComponent implements OnInit {
       type: 'text',
     },
     {
-      key: 'dataTerminaPrevista',
-      label: 'Data Termina Prevista',
+      key: 'dataTerminePrevista',
+      label: 'Data Termine Prevista',
       sortable: true,
       type: 'date'
     },
@@ -335,7 +335,7 @@ export class PianoFormativoComponent implements OnInit {
           ...a,
           dipendenteNome: `${a.dipendente.nome} ${a.dipendente.cognome}`.trim(),
           corsoNome: a.corso.nome,
-          dataTerminaPrevista: a.corso.dataScadenza,
+          dataTerminePrevista: a.dataTerminePrevista,
           attestatoDisplay: a.attestato ? 'SI' : 'NO',
           impattoIsmsDisplay: a.impattoIsms ? 'SI' : 'NO',
           statoDisplay: this.getStatoDisplayLabel(a.stato)
@@ -391,9 +391,9 @@ export class PianoFormativoComponent implements OnInit {
         }
       }
 
-      // Filter by Data Termina Prevista
-      if (this.valoriFiltri['dataTerminaPrevista']) {
-        if (!this.compareDates(a.corso.dataScadenza, this.valoriFiltri['dataTerminaPrevista'])) {
+      // Filter by Data Termine Prevista
+      if (this.valoriFiltri['dataTerminePrevista']) {
+        if (!this.compareDates(a.corso.dataScadenza, this.valoriFiltri['dataTerminePrevista'])) {
           return false;
         }
       }
@@ -502,6 +502,7 @@ export class PianoFormativoComponent implements OnInit {
       dataAssegnazione: assegnazioneData.dataAssegnazione || null,
       impattoIsms: assegnazioneData.impattoIsms || false,
       percentualeCompletamento: assegnazioneData.percentualeCompletamento || 0,
+      dataTerminePrevista: assegnazioneData.dataTerminePrevista || null,
       dataInizio: assegnazioneData.dataInizio || null,
       dataCompletamento: assegnazioneData.dataCompletamento || null,
       esito: assegnazioneData.esito || null,
@@ -562,19 +563,30 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   // NUOVO: Metodo per effettuare l'assegnazione
-  private assegnaCorso(assegnazione: any) {
-    this.assegnazioniService.assignCorsoToDipendente(
-      assegnazione.dipendenteId,
-      assegnazione.corsoId,
-      assegnazione.obbligatorio || false
-    ).subscribe({
+  assegnaCorso(risultato: any) {
+    console.log('Dati ricevuti dal form:', risultato);
+    console.log('URL chiamata:', `http://${this.assegnazioniService.server}:${this.assegnazioniService.port}/api/assegnazioni/bulk`);
+    
+    // Verifica che il metodo esista
+    if (!this.assegnazioniService.createMultipleAssegnazioni) {
+      console.error('Il metodo createMultipleAssegnazioni non esiste nel service!');
+      return;
+    }
+    
+    this.assegnazioniService.createMultipleAssegnazioni(risultato).subscribe({
       next: (response) => {
-        this.toastr.success('Corso assegnato con successo', 'Successo');
-        this.loadAssegnazioni(); // Ricarica i dati per aggiornare la tabella
+        console.log('Risposta dal server:', response);
+        const count = Array.isArray(response) ? response.length : 1;
+        this.toastr.success(`${count} assegnazione/i create con successo`);
+        this.loadAssegnazioni();
+        this.modaleService.chiudi();
       },
       error: (error) => {
-        console.error('❌ Errore durante l\'assegnazione:', error);
-        this.toastr.error('Errore durante l\'assegnazione del corso', 'Errore');
+        console.error('Errore completo:', error);
+        console.error('Status:', error.status);
+        console.error('Message:', error.message);
+        console.error('URL:', error.url);
+        this.toastr.error('Errore durante l\'assegnazione del corso');
       }
     });
   }

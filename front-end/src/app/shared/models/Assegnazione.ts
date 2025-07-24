@@ -6,6 +6,7 @@ export interface IAssegnazione {
   dipendente: IDipendenti;
   corso: ICorsi;
   dataAssegnazione: string;
+  dataTerminePrevista: string;
   dataInizio: string;
   dataCompletamento: string;
   percentualeCompletamento: number;
@@ -53,4 +54,5 @@ export interface AssegnazioneUpdateRequest {
   attestato?: boolean;
   dataInizio?: string;
   dataCompletamento?: string;
+  dataTerminePrevista?: string;
 }

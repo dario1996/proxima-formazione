@@ -12,5 +12,6 @@
     <include file="db/changelog/changes/006-add-processed-flag.xml" />
     <include file="db/changelog/changes/007-add-employee-content-ids.xml" />
     <include file="db/changelog/changes/008-insert-piattaforme-data.xml" />
+    <include file="db/changelog/changes/009-add-data-termine-prevista.xml" />
 
 </databaseChangeLog> 

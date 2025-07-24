@@ -44,7 +44,7 @@ export class FormModificaAssegnazioneComponent implements OnInit {
             impattoIsms: this.dati.impattoIsms || false,
             stato: this.mapStatoFromDisplay(this.dati.statoDisplay) || 'DA_INIZIARE',
             percentualeCompletamento: this.dati.percentualeCompletamento || 0,
-            dataTerminaPrevista: this.formatDateForInput(this.dati.dataTerminaPrevista),
+            dataTerminePrevista: this.formatDateForInput(this.dati.dataTerminePrevista),
             dataInizio: this.formatDateForInput(this.dati.dataInizio),
             dataCompletamento: this.formatDateForInput(this.dati.dataCompletamento),
             esito: this.dati.esito || '',
@@ -75,8 +75,8 @@ export class FormModificaAssegnazioneComponent implements OnInit {
         this.dati?.percentualeCompletamento || 0,
         [Validators.min(0), Validators.max(100)]
       ],
-      dataTerminaPrevista: [
-        this.formatDateForInput(this.dati?.dataTerminaPrevista),
+      dataTerminePrevista: [
+        this.formatDateForInput(this.dati?.dataTerminePrevista),
         []
       ],
       dataInizio: [

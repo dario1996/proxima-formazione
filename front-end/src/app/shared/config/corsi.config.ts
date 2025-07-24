@@ -5,7 +5,7 @@ import { IFiltroDef } from '../models/ui/filtro-def';
 export const CORSI_COLUMNS: IColumnDef[] = [
   { key: 'nome', label: 'Nome', sortable: true, type: 'text' },
   { key: 'argomento', label: 'Macro argomento', sortable: true, type: 'text' },
-  { key: 'isms', label: 'ISMS', sortable: true, type: 'text' },
+  { key: 'isms', label: 'Impatto ISMS', sortable: true, type: 'text' },
   { key: 'durata', label: 'Durata', sortable: true, type: 'text' },
   { key: 'piattaformaNome', label: 'Modalità', sortable: true, type: 'text' },
 ];
