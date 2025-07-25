@@ -22,6 +22,8 @@ export class PageTitleComponent {
   @Input() buttonText: string = '';
   @Input() buttons: ButtonConfig[] = [];
 
+  @Input() activeFiltersCount: number = 0;
+
   @Output() buttonClick = new EventEmitter<void>();
   @Output() buttonActionClick = new EventEmitter<string>();
 }

@@ -15,6 +15,13 @@
                 (click)="buttonActionClick.emit(button.action || '')">
                 <i *ngIf="button.icon" [class]="button.icon + ' btn-icon'"></i>
                 {{ button.text }}
+                <!-- Badge solo per il bottone Filtri -->
+                <span
+                  *ngIf="button.action === 'filter' && activeFiltersCount > 0"
+                  class="filter-badge ms-1"
+                >
+                  {{ activeFiltersCount }}
+                </span>
             </button>
         </div>
         

@@ -4,6 +4,7 @@
       [title]="'Piano Formativo'" 
       [subtitle]="'Gestione delle assegnazioni dei corsi ai dipendenti'"
       [buttons]="buttons"
+      [activeFiltersCount]="getActiveFiltersCount()"
       (buttonActionClick)="handleButtonClick($event)">
     </app-page-title>
   <!-- </div> -->
@@ -14,13 +15,13 @@
       <!-- Filters Section -->
       <div class="filters-section">
         <!-- Filter Button -->
-        <div class="filter-section">
+        <!-- <div class="filter-section">
           <app-filter-button
             [activeFiltersCount]="getActiveFiltersCount()"
             [hasActiveFilters]="hasActiveFilters()"
             (onClick)="openFilterPanel()">
           </app-filter-button>
-        </div>
+        </div> -->
 
         <!-- Filter Panel -->
         <app-filter-panel

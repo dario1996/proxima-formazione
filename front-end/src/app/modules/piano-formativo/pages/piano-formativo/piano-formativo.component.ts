@@ -1,5 +1,14 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { PageTitleComponent, ButtonConfig } from '../../../../core/page-title/page-title.component';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import {
+  PageTitleComponent,
+  ButtonConfig,
+} from '../../../../core/page-title/page-title.component';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -30,7 +39,11 @@ import { PaginationFooterComponent } from '../../../../shared/components/paginat
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
-import { AzioneColor, AzioneType, IAzioneDef } from '../../../../shared/models/ui/azione-def';
+import {
+  AzioneColor,
+  AzioneType,
+  IAzioneDef,
+} from '../../../../shared/models/ui/azione-def';
 import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { FormAssegnazioneComponent } from '../../components/form-assegnazione/form-assegnazione.component';
@@ -55,13 +68,13 @@ import { FormModificaAssegnazioneComponent } from '../../components/form-modific
 })
 export class PianoFormativoComponent implements OnInit {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
-  
+
   // CORRETTO: ViewChild per referenziare la tabella come in Corsi
-  @ViewChild(TabellaGenericaComponent) 
+  @ViewChild(TabellaGenericaComponent)
   set tabella(component: TabellaGenericaComponent) {
     this.tabellaComponent = component;
   }
-  
+
   private tabellaComponent!: TabellaGenericaComponent;
 
   // Filter panel state
@@ -90,15 +103,15 @@ export class PianoFormativoComponent implements OnInit {
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
-    key: 'impattoIsmsDisplay',
-    label: 'Impatto ISMS',
-    type: 'select',
-    options: [
-      { value: '', label: 'Tutti' },
-      { value: 'SI', label: 'SI' },
-      { value: 'NO', label: 'NO' },
-    ],
-    colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+      key: 'impattoIsmsDisplay',
+      label: 'Impatto ISMS',
+      type: 'select',
+      options: [
+        { value: '', label: 'Tutti' },
+        { value: 'SI', label: 'SI' },
+        { value: 'NO', label: 'NO' },
+      ],
+      colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
       key: 'statoDisplay',
@@ -179,35 +192,41 @@ export class PianoFormativoComponent implements OnInit {
   // Buttons configuration for page title
   buttons: ButtonConfig[] = [
     {
+      text: 'Filtri',
+      icon: 'fas fa-filter',
+      class: 'btn-secondary',
+      action: 'filter',
+    },
+    {
       text: 'Assegna corso',
       icon: 'fas fa-plus',
       class: 'btn-primary',
-      action: 'add'
+      action: 'add',
     },
     {
       text: 'Import massivo',
       icon: 'fas fa-upload',
       class: 'btn-secondary',
-      action: 'bulk-import'
-    }
+      action: 'bulk-import',
+    },
   ];
 
   dipendenti: IDipendenti[] = [];
 
   columns: IColumnDef[] = [
-    { 
-      key: 'dipendenteNome', 
-      label: 'Dipendente', 
-      sortable: true, 
+    {
+      key: 'dipendenteNome',
+      label: 'Dipendente',
+      sortable: true,
       type: 'text',
-      maxLength: 25
+      maxLength: 25,
     },
     {
       key: 'corsoNome',
       label: 'Corso',
       sortable: true,
       type: 'text',
-      maxLength: 35
+      maxLength: 35,
     },
     {
       key: 'dataAssegnazione',
@@ -216,18 +235,18 @@ export class PianoFormativoComponent implements OnInit {
       type: 'date',
     },
     {
-      key: 'impattoIsmsDisplay',  // ← CAMBIATO: da impattoIsms a impattoIsmsDisplay
+      key: 'impattoIsmsDisplay', // ← CAMBIATO: da impattoIsms a impattoIsmsDisplay
       label: 'Impatto ISMS',
       sortable: true,
-      type: 'badge',             // ← CAMBIATO: da 'text' a 'badge' per una migliore visualizzazione
-      statusType: 'impatto'      // ← AGGIUNTO: tipo di badge personalizzato
+      type: 'badge', // ← CAMBIATO: da 'text' a 'badge' per una migliore visualizzazione
+      statusType: 'impatto', // ← AGGIUNTO: tipo di badge personalizzato
     },
     {
       key: 'statoDisplay',
       label: 'Stato',
       sortable: true,
       type: 'badge',
-      statusType: 'assegnazione'
+      statusType: 'assegnazione',
     },
     {
       key: 'percentualeCompletamento',
@@ -239,7 +258,7 @@ export class PianoFormativoComponent implements OnInit {
       key: 'dataTerminePrevista',
       label: 'Data Termine Prevista',
       sortable: true,
-      type: 'date'
+      type: 'date',
     },
     {
       key: 'dataInizio',
@@ -254,7 +273,7 @@ export class PianoFormativoComponent implements OnInit {
       type: 'date',
     },
     {
-      key:'esito',
+      key: 'esito',
       label: 'Esito',
       sortable: true,
       type: 'text',
@@ -264,7 +283,7 @@ export class PianoFormativoComponent implements OnInit {
       label: 'Attestato',
       sortable: true,
       type: 'badge',
-      statusType: 'attestato'
+      statusType: 'attestato',
     },
   ];
 
@@ -291,7 +310,7 @@ export class PianoFormativoComponent implements OnInit {
     displayedItems: 0,
     totalItems: 0,
     pageSize: 20, // Will be updated by TabellaGenericaComponent
-    entityName: 'assegnazioni'
+    entityName: 'assegnazioni',
   };
 
   constructor(
@@ -338,7 +357,7 @@ export class PianoFormativoComponent implements OnInit {
           dataTerminePrevista: a.dataTerminePrevista,
           attestatoDisplay: a.attestato ? 'SI' : 'NO',
           impattoIsmsDisplay: a.impattoIsms ? 'SI' : 'NO',
-          statoDisplay: this.getStatoDisplayLabel(a.stato)
+          statoDisplay: this.getStatoDisplayLabel(a.stato),
         }));
         this.applicaFiltri();
         this.cd.detectChanges();
@@ -352,98 +371,138 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   applicaFiltri() {
-    this.formazioneDipendentiFiltrato = this.assegnazioni.filter((a: IAssegnazione) => {
-      // Filter by Dipendente Nome
-      if (this.valoriFiltri['dipendenteNome']) {
-        const nominativo = `${a.dipendente.nome} ${a.dipendente.cognome}`.trim().toLowerCase();
-        if (!nominativo.includes(this.valoriFiltri['dipendenteNome'].toLowerCase())) {
-          return false;
+    this.formazioneDipendentiFiltrato = this.assegnazioni.filter(
+      (a: IAssegnazione) => {
+        // Filter by Dipendente Nome
+        if (this.valoriFiltri['dipendenteNome']) {
+          const nominativo = `${a.dipendente.nome} ${a.dipendente.cognome}`
+            .trim()
+            .toLowerCase();
+          if (
+            !nominativo.includes(
+              this.valoriFiltri['dipendenteNome'].toLowerCase(),
+            )
+          ) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Corso Nome
-      if (this.valoriFiltri['corsoNome']) {
-        if (!a.corso.nome.toLowerCase().includes(this.valoriFiltri['corsoNome'].toLowerCase())) {
-          return false;
+        // Filter by Corso Nome
+        if (this.valoriFiltri['corsoNome']) {
+          if (
+            !a.corso.nome
+              .toLowerCase()
+              .includes(this.valoriFiltri['corsoNome'].toLowerCase())
+          ) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Data Assegnazione
-      if (this.valoriFiltri['dataAssegnazione']) {
-        if (!this.compareDates(a.dataAssegnazione, this.valoriFiltri['dataAssegnazione'])) {
-          return false;
+        // Filter by Data Assegnazione
+        if (this.valoriFiltri['dataAssegnazione']) {
+          if (
+            !this.compareDates(
+              a.dataAssegnazione,
+              this.valoriFiltri['dataAssegnazione'],
+            )
+          ) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Impatto ISMS
-      if (this.valoriFiltri['impattoIsmsDisplay']) {
-        const impattoDisplay = a.impattoIsms ? 'SI' : 'NO';
-        if (impattoDisplay !== this.valoriFiltri['impattoIsmsDisplay']) {
-          return false;
+        // Filter by Impatto ISMS
+        if (this.valoriFiltri['impattoIsmsDisplay']) {
+          const impattoDisplay = a.impattoIsms ? 'SI' : 'NO';
+          if (impattoDisplay !== this.valoriFiltri['impattoIsmsDisplay']) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Stato
-      if (this.valoriFiltri['statoDisplay']) {
-        const statoDisplay = this.getStatoDisplayLabel(a.stato);
-        if (statoDisplay !== this.valoriFiltri['statoDisplay']) {
-          return false;
+        // Filter by Stato
+        if (this.valoriFiltri['statoDisplay']) {
+          const statoDisplay = this.getStatoDisplayLabel(a.stato);
+          if (statoDisplay !== this.valoriFiltri['statoDisplay']) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Data Termine Prevista
-      if (this.valoriFiltri['dataTerminePrevista']) {
-        if (!this.compareDates(a.corso.dataScadenza, this.valoriFiltri['dataTerminePrevista'])) {
-          return false;
+        // Filter by Data Termine Prevista
+        if (this.valoriFiltri['dataTerminePrevista']) {
+          if (
+            !this.compareDates(
+              a.corso.dataScadenza,
+              this.valoriFiltri['dataTerminePrevista'],
+            )
+          ) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Data Inizio
-      if (this.valoriFiltri['dataInizio']) {
-        if (!this.compareDates(a.dataInizio, this.valoriFiltri['dataInizio'])) {
-          return false;
+        // Filter by Data Inizio
+        if (this.valoriFiltri['dataInizio']) {
+          if (
+            !this.compareDates(a.dataInizio, this.valoriFiltri['dataInizio'])
+          ) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Data Completamento
-      if (this.valoriFiltri['dataCompletamento']) {
-        if (!this.compareDates(a.dataCompletamento, this.valoriFiltri['dataCompletamento'])) {
-          return false;
+        // Filter by Data Completamento
+        if (this.valoriFiltri['dataCompletamento']) {
+          if (
+            !this.compareDates(
+              a.dataCompletamento,
+              this.valoriFiltri['dataCompletamento'],
+            )
+          ) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Attestato
-      if (this.valoriFiltri['attestatoDisplay']) {
-        const attestatoDisplay = a.attestato ? 'SI' : 'NO';
-        if (attestatoDisplay !== this.valoriFiltri['attestatoDisplay']) {
-          return false;
+        // Filter by Attestato
+        if (this.valoriFiltri['attestatoDisplay']) {
+          const attestatoDisplay = a.attestato ? 'SI' : 'NO';
+          if (attestatoDisplay !== this.valoriFiltri['attestatoDisplay']) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Email
-      if (this.valoriFiltri['email']) {
-        if (!a.dipendente.email.toLowerCase().includes(this.valoriFiltri['email'].toLowerCase())) {
-          return false;
+        // Filter by Email
+        if (this.valoriFiltri['email']) {
+          if (
+            !a.dipendente.email
+              .toLowerCase()
+              .includes(this.valoriFiltri['email'].toLowerCase())
+          ) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Ruolo
-      if (this.valoriFiltri['ruolo']) {
-        if (!a.dipendente.ruolo.toLowerCase().includes(this.valoriFiltri['ruolo'].toLowerCase())) {
-          return false;
+        // Filter by Ruolo
+        if (this.valoriFiltri['ruolo']) {
+          if (
+            !a.dipendente.ruolo
+              .toLowerCase()
+              .includes(this.valoriFiltri['ruolo'].toLowerCase())
+          ) {
+            return false;
+          }
         }
-      }
 
-      // Filter by Obbligatorio
-      if (this.valoriFiltri['obbligatorio'] !== undefined && this.valoriFiltri['obbligatorio'] !== '') {
-        const isObbligatorio = this.valoriFiltri['obbligatorio'] === 'true';
-        if (a.obbligatorio !== isObbligatorio) {
-          return false;
+        // Filter by Obbligatorio
+        if (
+          this.valoriFiltri['obbligatorio'] !== undefined &&
+          this.valoriFiltri['obbligatorio'] !== ''
+        ) {
+          const isObbligatorio = this.valoriFiltri['obbligatorio'] === 'true';
+          if (a.obbligatorio !== isObbligatorio) {
+            return false;
+          }
         }
-      }
 
-      return true;
-    });
+        return true;
+      },
+    );
   }
 
   deleteAssegnazione(id: number) {
@@ -467,10 +526,11 @@ export class PianoFormativoComponent implements OnInit {
           titolo: 'Modifica assegnazione',
           componente: FormModificaAssegnazioneComponent,
           dati: e.item,
-          onConferma: (formValue: any) => {  // ✅ CORRETTO: onConferma (come corsi)
+          onConferma: (formValue: any) => {
+            // ✅ CORRETTO: onConferma (come corsi)
             console.log('onConferma ricevuto:', formValue);
             this.updateAssegnazione(e.item.id, formValue);
-          }
+          },
         });
         break;
       case 'delete':
@@ -485,7 +545,7 @@ export class PianoFormativoComponent implements OnInit {
               e.item.corsoNome +
               '"?',
           },
-          onConferma: () => this.deleteAssegnazione(e.item.id),  // ✅ CORRETTO: onConferma (come corsi)
+          onConferma: () => this.deleteAssegnazione(e.item.id), // ✅ CORRETTO: onConferma (come corsi)
         });
         break;
       default:
@@ -495,7 +555,7 @@ export class PianoFormativoComponent implements OnInit {
 
   updateAssegnazione(id: number, assegnazioneData: any) {
     console.log('Dati ricevuti dal form:', assegnazioneData);
-  
+
     // Converti i dati del form nel formato richiesto dal service
     const updateData = {
       stato: assegnazioneData.stato,
@@ -506,7 +566,7 @@ export class PianoFormativoComponent implements OnInit {
       dataInizio: assegnazioneData.dataInizio || null,
       dataCompletamento: assegnazioneData.dataCompletamento || null,
       esito: assegnazioneData.esito || null,
-      attestato: assegnazioneData.attestato || false
+      attestato: assegnazioneData.attestato || false,
     };
 
     console.log('Dati inviati al servizio:', updateData);
@@ -517,12 +577,12 @@ export class PianoFormativoComponent implements OnInit {
         this.toastr.success('Assegnazione modificata con successo');
         this.modaleService.chiudi();
       },
-      error: (error) => {
-        console.error('Errore durante l\'aggiornamento:', error);
-        this.toastr.error('Errore durante la modifica dell\'assegnazione');
+      error: error => {
+        console.error("Errore durante l'aggiornamento:", error);
+        this.toastr.error("Errore durante la modifica dell'assegnazione");
       },
     });
-}
+  }
 
   // NUOVO: Metodo per gestire il click del pulsante "Assegna corso"
   onAssegnaCorso() {
@@ -535,7 +595,7 @@ export class PianoFormativoComponent implements OnInit {
         if (risultato) {
           this.assegnaCorso(risultato);
         }
-      }
+      },
     });
   }
 
@@ -554,8 +614,11 @@ export class PianoFormativoComponent implements OnInit {
           onConferma: () => {
             // Refresh the table after import
             this.loadAssegnazioni();
-          }
+          },
         });
+        break;
+      case 'filter':
+        this.openFilterPanel();
         break;
       default:
         console.warn('Azione non riconosciuta:', action);
@@ -565,29 +628,34 @@ export class PianoFormativoComponent implements OnInit {
   // NUOVO: Metodo per effettuare l'assegnazione
   assegnaCorso(risultato: any) {
     console.log('Dati ricevuti dal form:', risultato);
-    console.log('URL chiamata:', `http://${this.assegnazioniService.server}:${this.assegnazioniService.port}/api/assegnazioni/bulk`);
-    
+    console.log(
+      'URL chiamata:',
+      `http://${this.assegnazioniService.server}:${this.assegnazioniService.port}/api/assegnazioni/bulk`,
+    );
+
     // Verifica che il metodo esista
     if (!this.assegnazioniService.createMultipleAssegnazioni) {
-      console.error('Il metodo createMultipleAssegnazioni non esiste nel service!');
+      console.error(
+        'Il metodo createMultipleAssegnazioni non esiste nel service!',
+      );
       return;
     }
-    
+
     this.assegnazioniService.createMultipleAssegnazioni(risultato).subscribe({
-      next: (response) => {
+      next: response => {
         console.log('Risposta dal server:', response);
         const count = Array.isArray(response) ? response.length : 1;
         this.toastr.success(`${count} assegnazione/i create con successo`);
         this.loadAssegnazioni();
         this.modaleService.chiudi();
       },
-      error: (error) => {
+      error: error => {
         console.error('Errore completo:', error);
         console.error('Status:', error.status);
         console.error('Message:', error.message);
         console.error('URL:', error.url);
-        this.toastr.error('Errore durante l\'assegnazione del corso');
-      }
+        this.toastr.error("Errore durante l'assegnazione del corso");
+      },
     });
   }
 
@@ -623,8 +691,8 @@ export class PianoFormativoComponent implements OnInit {
 
   // Get count of active filters
   getActiveFiltersCount(): number {
-    return Object.values(this.valoriFiltri).filter(value => 
-      value !== null && value !== undefined && value !== ''
+    return Object.values(this.valoriFiltri).filter(
+      value => value !== null && value !== undefined && value !== '',
     ).length;
   }
 
@@ -636,15 +704,14 @@ export class PianoFormativoComponent implements OnInit {
   // Utility method to compare dates
   private compareDates(date1: string | Date, date2: string | Date): boolean {
     if (!date1 || !date2) return false;
-    
+
     const d1 = new Date(date1);
     const d2 = new Date(date2);
-    
+
     // Reset time to compare only dates
     d1.setHours(0, 0, 0, 0);
     d2.setHours(0, 0, 0, 0);
-    
+
     return d1.getTime() === d2.getTime();
   }
-  
 }
