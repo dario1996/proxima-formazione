@@ -96,6 +96,8 @@ export class AssegnazioniService {
       params.dataCompletamento = updateData.dataCompletamento;
     if (updateData.feedbackFornito !== undefined)
       params.feedbackFornito = updateData.feedbackFornito.toString();
+    if (updateData.modalita !== undefined) 
+      params.modalita = updateData.modalita;
 
     console.log('Sending PUT request with params:', params);
     const url = `http://${this.server}:${this.port}/api/assegnazioni/${assegnazioneId}`;

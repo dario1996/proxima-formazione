@@ -55,4 +55,5 @@ export interface AssegnazioneUpdateRequest {
   dataInizio?: string;
   dataCompletamento?: string;
   dataTerminePrevista?: string;
+  modalita?: string;
 }

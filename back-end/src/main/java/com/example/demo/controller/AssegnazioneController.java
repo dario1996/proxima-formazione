@@ -241,7 +241,8 @@ public class AssegnazioneController {
             @Parameter(description = "Attestato") @RequestParam(required = false) Boolean attestato,
             @Parameter(description = "Data inizio") @RequestParam(required = false) String dataInizio,
             @Parameter(description = "Data completamento") @RequestParam(required = false) String dataCompletamento,
-            @Parameter(description = "Data termine prevista") @RequestParam(required = false) String dataTerminePrevista) {
+            @Parameter(description = "Data termine prevista") @RequestParam(required = false) String dataTerminePrevista,
+            @Parameter(description = "Modalità") @RequestParam(required = false) String modalita) {
         Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
         if (!optionalAssegnazione.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -340,29 +341,50 @@ public class AssegnazioneController {
             }
 
             // Aggiorna data inizio se fornita
-            if (dataInizio != null && !dataInizio.isEmpty()) {
-                try {
-                    assegnazione.setDataInizio(LocalDate.parse(dataInizio));
-                } catch (Exception e) {
-                    return ResponseEntity.badRequest().body("Formato data inizio non valido: " + dataInizio);
+            if (dataInizio != null) {
+                if (dataInizio.isEmpty() || dataInizio.equalsIgnoreCase("null")) {
+                    // 🔥 AGGIUNTO: Gestione esplicita per resettare a NULL
+                    assegnazione.setDataInizio(null);
+                    log.debug("Data inizio resettata a NULL per assegnazione {}", assegnazioneId);
+                } else {
+                    try {
+                        assegnazione.setDataInizio(LocalDate.parse(dataInizio));
+                        log.debug("Data inizio aggiornata a {} per assegnazione {}", dataInizio, assegnazioneId);
+                    } catch (Exception e) {
+                        return ResponseEntity.badRequest().body("Formato data inizio non valido: " + dataInizio);
+                    }
                 }
             }
 
-                        // Aggiorna data inizio se fornita
-            if (dataTerminePrevista != null && !dataTerminePrevista.isEmpty()) {
-                try {
-                    assegnazione.setDataTerminePrevista(LocalDate.parse(dataTerminePrevista));
-                } catch (Exception e) {
-                    return ResponseEntity.badRequest().body("Formato data termine prevista non valido: " + dataTerminePrevista);
+            // Aggiorna data inizio se fornita
+            if (dataTerminePrevista != null) {
+                if (dataTerminePrevista.isEmpty() || dataTerminePrevista.equalsIgnoreCase("null")) {
+                    // 🔥 AGGIUNTO: Gestione esplicita per resettare a NULL
+                    assegnazione.setDataTerminePrevista(null);
+                    log.debug("Data termine prevista resettata a NULL per assegnazione {}", assegnazioneId);
+                } else {
+                    try {
+                        assegnazione.setDataTerminePrevista(LocalDate.parse(dataTerminePrevista));
+                        log.debug("Data termine prevista aggiornata a {} per assegnazione {}", dataTerminePrevista, assegnazioneId);
+                    } catch (Exception e) {
+                        return ResponseEntity.badRequest().body("Formato data termine prevista non valido: " + dataTerminePrevista);
+                    }
                 }
             }
 
             // Aggiorna data completamento se fornita
-            if (dataCompletamento != null && !dataCompletamento.isEmpty()) {
-                try {
-                    assegnazione.setDataCompletamento(LocalDate.parse(dataCompletamento));
-                } catch (Exception e) {
-                    return ResponseEntity.badRequest().body("Formato data completamento non valido: " + dataCompletamento);
+            if (dataCompletamento != null) {
+                if (dataCompletamento.isEmpty() || dataCompletamento.equalsIgnoreCase("null")) {
+                    // 🔥 AGGIUNTO: Gestione esplicita per resettare a NULL
+                    assegnazione.setDataCompletamento(null);
+                    log.debug("Data completamento resettata a NULL per assegnazione {}", assegnazioneId);
+                } else {
+                    try {
+                        assegnazione.setDataCompletamento(LocalDate.parse(dataCompletamento));
+                        log.debug("Data completamento aggiornata a {} per assegnazione {}", dataCompletamento, assegnazioneId);
+                    } catch (Exception e) {
+                        return ResponseEntity.badRequest().body("Formato data completamento non valido: " + dataCompletamento);
+                    }
                 }
             }
 

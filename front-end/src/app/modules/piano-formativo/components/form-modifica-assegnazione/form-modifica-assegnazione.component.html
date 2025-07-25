@@ -16,13 +16,13 @@
         <select id="esito" class="filter-select" formControlName="esito"
           [ngClass]="{ 'is-invalid': submitted && form.controls['esito'].invalid }">
           <option value="">Seleziona esito</option>
-          <option value="SUPERATO">Superato</option>
-          <option value="NON_SUPERATO">Non Superato</option>
-          <option value="IN_CORSO">In Corso</option>
+          <option value="Superato">Superato</option>
+          <option value="Non superato">Non Superato</option>
+          <option value="In corso">In Corso</option>
         </select>
         <div *ngIf="submitted && form.controls['esito'].invalid" class="invalid-feedback">
           Seleziona un esito valido.
-        </div>
+        </div>  
       </div>
     </div>
 
