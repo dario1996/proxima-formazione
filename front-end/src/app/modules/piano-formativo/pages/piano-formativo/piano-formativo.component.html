@@ -1,12 +1,12 @@
 <div class="page-container">
-  <div class="page-header">
+  <!-- <div class="page-header"> -->
     <app-page-title 
       [title]="'Piano Formativo'" 
       [subtitle]="'Gestione delle assegnazioni dei corsi ai dipendenti'"
       [buttons]="buttons"
       (buttonActionClick)="handleButtonClick($event)">
     </app-page-title>
-  </div>
+  <!-- </div> -->
   
   <div class="page-content" #pageContentInner>
     <!-- Content Area -->
@@ -14,7 +14,7 @@
       <!-- Filters Section -->
       <div class="filters-section">
         <!-- Filter Button -->
-        <div class="filter-section mb-3">
+        <div class="filter-section">
           <app-filter-button
             [activeFiltersCount]="getActiveFiltersCount()"
             [hasActiveFilters]="hasActiveFilters()"
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Pagination Container -->
-      <div class="pagination-container">
+      <!-- <div class="pagination-container"> -->
         <app-pagination-footer
           [currentPage]="paginationInfo.currentPage"
           [totalPages]="paginationInfo.totalPages"
@@ -57,7 +57,7 @@
           [entityName]="paginationInfo.entityName"
           (pageChange)="cambiaPagina($event)">
         </app-pagination-footer>
-      </div>
+      <!-- </div> -->
     </div>
   </div>
 </div>

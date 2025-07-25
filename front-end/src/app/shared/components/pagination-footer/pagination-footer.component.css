@@ -1,15 +1,15 @@
 /* ================== CONTAINER FOOTER PAGINAZIONE =================== */
 .pagination-footer-container {
-  height: 100%;
+  /* height: 100%; */
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding-bottom: 13px;
+  /* padding-bottom: 13px; */
   position: relative;
   z-index: 1;
   border-radius: 4px;
-  padding: 4px 13px 5px 13px; /* MODIFICATO: ridotto padding-top da 8px a 4px */
+  /* padding: 4px 13px 5px 13px; */
   margin-top: 4px; /* MODIFICATO: ridotto margin-top da 8px a 4px */
 }
 

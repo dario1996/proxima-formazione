@@ -94,7 +94,7 @@
 .table-container {
   flex: 1;
   min-height: 0;
-  margin-bottom: var(--spacing-md);
+  /* margin-bottom: var(--spacing-md); */
   overflow: hidden; /* Prevent table from overflowing */
 }
 
