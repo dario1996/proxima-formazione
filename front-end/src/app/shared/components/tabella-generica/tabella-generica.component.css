@@ -173,9 +173,9 @@ th .fa {
 
 /* INIZIO - contenitore per la gestione dello scrolling del contenuto tabella */
 .table-scroll-container {
-  flex: 1 1 auto;
+  /* flex: 1 1 auto; */
   min-height: 0;
-  max-height: calc(100vh - 260px); /* AUMENTATO: ridotto da 322px a 260px per più spazio */
+  max-height: 100%; /* AUMENTATO: ridotto da 322px a 260px per più spazio */
   overflow-y: auto; /* Scroll verticale */
   overflow-x: hidden; /* Nasconde scroll orizzontale se non necessario */
   display: flex;

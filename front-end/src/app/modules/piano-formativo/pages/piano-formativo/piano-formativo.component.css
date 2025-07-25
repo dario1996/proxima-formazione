@@ -74,6 +74,7 @@
 .table-container {
   flex: 1;
   min-height: 0;
+  max-height: fit-content;
   /* margin-bottom: var(--spacing-md); */
   overflow: hidden; /* Prevent table from overflowing */
 }

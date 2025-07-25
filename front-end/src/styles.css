@@ -754,8 +754,8 @@ app-tabella-generica {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  height: 100vh; /* AGGIUNTO: altezza piena */
-  margin: 12px 12px 0px 12px;
+  max-height: 100%; /* AGGIUNTO: altezza piena */
+  margin: 12px 12px 12px 12px;
 }
 
 app-pagination-footer {
