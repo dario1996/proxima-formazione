@@ -17,6 +17,10 @@ public class AssegnazioneBulkImportItem {
     @Schema(description = "Nome del corso", example = "Angular Fundamentals", required = true)
     private String corso;
 
+    @Size(max = 200, message = "L'argomento non può superare 200 caratteri")
+    @Schema(description = "Argomento del corso (dalla colonna Macro-argomenti)", example = "Sviluppo Software")
+    private String argomento;
+
     @Schema(description = "Data di inizio (formato ISO: YYYY-MM-DD)", example = "2025-01-01")
     private String dataInizio;
 
@@ -38,6 +42,10 @@ public class AssegnazioneBulkImportItem {
     @Size(max = 10, message = "Il campo Impatto ISMS non può superare 10 caratteri")
     @Schema(description = "Impatto ISMS", example = "Si")
     private String impattoIsms;
+
+    @Size(max = 100, message = "Il campo non può superare 100 caratteri")
+    @Schema(description = "Modalità", example = "Linkedin")
+    private String modalita;
 
     // Costruttori
     public AssegnazioneBulkImportItem() {
@@ -63,6 +71,14 @@ public class AssegnazioneBulkImportItem {
 
     public void setCorso(String corso) {
         this.corso = corso;
+    }
+
+    public String getArgomento() {
+        return argomento;
+    }
+
+    public void setArgomento(String argomento) {
+        this.argomento = argomento;
     }
 
     public String getDataInizio() {
@@ -113,17 +129,27 @@ public class AssegnazioneBulkImportItem {
         this.impattoIsms = impattoIsms;
     }
 
+    public String getModalita() {
+        return modalita;
+    }
+
+    public void setModalita(String modalita) {
+        this.modalita = modalita;
+    }
+
     @Override
     public String toString() {
         return "AssegnazioneBulkImportItem{" +
                 "nominativo='" + nominativo + '\'' +
                 ", corso='" + corso + '\'' +
+                ", argomento='" + argomento + '\'' +
                 ", dataInizio='" + dataInizio + '\'' +
                 ", dataCompletamento='" + dataCompletamento + '\'' +
                 ", stato='" + stato + '\'' +
                 ", esito='" + esito + '\'' +
                 ", fonteRichiesta='" + fonteRichiesta + '\'' +
                 ", impattoIsms='" + impattoIsms + '\'' +
+                ", modalita='" + modalita + '\'' +
                 '}';
     }
 }

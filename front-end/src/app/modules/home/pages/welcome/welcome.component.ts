@@ -58,12 +58,12 @@ export class WelcomeComponent implements OnInit {
       ],
     },
     {
-      title: 'Settings',
+      title: 'Impostazioni',
       icon: 'fa-solid fa-gears fa-xl',
       links: [
         {
-          label: 'Settings',
-          url: 'settings',
+          label: 'Impostazioni',
+          url: 'impostazioni',
           icon: 'fa-solid fa-gears fa-lg',
         },
       ],

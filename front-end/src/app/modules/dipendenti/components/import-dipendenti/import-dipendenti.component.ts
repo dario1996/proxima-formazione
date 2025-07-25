@@ -266,8 +266,8 @@ export class ImportDipendentiComponent implements OnInit {
       }
 
       // ISMS validation
-      if (dipendente.isms && !['Si', 'No'].includes(dipendente.isms)) {
-        dipendente.errors.push('ISMS deve essere "Si" o "No"');
+      if (dipendente.isms && !['SI', 'NO'].includes(dipendente.isms)) {
+        dipendente.errors.push('ISMS deve essere "SI" o "NO"');
       }
     });
   }

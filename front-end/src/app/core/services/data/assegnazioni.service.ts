@@ -80,6 +80,8 @@ export class AssegnazioniService {
       params.competenzeAcquisite = updateData.competenzeAcquisite;
     if (updateData.certificatoOttenuto !== undefined)
       params.certificatoOttenuto = updateData.certificatoOttenuto.toString();
+    if (updateData.dataTerminePrevista !== undefined)
+      params.dataTerminePrevista = updateData.dataTerminePrevista;
     if (updateData.esito !== undefined)
       params.esito = updateData.esito;
     if (updateData.fonteRichiesta !== undefined)
@@ -94,6 +96,8 @@ export class AssegnazioniService {
       params.dataCompletamento = updateData.dataCompletamento;
     if (updateData.feedbackFornito !== undefined)
       params.feedbackFornito = updateData.feedbackFornito.toString();
+    if (updateData.modalita !== undefined) 
+      params.modalita = updateData.modalita;
 
     console.log('Sending PUT request with params:', params);
     const url = `http://${this.server}:${this.port}/api/assegnazioni/${assegnazioneId}`;
@@ -158,5 +162,17 @@ export class AssegnazioniService {
     this.httpClient.post<any>(
       `http://${this.server}:${this.port}/api/assegnazioni/bulk-import`,
       importData,
+    );
+
+  // AGGIUNGI questo metodo alla fine della classe AssegnazioniService
+  createMultipleAssegnazioni = (data: {
+    dipendentiIds: number[];
+    corsiIds: number[];  // AGGIUNGI
+    obbligatorio: boolean;
+    dataTerminePrevista?: string;
+  }) =>
+    this.httpClient.post<IAssegnazione[]>(
+      `http://${this.server}:${this.port}/api/assegnazioni/assegnazioneMultipla`,
+      data
     );
 }

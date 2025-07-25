@@ -10,14 +10,29 @@
   --color-muted-foreground: hsl(0 0% 45%);
   --color-border: hsl(0 0% 91%);
   --color-input: hsl(0 0% 100%);
-  --color-primary: hsl(222 84% 5%);
+  --color-primary: #0F4C82;
   --color-primary-foreground: hsl(0 0% 98%);
-  --color-secondary: hsl(0 0% 96%);
+  --color-secondary: #93A9D1;
   --color-secondary-foreground: hsl(0 0% 9%);
   --color-accent: hsl(0 0% 96%);
   --color-accent-foreground: hsl(0 0% 9%);
   --color-destructive: hsl(0 84% 60%);
   --color-destructive-foreground: hsl(0 0% 98%);
+
+  /* COLORI AZIENDALI */
+  --color-BLU : #0F4C82;
+  --color-VIOLA-SCURO : #5A5BA0;
+  --color-VIOLA-CHIARO : #93A9D1;
+  --color-PURPLE : #8B42B9;
+  --color-ROSA : #FA02EE;
+  --color-CELESTE : #00D1DE;
+  --color-BIANCO : #F4F4F4;
+  --color-NERO : #222222;
+
+  
+  /* Sidebar - UNA SOLA DICHIARAZIONE */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 85px;
 
   /* Red colors */
   --color-red-400: #f87171;
@@ -232,6 +247,14 @@ html, body {
   height: 100%;
   min-height: 0;
   display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-body {
+  /* background-color: rgb(248, 248, 248); */
+  height: 100%;
+  min-height: 0;
   flex-direction: column;
   overflow: hidden;
 }

@@ -33,6 +33,9 @@ public class Assegnazione {
     @Column(name = "data_inizio")
     private LocalDate dataInizio;
 
+    @Column(name = "data_termine_prevista")
+    private LocalDate dataTerminePrevista;
+
     @Column(name = "data_completamento")
     private LocalDate dataCompletamento;
 
@@ -158,6 +161,14 @@ public class Assegnazione {
 
     public void setDataInizio(LocalDate dataInizio) {
         this.dataInizio = dataInizio;
+    }
+
+    public LocalDate getDataTerminePrevista() {
+        return dataTerminePrevista;
+    }
+
+    public void setDataTerminePrevista(LocalDate dataTerminePrevista) {
+        this.dataTerminePrevista = dataTerminePrevista;
     }
 
     public LocalDate getDataCompletamento() {

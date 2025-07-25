@@ -51,3 +51,12 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+    # Spring Web and Jackson for request/response debugging
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation: DEBUG
+    # Our application logging
+    com.example.demo: DEBUG
+    com.example.demo.service.AssegnazioneBulkImportService: DEBUG
+    com.example.demo.controller: DEBUG
+    # Root logger
+    root: INFO

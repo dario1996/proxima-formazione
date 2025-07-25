@@ -16,7 +16,7 @@ export class TabellaGenericaComponent {
   @Input() data: any[] = [];
   @Input() columns: IColumnDef[] = [];
   @Input() azioni: IAzioneDef[] = [];
-  @Input() pageSize = 20; // FISSO: Sempre 20 righe per pagina
+  @Input() pageSize = 20; // Default: 20 items per page for consistent UX across all tables
   @Input() entityName = 'elementi';
 
   // Output events
@@ -44,6 +44,7 @@ export class TabellaGenericaComponent {
   sortDirection: 'asc' | 'desc' = 'asc';
 
   ngOnChanges() {
+    console.log('🔄 TabellaGenerica ngOnChanges called with data:', this.data?.length, 'items');
     this.currentPage = 1;
     this.updatePagination();
   }
@@ -63,6 +64,8 @@ export class TabellaGenericaComponent {
    * Aggiorna la paginazione e emette i dati per il footer
    */
   updatePagination() {
+    console.log('📄 TabellaGenerica updatePagination called with:', this.data?.length, 'total items, pageSize:', this.pageSize);
+    
     // Calcola il numero totale di pagine
     this.totalPages = Math.ceil(this.data.length / this.pageSize);
     
@@ -72,6 +75,8 @@ export class TabellaGenericaComponent {
     
     // Estrae i dati per la pagina corrente
     this.paginatedData = this.data.slice(start, end);
+    
+    console.log('📄 TabellaGenerica paginatedData:', this.paginatedData?.length, 'items on current page');
     
     // Aggiorna le pagine da mostrare
     this.updatePages();

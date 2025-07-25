@@ -9,6 +9,8 @@ import com.example.demo.repository.DipendenteRepository;
 import com.example.demo.service.AssegnazioneBulkImportService;
 import com.example.demo.dto.AssegnazioneBulkImportRequest;
 import com.example.demo.dto.AssegnazioneBulkImportResponse;
+import com.example.demo.dto.CreateMultipleAssegnazioniRequest;
+import com.example.demo.dto.MultipleAssegnazionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 @Tag(name = "Assegnazioni", description = "Gestione delle assegnazioni corsi ai dipendenti")
+@Slf4j
 public class AssegnazioneController {
 
     @Autowired
@@ -236,8 +240,9 @@ public class AssegnazioneController {
             @Parameter(description = "Impatto ISMS") @RequestParam(required = false) Boolean impattoIsms,
             @Parameter(description = "Attestato") @RequestParam(required = false) Boolean attestato,
             @Parameter(description = "Data inizio") @RequestParam(required = false) String dataInizio,
-            @Parameter(description = "Data completamento") @RequestParam(required = false) String dataCompletamento) {
-
+            @Parameter(description = "Data completamento") @RequestParam(required = false) String dataCompletamento,
+            @Parameter(description = "Data termine prevista") @RequestParam(required = false) String dataTerminePrevista,
+            @Parameter(description = "Modalità") @RequestParam(required = false) String modalita) {
         Optional<Assegnazione> optionalAssegnazione = assegnazioneRepository.findById(assegnazioneId);
         if (!optionalAssegnazione.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -336,20 +341,50 @@ public class AssegnazioneController {
             }
 
             // Aggiorna data inizio se fornita
-            if (dataInizio != null && !dataInizio.isEmpty()) {
-                try {
-                    assegnazione.setDataInizio(LocalDate.parse(dataInizio));
-                } catch (Exception e) {
-                    return ResponseEntity.badRequest().body("Formato data inizio non valido: " + dataInizio);
+            if (dataInizio != null) {
+                if (dataInizio.isEmpty() || dataInizio.equalsIgnoreCase("null")) {
+                    // 🔥 AGGIUNTO: Gestione esplicita per resettare a NULL
+                    assegnazione.setDataInizio(null);
+                    log.debug("Data inizio resettata a NULL per assegnazione {}", assegnazioneId);
+                } else {
+                    try {
+                        assegnazione.setDataInizio(LocalDate.parse(dataInizio));
+                        log.debug("Data inizio aggiornata a {} per assegnazione {}", dataInizio, assegnazioneId);
+                    } catch (Exception e) {
+                        return ResponseEntity.badRequest().body("Formato data inizio non valido: " + dataInizio);
+                    }
+                }
+            }
+
+            // Aggiorna data inizio se fornita
+            if (dataTerminePrevista != null) {
+                if (dataTerminePrevista.isEmpty() || dataTerminePrevista.equalsIgnoreCase("null")) {
+                    // 🔥 AGGIUNTO: Gestione esplicita per resettare a NULL
+                    assegnazione.setDataTerminePrevista(null);
+                    log.debug("Data termine prevista resettata a NULL per assegnazione {}", assegnazioneId);
+                } else {
+                    try {
+                        assegnazione.setDataTerminePrevista(LocalDate.parse(dataTerminePrevista));
+                        log.debug("Data termine prevista aggiornata a {} per assegnazione {}", dataTerminePrevista, assegnazioneId);
+                    } catch (Exception e) {
+                        return ResponseEntity.badRequest().body("Formato data termine prevista non valido: " + dataTerminePrevista);
+                    }
                 }
             }
 
             // Aggiorna data completamento se fornita
-            if (dataCompletamento != null && !dataCompletamento.isEmpty()) {
-                try {
-                    assegnazione.setDataCompletamento(LocalDate.parse(dataCompletamento));
-                } catch (Exception e) {
-                    return ResponseEntity.badRequest().body("Formato data completamento non valido: " + dataCompletamento);
+            if (dataCompletamento != null) {
+                if (dataCompletamento.isEmpty() || dataCompletamento.equalsIgnoreCase("null")) {
+                    // 🔥 AGGIUNTO: Gestione esplicita per resettare a NULL
+                    assegnazione.setDataCompletamento(null);
+                    log.debug("Data completamento resettata a NULL per assegnazione {}", assegnazioneId);
+                } else {
+                    try {
+                        assegnazione.setDataCompletamento(LocalDate.parse(dataCompletamento));
+                        log.debug("Data completamento aggiornata a {} per assegnazione {}", dataCompletamento, assegnazioneId);
+                    } catch (Exception e) {
+                        return ResponseEntity.badRequest().body("Formato data completamento non valido: " + dataCompletamento);
+                    }
                 }
             }
 
@@ -391,10 +426,22 @@ public class AssegnazioneController {
             @RequestBody AssegnazioneBulkImportRequest request) {
 
         try {
+            // Debug logging per tracciare la richiesta ricevuta
+            log.info("Bulk import request received with {} items", request.getAssegnazioni().size());
+            log.debug("Bulk import options: {}", request.getOptions());
+            
+            // Log dei primi elementi per debug
+            if (!request.getAssegnazioni().isEmpty()) {
+                var firstItem = request.getAssegnazioni().get(0);
+                log.debug("First item sample: nominativo={}, corso={}, argomento={}", 
+                         firstItem.getNominativo(), firstItem.getCorso(), firstItem.getArgomento());
+            }
+            
             AssegnazioneBulkImportResponse response = assegnazioneBulkImportService.importAssegnazioni(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             // Log dell'errore
+            log.error("Error during bulk import", e);
             e.printStackTrace();
 
             // Risposta di errore
@@ -410,6 +457,79 @@ public class AssegnazioneController {
             errorResponse.setErrors(errors);
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @Operation(summary = "Assegnazione multipla", description = "Crea multiple assegnazioni per più dipendenti verso un singolo corso")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Assegnazioni create con successo"),
+            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+            @ApiResponse(responseCode = "404", description = "Dipendente o corso non trovato")
+    })
+    @PostMapping("/assegnazioni/assegnazioneMultipla")
+    public ResponseEntity<?> createMultipleAssegnazioni(@RequestBody CreateMultipleAssegnazioniRequest request) {
+        try {
+            List<Assegnazione> assegnazioniCreate = new ArrayList<>();
+            List<String> errori = new ArrayList<>();
+            
+            // Logica per gestire N:M assegnazioni
+            for (Long dipendenteId : request.getDipendentiIds()) {
+                for (Long corsoId : request.getCorsiIds()) {
+                    try {
+                        // Verifica esistenza dipendente e corso
+                        Optional<Dipendente> dipendente = dipendenteRepository.findById(dipendenteId);
+                        Optional<Corso> corso = corsoRepository.findById(corsoId);
+                        
+                        if (!dipendente.isPresent() || !corso.isPresent()) {
+                            continue;
+                        }
+                        
+                        // Verifica duplicati
+                        if (assegnazioneRepository.existsByDipendenteIdAndCorsoId(dipendenteId, corsoId)) {
+                            errori.add("Assegnazione già esistente per dipendente " + dipendenteId + " e corso " + corsoId);
+                            continue;
+                        }
+                        
+                        // Crea assegnazione
+                        Assegnazione assegnazione = new Assegnazione();
+                        assegnazione.setDipendente(dipendente.get());
+                        assegnazione.setCorso(corso.get());
+                        assegnazione.setStato(Assegnazione.StatoAssegnazione.DA_INIZIARE);
+                        assegnazione.setDataAssegnazione(LocalDate.now());
+                        assegnazione.setObbligatorio(request.isObbligatorio());
+                        assegnazione.setImpattoIsms(request.isObbligatorio());
+                        
+                        if (request.getDataTerminePrevista() != null && !request.getDataTerminePrevista().isEmpty()) {
+                            try {
+                                assegnazione.setDataTerminePrevista(LocalDate.parse(request.getDataTerminePrevista()));
+                            } catch (Exception e) {
+                                log.warn("Formato data termine prevista non valido: {}", request.getDataTerminePrevista());
+                            }
+                        }
+                        
+                        Assegnazione savedAssegnazione = assegnazioneRepository.save(assegnazione);
+                        assegnazioniCreate.add(savedAssegnazione);
+                        
+                    } catch (Exception e) {
+                        errori.add("Errore durante la creazione dell'assegnazione per dipendente " + dipendenteId + " e corso " + corsoId + ": " + e.getMessage());
+                    }
+                }
+            }
+            
+            // Prepara risposta
+            MultipleAssegnazionResponse response = new MultipleAssegnazionResponse();
+            response.setAssegnazioniCreate(assegnazioniCreate);
+            response.setErrori(errori);
+            response.setTotaleRichieste(request.getDipendentiIds().size() * request.getCorsiIds().size());
+            response.setTotaleCreate(assegnazioniCreate.size());
+            response.setTotaleErrori(errori.size());
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            
+        } catch (Exception e) {
+            log.error("Errore durante l'assegnazione multipla", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore interno del server: " + e.getMessage());
         }
     }
 }

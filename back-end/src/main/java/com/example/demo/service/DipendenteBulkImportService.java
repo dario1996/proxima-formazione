@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service
@@ -162,8 +161,8 @@ public class DipendenteBulkImportService {
 
         // Validazione ISMS
         if (item.getIsms() != null && !item.getIsms().trim().isEmpty()) {
-            if (!item.getIsms().equals("Si") && !item.getIsms().equals("No")) {
-                response.addError(rowIndex, "isms", "ISMS deve essere 'Si' o 'No'", item.getIsms());
+            if (!item.getIsms().equals("SI") && !item.getIsms().equals("NO")) {
+                response.addError(rowIndex, "isms", "ISMS deve essere 'SI' o 'NO'", item.getIsms());
                 valid = false;
             }
         }
@@ -174,7 +173,7 @@ public class DipendenteBulkImportService {
                 response.addError(rowIndex, "dataCessazione", "Formato data non valido", item.getDataCessazione());
                 valid = false;
             }
-        }
+        }   
 
         return valid;
     }
@@ -246,7 +245,20 @@ public class DipendenteBulkImportService {
                 LocalDateTime dataCessazione = parseDate(item.getDataCessazione());
                 if (dataCessazione != null) {
                     existing.setDataCessazione(dataCessazione);
+                    // Aggiorna lo status basato sulla data di cessazione
+                    boolean isActive = isEmployeeActive(dataCessazione);
+                    existing.setAttivo(isActive);
+                    logger.info("DIPENDENTE AGGIORNATO - Nome: {}, Data Cessazione: {}, Status Attivo: {} (boolean: {})", 
+                               item.getNominativo(), dataCessazione, isActive ? "SI" : "NO", isActive);
+                } else {
+                    logger.warn("Impossibile parsare la data cessazione '{}' per dipendente esistente: {}", 
+                               item.getDataCessazione(), item.getNominativo());
                 }
+            } else {
+                // Se la data di cessazione viene rimossa, il dipendente dovrebbe essere attivo
+                existing.setDataCessazione(null);
+                existing.setAttivo(true);
+                logger.debug("Data cessazione rimossa per dipendente esistente {}, impostato come attivo", item.getNominativo());
             }
 
             Dipendente updatedDipendente = dipendenteRepository.save(existing);
@@ -284,10 +296,14 @@ public class DipendenteBulkImportService {
         }
         
         // Data cessazione
+        LocalDateTime dataCessazione = null;
         if (item.getDataCessazione() != null && !item.getDataCessazione().trim().isEmpty()) {
-            LocalDateTime dataCessazione = parseDate(item.getDataCessazione());
+            dataCessazione = parseDate(item.getDataCessazione());
             if (dataCessazione != null) {
                 dipendente.setDataCessazione(dataCessazione);
+                logger.debug("Data cessazione parsata con successo: {} per dipendente: {}", dataCessazione, item.getNominativo());
+            } else {
+                logger.warn("Impossibile parsare la data cessazione '{}' per dipendente: {}", item.getDataCessazione(), item.getNominativo());
             }
         }
 
@@ -298,7 +314,11 @@ public class DipendenteBulkImportService {
         // Genera codice dipendente automatico
         dipendente.setCodiceDipendente(generateCodiceDipendente(nome, cognome));
         
-        dipendente.setAttivo(true);
+        // Determina lo status basato sulla data di cessazione
+        boolean isActive = isEmployeeActive(dataCessazione);
+        dipendente.setAttivo(isActive);
+        logger.info("DIPENDENTE CREATO - Nome: {}, Data Cessazione: {}, Status Attivo: {} (boolean: {})", 
+                   item.getNominativo(), dataCessazione, isActive ? "SI" : "NO", isActive);
         dipendente.setDataAssunzione(LocalDateTime.now());
         
         return dipendente;
@@ -322,12 +342,34 @@ public class DipendenteBulkImportService {
         return codice;
     }
 
+    /**
+     * Determina se un dipendente è attivo basandosi sulla data di cessazione.
+     * Un dipendente è considerato non attivo se ha una data di cessazione che è oggi o nel passato.
+     */
+    private boolean isEmployeeActive(LocalDateTime dataCessazione) {
+        if (dataCessazione == null) {
+            return true; // Nessuna data di cessazione = attivo
+        }
+        
+        LocalDateTime now = LocalDateTime.now();
+        boolean isActive = dataCessazione.isAfter(now);
+        
+        // Log per debug con INFO level per essere sicuri che venga visualizzato
+        logger.info("CONTROLLO ATTIVAZIONE - Data cessazione: {}, Data attuale: {}, Risultato isAfter: {}, Dipendente ATTIVO: {}", 
+                   dataCessazione, now, dataCessazione.isAfter(now), isActive);
+        
+        // Il dipendente è non attivo se la data di cessazione è nel passato
+        // Un dipendente è attivo solo se la data di cessazione è nel futuro
+        return isActive;
+    }
+
     private LocalDateTime parseDate(String dateString) {
         if (dateString == null || dateString.trim().isEmpty()) {
             return null;
         }
 
         String cleanDateString = dateString.trim();
+        logger.debug("Tentativo di parsing della data: '{}'", cleanDateString);
         
         // First try to parse as Excel serial number
         try {
@@ -344,7 +386,9 @@ public class DipendenteBulkImportService {
                 }
                 
                 LocalDate parsedDate = excelEpoch.plusDays(daysSinceEpoch);
-                return parsedDate.atStartOfDay();
+                LocalDateTime result = parsedDate.atStartOfDay();
+                logger.debug("Data parsata come Excel serial number: {}", result);
+                return result;
             }
         } catch (NumberFormatException e) {
             // Not a number, continue with other parsing methods
@@ -353,7 +397,9 @@ public class DipendenteBulkImportService {
         // Try to parse as LocalDateTime with time
         for (DateTimeFormatter formatter : DATETIME_FORMATTERS) {
             try {
-                return LocalDateTime.parse(cleanDateString, formatter);
+                LocalDateTime result = LocalDateTime.parse(cleanDateString, formatter);
+                logger.debug("Data parsata con successo usando formatter '{}': {}", formatter.toString(), result);
+                return result;
             } catch (DateTimeParseException e) {
                 // Try the next formatter
             }
@@ -363,7 +409,9 @@ public class DipendenteBulkImportService {
         for (DateTimeFormatter formatter : DATE_FORMATTERS) {
             try {
                 LocalDate localDate = LocalDate.parse(cleanDateString, formatter);
-                return localDate.atStartOfDay();
+                LocalDateTime result = localDate.atStartOfDay();
+                logger.debug("Data parsata come LocalDate e convertita: {}", result);
+                return result;
             } catch (DateTimeParseException e) {
                 // Try the next formatter
             }

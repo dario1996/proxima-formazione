@@ -6,21 +6,23 @@ import com.example.demo.dto.AssegnazioneBulkImportResponse;
 import com.example.demo.entity.Assegnazione;
 import com.example.demo.entity.Dipendente;
 import com.example.demo.entity.Corso;
+import com.example.demo.entity.Piattaforma;
 import com.example.demo.repository.AssegnazioneRepository;
 import com.example.demo.repository.DipendenteRepository;
 import com.example.demo.repository.CorsoRepository;
+import com.example.demo.repository.PiattaformaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 public class AssegnazioneBulkImportService {
 
     @Autowired
@@ -31,6 +33,9 @@ public class AssegnazioneBulkImportService {
 
     @Autowired
     private CorsoRepository corsoRepository;
+
+    @Autowired
+    private PiattaformaRepository piattaformaRepository;
 
     private static final DateTimeFormatter[] DATE_FORMATTERS = {
             DateTimeFormatter.ofPattern("dd/MM/yyyy"),
@@ -59,6 +64,8 @@ public class AssegnazioneBulkImportService {
         // Pre-carica dipendenti e corsi per ottimizzare le query
         Map<String, Dipendente> dipendentiMap = loadDipendentiMap();
         Map<String, Corso> corsiMap = loadCorsiMap();
+        Map<String, Piattaforma> piattaformeMap = loadPiattaformeMap();
+
 
         for (int i = 0; i < items.size(); i++) {
             AssegnazioneBulkImportItem item = items.get(i);
@@ -66,7 +73,7 @@ public class AssegnazioneBulkImportService {
 
             try {
                 // Valida l'item
-                List<String> validationErrors = validateItem(item, dipendentiMap, corsiMap);
+                List<String> validationErrors = validateItem(item, dipendentiMap, corsiMap, piattaformeMap, options);
                 
                 if (!validationErrors.isEmpty()) {
                     errorCount++;
@@ -82,7 +89,7 @@ public class AssegnazioneBulkImportService {
                 }
 
                 // Processa l'item
-                boolean wasUpdated = processItem(item, dipendentiMap, corsiMap, options);
+                boolean wasUpdated = processItem(item, dipendentiMap, corsiMap, piattaformeMap, options);
                 
                 if (wasUpdated) {
                     updatedCount++;
@@ -116,11 +123,17 @@ public class AssegnazioneBulkImportService {
     private boolean processItem(AssegnazioneBulkImportItem item, 
                                Map<String, Dipendente> dipendentiMap, 
                                Map<String, Corso> corsiMap,
+                               Map<String, Piattaforma> piattaformeMap,
                                AssegnazioneBulkImportRequest.BulkImportOptions options) {
         
         // Trova dipendente e corso
         Dipendente dipendente = findDipendente(item.getNominativo(), dipendentiMap);
         Corso corso = findCorso(item.getCorso(), corsiMap);
+
+        if (corso == null && options.isCreaCorsiMancanti()) {
+            corso = createMissingCorso(item.getCorso(), item.getArgomento(), item.getModalita(), piattaformeMap);
+            corsiMap.put(corso.getNome().toLowerCase(), corso);
+        }
 
         // Controlla se esiste già un'assegnazione per questo dipendente e corso
         Optional<Assegnazione> existingAssegnazione = assegnazioneRepository
@@ -142,7 +155,23 @@ public class AssegnazioneBulkImportService {
         // Crea nuova assegnazione
         Assegnazione assegnazione = createAssegnazioneFromItem(item, dipendente, corso);
         assegnazioneRepository.save(assegnazione);
-        return false; // Indica che è stata una creazione
+        return false;
+    }
+
+    private Map<String, Piattaforma> loadPiattaformeMap() {
+        List<Piattaforma> piattaforme = piattaformaRepository.findAll();
+        Map<String, Piattaforma> piattaformeMap = new HashMap<>();
+
+        for (Piattaforma piattaforma : piattaforme) {
+            if (piattaforma.getNome() != null && !piattaforma.getNome().trim().isEmpty()) {
+                String key = piattaforma.getNome().trim().toLowerCase();
+                piattaformeMap.put(key, piattaforma);
+                log.debug("Caricata piattaforma: {} -> ID {}", key, piattaforma.getId());
+            }
+        }
+
+        log.info("Caricate {} piattaforme nella mappa", piattaformeMap.size());
+        return piattaformeMap;
     }
 
     /**
@@ -150,8 +179,14 @@ public class AssegnazioneBulkImportService {
      */
     private List<String> validateItem(AssegnazioneBulkImportItem item, 
                                      Map<String, Dipendente> dipendentiMap, 
-                                     Map<String, Corso> corsiMap) {
+                                     Map<String, Corso> corsiMap,
+                                     Map<String, Piattaforma> piattaformeMap,
+                                     AssegnazioneBulkImportRequest.BulkImportOptions options) {
         List<String> errors = new ArrayList<>();
+
+        // Debug logging per tracciare i dati ricevuti
+        log.debug("Validating item: nominativo={}, corso={}, argomento={}", 
+                 item.getNominativo(), item.getCorso(), item.getArgomento(), item.getModalita());
 
         // Valida nominativo
         if (item.getNominativo() == null || item.getNominativo().trim().isEmpty()) {
@@ -163,8 +198,42 @@ public class AssegnazioneBulkImportService {
         // Valida corso
         if (item.getCorso() == null || item.getCorso().trim().isEmpty()) {
             errors.add("Il corso è obbligatorio");
-        } else if (findCorso(item.getCorso(), corsiMap) == null) {
-            errors.add("Corso non trovato: " + item.getCorso());
+        } else {
+            Corso corso = findCorso(item.getCorso(), corsiMap);
+            if (corso == null) {
+                if (options.isCreaCorsiMancanti()) {
+                    // 🔥 AGGIORNATO: Valida anche la piattaforma quando si crea il corso
+                    String modalita = item.getModalita();
+                    if (modalita != null && !modalita.trim().isEmpty()) {
+                        Piattaforma piattaforma = findPiattaforma(modalita, piattaformeMap);
+                        if (piattaforma == null) {
+                            errors.add("Piattaforma non trovata per modalità '" + modalita + "'. " +
+                                     "Verifica che la piattaforma esista nella tabella piattaforme.");
+                        } else {
+                            log.info("Piattaforma trovata per modalità '{}': {} (ID: {})", 
+                                   modalita, piattaforma.getNome(), piattaforma.getId());
+                        }
+                    } else {
+                        errors.add("Modalità/Piattaforma è obbligatoria quando si creano corsi automaticamente");
+                    }
+
+                    // Se non ci sono errori di piattaforma, prova a creare il corso
+                    if (errors.isEmpty()) {
+                        try {
+                            log.info("Creating missing course '{}' with argomento '{}' and modalita '{}'", 
+                                   item.getCorso(), item.getArgomento(), modalita);
+                            corso = createMissingCorso(item.getCorso(), item.getArgomento(), modalita, piattaformeMap);
+                            corsiMap.put(corso.getNome().toLowerCase(), corso);
+                            log.info("Corso creato automaticamente durante l'importazione: {} su piattaforma {} (ID: {})", 
+                                   corso.getNome(), corso.getPiattaforma().getNome(), corso.getPiattaforma().getId());
+                        } catch (Exception e) {
+                            errors.add("Errore nella creazione automatica del corso '" + item.getCorso() + "': " + e.getMessage());
+                        }
+                    }
+                } else {
+                    errors.add("Corso non trovato: " + item.getCorso());
+                }
+            }
         }
 
         // Valida date
@@ -395,5 +464,74 @@ public class AssegnazioneBulkImportService {
                     throw new IllegalArgumentException("Stato non riconosciuto: " + statoString);
                 }
         }
+    }
+
+    /**
+     * Crea un nuovo corso con i dati minimi necessari
+     */
+    private Corso createMissingCorso(String nomeCorso, String argomento, String modalita, 
+                                     Map<String, Piattaforma> piattaformeMap) {
+        log.info("Creazione automatica del corso: {} con argomento: {}", nomeCorso, argomento, modalita);
+        
+
+        // Trova la piattaforma dalla modalità
+        Piattaforma piattaforma = null;
+        if (modalita != null && !modalita.trim().isEmpty()) {
+            piattaforma = findPiattaforma(modalita, piattaformeMap);
+        }
+        
+        // Se non trova la piattaforma dalla modalità, usa quella di default
+        if (piattaforma == null) {
+            log.warn("Piattaforma non trovata per modalità '{}', uso piattaforma di default", modalita);
+            piattaforma = piattaformaRepository.findByAttivaTrue()
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Nessuna piattaforma attiva disponibile per creare il corso"));
+        }
+
+        // Crea il nuovo corso con valori di default
+        Corso corso = new Corso();
+        corso.setNome(nomeCorso.trim());
+        corso.setPiattaforma(piattaforma);
+        corso.setStato(Corso.StatoCorso.PIANIFICATO);
+        
+        // Usa l'argomento se fornito, altrimenti un valore di default
+        if (argomento != null && !argomento.trim().isEmpty()) {
+            corso.setArgomento(argomento.trim());
+        } else {
+            corso.setArgomento("Corso creato automaticamente durante importazione");
+        }
+        
+        corso.setCategoria("Generale");
+        corso.setDurata(java.math.BigDecimal.ZERO); // Durata 0, da aggiornare manualmente
+        corso.setCertificazioneRilasciata(false);
+        corso.setFeedbackRichiesto(false);
+        
+        // Salva il corso
+        corso = corsoRepository.save(corso);
+        
+        log.info("Corso creato con successo: {} (ID: {}, Piattaforma: {}, Argomento: {})", 
+                corso.getNome(), corso.getId(), piattaforma.getNome(), corso.getArgomento());
+        
+        return corso;
+    }
+
+    private Piattaforma findPiattaforma(String modalita, Map<String, Piattaforma> piattaformeMap) {
+        if (modalita == null || modalita.trim().isEmpty()) {
+            return null;
+        }
+
+        String key = modalita.trim().toLowerCase();
+        Piattaforma piattaforma = piattaformeMap.get(key);
+        
+        if (piattaforma != null) {
+            log.debug("Piattaforma trovata per modalità '{}': {} (ID: {})", 
+                     modalita, piattaforma.getNome(), piattaforma.getId());
+        } else {
+            log.warn("Piattaforma NON trovata per modalità '{}'. Piattaforme disponibili: {}", 
+                    modalita, piattaformeMap.keySet());
+        }
+        
+        return piattaforma;
     }
 }

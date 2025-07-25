@@ -10,6 +10,8 @@ import { FormCorsiComponent } from '../../components/form-corsi/form-corsi.compo
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { AdvancedFiltersComponent } from '../../../../shared/components/advanced-filters/advanced-filters.component';
+// AGGIUNTO: Import del PaginationFooterComponent
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
 import { CORSI_COLUMNS,CORSI_FILTRI,CORSI_AZIONI} from '../../../../shared/config/corsi.config';
@@ -23,8 +25,8 @@ import { FilterButtonComponent } from '../../../../shared/components/filter-butt
     ToastrModule,
     TabellaGenericaComponent,
     PageTitleComponent,
-    FilterPanelComponent,
-    FilterButtonComponent,
+    AdvancedFiltersComponent,
+    // AGGIUNTO: PaginationFooterComponent nell'array imports
     PaginationFooterComponent,
   ],
   templateUrl: './corsi.component.html',
@@ -42,9 +44,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   
   private tabellaComponent!: TabellaGenericaComponent; // AGGIUNTO
 
-  pageSize = 20; // FISSO: Sempre 20 righe
-  // Filter panel state
-  isFilterPanelOpen = false;
   corsi: ICorsi[] = [];
   corsiFiltrati: ICorsi[] = [];
   piattaforme: IPiattaforma[] = [];
@@ -62,7 +61,7 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
     pages: [] as number[],
     displayedItems: 0,
     totalItems: 0,
-    pageSize: 20,
+    pageSize: 20, // Will be updated by TabellaGenericaComponent
     entityName: 'corsi'
   };
 
@@ -249,41 +248,51 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
 
   onFiltriChange(valori: { [key: string]: any }) {
     this.valoriFiltri = valori;
+    // Note: No immediate filter application - filters are applied only when the user clicks "Apply" in the panel
+  }
+
+  onFiltersApplied(valori: { [key: string]: any }) {
+    this.valoriFiltri = valori;
     this.applicaFiltri();
   }
 
-  applicaFiltri(): void {
-  this.corsiFiltrati = this.corsi.filter(c => {
-    // Filtro nome corso
-    if (this.valoriFiltri['nome'] && 
-        !c.nome.toLowerCase().includes(this.valoriFiltri['nome'].toLowerCase())) {
-      return false;
-    }
-    
-    // Filtro argomento
-    if (this.valoriFiltri['argomento'] && 
-        !c.argomento.toLowerCase().includes(this.valoriFiltri['argomento'].toLowerCase())) {
-      return false;
-    }
-    
-    // Filtro impatto ISMS
-    if (this.valoriFiltri['impattoIsms'] !== undefined && 
-        this.valoriFiltri['impattoIsms'] !== '') {
-      const filtroValue = this.valoriFiltri['impattoIsms'] === 'true';
-      if (c.impattoIsms !== filtroValue) {
+  applicaFiltri() {
+    this.corsiFiltrati = this.corsi.filter(c => {
+      if (
+        this.valoriFiltri['nome'] &&
+        !c.nome.toLowerCase().includes(this.valoriFiltri['nome'].toLowerCase())
+      ) {
         return false;
       }
-    }
-    
-    // Filtro piattaforma
-    if (this.valoriFiltri['piattaforma'] && 
-        c.piattaforma?.id.toString() !== this.valoriFiltri['piattaforma']) {
-      return false;
-    }
-    
-    return true;
-  });
-}
+      if (
+        this.valoriFiltri['argomento'] &&
+        !c.argomento
+          .toLowerCase()
+          .includes(this.valoriFiltri['argomento'].toLowerCase())
+      ) {
+        return false;
+      }
+      // Filter by ISMS - using any type to access potentially dynamic property
+      if (this.valoriFiltri['isms']) {
+        const ismsValue = (c as any).isms ? (c as any).isms.trim() : null;
+        const filterValue = this.valoriFiltri['isms'];
+        
+        if (filterValue === 'Si' && ismsValue !== 'Si') {
+          return false;
+        }
+        if (filterValue === 'No' && ismsValue !== 'No') {
+          return false;
+        }
+      }
+      if (
+        this.valoriFiltri['piattaforma'] &&
+        c.piattaforma?.id != this.valoriFiltri['piattaforma']
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }
 
   setPiattaformaFilterOptions() {
     const piattaformaOptions = [

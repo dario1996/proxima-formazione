@@ -9,45 +9,44 @@
   </div>
   
   <div class="page-content" #pageContentInner>
-    <!-- Filter Button -->
-    <div class="filter-section mb-3">
-      <app-filter-button
-        [activeFiltersCount]="getActiveFiltersCount()"
-        [hasActiveFilters]="hasActiveFilters()"
-        (onClick)="openFilterPanel()">
-      </app-filter-button>
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <app-advanced-filters 
+          [filtri]="filtri" 
+          [valori]="valoriFiltri"
+          (valoriChange)="onFiltriChange($event)"
+          (filtersApplied)="onFiltersApplied($event)">
+        </app-advanced-filters>
+      </div>
+      
+      <!-- Table Container -->
+      <div class="table-container">
+        <app-tabella-generica 
+          [data]="corsiFiltrati" 
+          [columns]="columns" 
+          [azioni]="actions"
+          [entityName]="'corsi'"
+          (action)="gestioneAzione($event)"
+          (paginationInfo)="aggiornaPaginazione($event)">
+        </app-tabella-generica>
+      </div>
+
+      <!-- Pagination Container -->
+      <div class="pagination-container">
+        <app-pagination-footer
+          [currentPage]="paginationInfo.currentPage"
+          [totalPages]="paginationInfo.totalPages"
+          [pages]="paginationInfo.pages"
+          [displayedItems]="paginationInfo.displayedItems"
+          [totalItems]="paginationInfo.totalItems"
+          [pageSize]="paginationInfo.pageSize"
+          [entityName]="paginationInfo.entityName"
+          (pageChange)="cambiaPagina($event)">
+        </app-pagination-footer>
+      </div>
     </div>
-
-    <!-- Filter Panel -->
-    <app-filter-panel
-      [filtri]="filtri"
-      [valori]="valoriFiltri"
-      [isOpen]="isFilterPanelOpen"
-      (close)="closeFilterPanel()"
-      (applyFilters)="applyFilters($event)"
-      (clearFilters)="clearFilters()">
-    </app-filter-panel>
-    
-    <app-tabella-generica 
-      [data]="corsiFiltrati" 
-      [columns]="columns" 
-      [azioni]="actions"
-      [pageSize]="pageSize"
-      [entityName]="'corsi'"
-      (action)="gestioneAzione($event)"
-      (paginationInfo)="aggiornaPaginazione($event)">
-    </app-tabella-generica>
-
-    <app-pagination-footer
-      [currentPage]="paginationInfo.currentPage"
-      [totalPages]="paginationInfo.totalPages"
-      [pages]="paginationInfo.pages"
-      [displayedItems]="paginationInfo.displayedItems"
-      [totalItems]="paginationInfo.totalItems"
-      [pageSize]="paginationInfo.pageSize"
-      [entityName]="paginationInfo.entityName"
-      (pageChange)="cambiaPagina($event)">
-    </app-pagination-footer>
   </div>
 </div>
 

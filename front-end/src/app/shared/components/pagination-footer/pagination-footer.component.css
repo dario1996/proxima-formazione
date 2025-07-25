@@ -46,7 +46,7 @@
   color: #374151;
   font-size: 14px;
   font-weight: 500;
-  border-radius: 50%;
+  border-radius: 4px;
   cursor: pointer;
   
   /* RIMUOVO tutti i contorni */
@@ -73,9 +73,9 @@
 }
 /* Stato attivo */
 .page-item.active .page-link {
-  background: #374151 !important;
+  background: var(--color-BLU);
   color: #ffffff !important;
-  font-weight: 600;
+  /* font-weight: 600; */
   
   /* RIMUOVO contorni per attivo */
   border: none !important;

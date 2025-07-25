@@ -27,8 +27,6 @@ import { TabellaGenericaComponent } from '../../../../shared/components/tabella-
 import { FilterPanelComponent } from '../../../../shared/components/filter-panel/filter-panel.component';
 import { FilterButtonComponent } from '../../../../shared/components/filter-button/filter-button.component';
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
-import { DettaglioDipendentiComponent } from '../../../dipendenti/components/dettaglio-dipendenti/dettaglio-dipendenti.component';
-import { DisableConfirmComponent } from '../../../../core/disable-confirm/disable-confirm.component';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { ToastrService } from 'ngx-toastr';
 import { ModaleService } from '../../../../core/services/modal.service';
@@ -37,6 +35,7 @@ import { IColumnDef } from '../../../../shared/models/ui/column-def';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { FormAssegnazioneComponent } from '../../components/form-assegnazione/form-assegnazione.component';
 import { ImportAssegnazioniComponent } from '../../components/import-assegnazioni/import-assegnazioni.component';
+import { FormModificaAssegnazioneComponent } from '../../components/form-modifica-assegnazione/form-modifica-assegnazione.component';
 
 @Component({
   selector: 'app-piano-formativo',
@@ -65,8 +64,6 @@ export class PianoFormativoComponent implements OnInit {
   
   private tabellaComponent!: TabellaGenericaComponent;
 
-  pageSize = 20; // CORRETTO: 20 righe come in Corsi
-
   // Filter panel state
   isFilterPanelOpen = false;
 
@@ -93,6 +90,17 @@ export class PianoFormativoComponent implements OnInit {
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
+    key: 'impattoIsmsDisplay',
+    label: 'Impatto ISMS',
+    type: 'select',
+    options: [
+      { value: '', label: 'Tutti' },
+      { value: 'SI', label: 'SI' },
+      { value: 'NO', label: 'NO' },
+    ],
+    colClass: 'col-12 col-md-4 col-lg-3 mb-2',
+    },
+    {
       key: 'statoDisplay',
       label: 'Stato',
       type: 'select',
@@ -106,8 +114,8 @@ export class PianoFormativoComponent implements OnInit {
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
     },
     {
-      key: 'dataTerminaPrevista',
-      label: 'Data Termina Prevista',
+      key: 'dataTerminePrevista',
+      label: 'Data Termine Prevista',
       type: 'date',
       placeholder: 'Seleziona data...',
       colClass: 'col-12 col-md-4 col-lg-3 mb-2',
@@ -208,6 +216,13 @@ export class PianoFormativoComponent implements OnInit {
       type: 'date',
     },
     {
+      key: 'impattoIsmsDisplay',  // ← CAMBIATO: da impattoIsms a impattoIsmsDisplay
+      label: 'Impatto ISMS',
+      sortable: true,
+      type: 'badge',             // ← CAMBIATO: da 'text' a 'badge' per una migliore visualizzazione
+      statusType: 'impatto'      // ← AGGIUNTO: tipo di badge personalizzato
+    },
+    {
       key: 'statoDisplay',
       label: 'Stato',
       sortable: true,
@@ -215,8 +230,14 @@ export class PianoFormativoComponent implements OnInit {
       statusType: 'assegnazione'
     },
     {
-      key: 'dataTerminaPrevista',
-      label: 'Data Termina Prevista',
+      key: 'percentualeCompletamento',
+      label: 'Percentuale Completamento',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'dataTerminePrevista',
+      label: 'Data Termine Prevista',
       sortable: true,
       type: 'date'
     },
@@ -233,6 +254,12 @@ export class PianoFormativoComponent implements OnInit {
       type: 'date',
     },
     {
+      key:'esito',
+      label: 'Esito',
+      sortable: true,
+      type: 'text',
+    },
+    {
       key: 'attestatoDisplay',
       label: 'Attestato',
       sortable: true,
@@ -242,6 +269,12 @@ export class PianoFormativoComponent implements OnInit {
   ];
 
   azioni: IAzioneDef[] = [
+    {
+      label: 'Modifica',
+      icon: 'fa fa-pen',
+      action: AzioneType.Edit,
+      color: AzioneColor.Secondary, // Stesso colore della modifica dei corsi
+    },
     {
       label: 'Elimina',
       icon: 'fa fa-trash',
@@ -257,7 +290,7 @@ export class PianoFormativoComponent implements OnInit {
     pages: [] as number[],
     displayedItems: 0,
     totalItems: 0,
-    pageSize: 20,
+    pageSize: 20, // Will be updated by TabellaGenericaComponent
     entityName: 'assegnazioni'
   };
 
@@ -302,8 +335,9 @@ export class PianoFormativoComponent implements OnInit {
           ...a,
           dipendenteNome: `${a.dipendente.nome} ${a.dipendente.cognome}`.trim(),
           corsoNome: a.corso.nome,
-          dataTerminaPrevista: a.corso.dataScadenza,
+          dataTerminePrevista: a.dataTerminePrevista,
           attestatoDisplay: a.attestato ? 'SI' : 'NO',
+          impattoIsmsDisplay: a.impattoIsms ? 'SI' : 'NO',
           statoDisplay: this.getStatoDisplayLabel(a.stato)
         }));
         this.applicaFiltri();
@@ -341,6 +375,14 @@ export class PianoFormativoComponent implements OnInit {
         }
       }
 
+      // Filter by Impatto ISMS
+      if (this.valoriFiltri['impattoIsmsDisplay']) {
+        const impattoDisplay = a.impattoIsms ? 'SI' : 'NO';
+        if (impattoDisplay !== this.valoriFiltri['impattoIsmsDisplay']) {
+          return false;
+        }
+      }
+
       // Filter by Stato
       if (this.valoriFiltri['statoDisplay']) {
         const statoDisplay = this.getStatoDisplayLabel(a.stato);
@@ -349,9 +391,9 @@ export class PianoFormativoComponent implements OnInit {
         }
       }
 
-      // Filter by Data Termina Prevista
-      if (this.valoriFiltri['dataTerminaPrevista']) {
-        if (!this.compareDates(a.corso.dataScadenza, this.valoriFiltri['dataTerminaPrevista'])) {
+      // Filter by Data Termine Prevista
+      if (this.valoriFiltri['dataTerminePrevista']) {
+        if (!this.compareDates(a.corso.dataScadenza, this.valoriFiltri['dataTerminePrevista'])) {
           return false;
         }
       }
@@ -417,7 +459,20 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   gestioneAzione(e: { tipo: string; item: any }) {
+    console.log('gestioneAzione chiamata:', e);
     switch (e.tipo) {
+      case 'edit':
+        console.log('Aprendo modal di modifica per:', e.item);
+        this.modaleService.apri({
+          titolo: 'Modifica assegnazione',
+          componente: FormModificaAssegnazioneComponent,
+          dati: e.item,
+          onConferma: (formValue: any) => {  // ✅ CORRETTO: onConferma (come corsi)
+            console.log('onConferma ricevuto:', formValue);
+            this.updateAssegnazione(e.item.id, formValue);
+          }
+        });
+        break;
       case 'delete':
         this.modaleService.apri({
           titolo: 'Conferma eliminazione',
@@ -430,13 +485,44 @@ export class PianoFormativoComponent implements OnInit {
               e.item.corsoNome +
               '"?',
           },
-          onConferma: () => this.deleteAssegnazione(e.item.id),
+          onConferma: () => this.deleteAssegnazione(e.item.id),  // ✅ CORRETTO: onConferma (come corsi)
         });
         break;
       default:
         console.error('Azione non supportata:', e.tipo);
     }
   }
+
+  updateAssegnazione(id: number, assegnazioneData: any) {
+    console.log('Dati ricevuti dal form:', assegnazioneData);
+  
+    // Converti i dati del form nel formato richiesto dal service
+    const updateData = {
+      stato: assegnazioneData.stato,
+      dataAssegnazione: assegnazioneData.dataAssegnazione || null,
+      impattoIsms: assegnazioneData.impattoIsms || false,
+      percentualeCompletamento: assegnazioneData.percentualeCompletamento || 0,
+      dataTerminePrevista: assegnazioneData.dataTerminePrevista || null,
+      dataInizio: assegnazioneData.dataInizio || null,
+      dataCompletamento: assegnazioneData.dataCompletamento || null,
+      esito: assegnazioneData.esito || null,
+      attestato: assegnazioneData.attestato || false
+    };
+
+    console.log('Dati inviati al servizio:', updateData);
+
+    this.assegnazioniService.updateAssegnazione(id, updateData).subscribe({
+      next: () => {
+        this.loadAssegnazioni();
+        this.toastr.success('Assegnazione modificata con successo');
+        this.modaleService.chiudi();
+      },
+      error: (error) => {
+        console.error('Errore durante l\'aggiornamento:', error);
+        this.toastr.error('Errore durante la modifica dell\'assegnazione');
+      },
+    });
+}
 
   // NUOVO: Metodo per gestire il click del pulsante "Assegna corso"
   onAssegnaCorso() {
@@ -477,19 +563,30 @@ export class PianoFormativoComponent implements OnInit {
   }
 
   // NUOVO: Metodo per effettuare l'assegnazione
-  private assegnaCorso(assegnazione: any) {
-    this.assegnazioniService.assignCorsoToDipendente(
-      assegnazione.dipendenteId,
-      assegnazione.corsoId,
-      assegnazione.obbligatorio || false
-    ).subscribe({
+  assegnaCorso(risultato: any) {
+    console.log('Dati ricevuti dal form:', risultato);
+    console.log('URL chiamata:', `http://${this.assegnazioniService.server}:${this.assegnazioniService.port}/api/assegnazioni/bulk`);
+    
+    // Verifica che il metodo esista
+    if (!this.assegnazioniService.createMultipleAssegnazioni) {
+      console.error('Il metodo createMultipleAssegnazioni non esiste nel service!');
+      return;
+    }
+    
+    this.assegnazioniService.createMultipleAssegnazioni(risultato).subscribe({
       next: (response) => {
-        this.toastr.success('Corso assegnato con successo', 'Successo');
-        this.loadAssegnazioni(); // Ricarica i dati per aggiornare la tabella
+        console.log('Risposta dal server:', response);
+        const count = Array.isArray(response) ? response.length : 1;
+        this.toastr.success(`${count} assegnazione/i create con successo`);
+        this.loadAssegnazioni();
+        this.modaleService.chiudi();
       },
       error: (error) => {
-        console.error('❌ Errore durante l\'assegnazione:', error);
-        this.toastr.error('Errore durante l\'assegnazione del corso', 'Errore');
+        console.error('Errore completo:', error);
+        console.error('Status:', error.status);
+        console.error('Message:', error.message);
+        console.error('URL:', error.url);
+        this.toastr.error('Errore durante l\'assegnazione del corso');
       }
     });
   }
@@ -549,4 +646,5 @@ export class PianoFormativoComponent implements OnInit {
     
     return d1.getTime() === d2.getTime();
   }
+  
 }
