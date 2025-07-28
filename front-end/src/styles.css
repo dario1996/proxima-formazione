@@ -29,6 +29,16 @@
   --color-BIANCO : #F4F4F4;
   --color-NERO : #222222;
 
+  /* COLORI AZIENDALI PASTELLO */
+  --color-BLU-PASTELLO: #A3C4E8;           /* Pastel Blue */
+  --color-VIOLA-SCURO-PASTELLO: #B7B9DD;   /* Pastel Dark Violet */
+  --color-VIOLA-CHIARO-PASTELLO: #D6E2F3;  /* Pastel Light Violet */
+  --color-PURPLE-PASTELLO: #CBA4E8;        /* Pastel Purple */
+  --color-ROSA-PASTELLO: #F7B3EA;          /* Pastel Pink */
+  --color-CELESTE-PASTELLO: #A2EAF2;       /* Pastel Light Blue */
+  --color-BIANCO-PASTELLO: #F8F8FA;        /* Soft White */
+  --color-NERO-PASTELLO : #444444;          /* Soft Black */
+
   
   /* Sidebar - UNA SOLA DICHIARAZIONE */
   --sidebar-width: 260px;
@@ -136,17 +146,33 @@ html, body {
 }
 
 .btn-primary {
-  background: #0F4C82 !important;
-  color: #fafafa !important;
+  background: var(--color-VIOLA-SCURO-PASTELLO) !important;
+  color: var(--color-VIOLA-SCURO) !important;
   border: none !important;
+  border-radius: 50px !important;
+  padding: 0px 10px 0px 10px !important;
 }
 
 .btn-primary:hover {
-  background: #0F4C82 !important;
+  background: var(--color-VIOLA-SCURO) !important;
+  color: var(--color-BIANCO-PASTELLO) !important;
 }
 
 .btn-primary:active {
-  background: #0c3d67 !important;
+  background: var(--color-VIOLA-SCURO-PASTELLO) !important;
+}
+
+.btn-secondary {
+  background: var(--color-BLU-PASTELLO) !important;
+  color: var(--color-BLU) !important;
+  border: none !important;
+  border-radius: 50px !important;
+  padding: 0px 10px 0px 10px !important;
+}
+
+.btn-secondary:hover {
+  background: var(--color-BLU) !important;
+  color: var(--color-BIANCO) !important;
 }
 
 .btn-icon {

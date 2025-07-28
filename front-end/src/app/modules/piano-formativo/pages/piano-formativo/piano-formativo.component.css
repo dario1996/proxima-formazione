@@ -225,11 +225,6 @@
   border: none;
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-  border: none;
-}
-
 .btn-danger {
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   border: none;

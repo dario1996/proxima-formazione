@@ -73,12 +73,8 @@
 }
 /* Stato attivo */
 .page-item.active .page-link {
-  background: var(--color-BLU);
-  color: #ffffff !important;
-  /* font-weight: 600; */
-  
-  /* RIMUOVO contorni per attivo */
-  border: none !important;
+  color: var(--color-BLU) !important;
+  border-radius: 50px !important;
   outline: none !important;
   box-shadow: none !important;
 }

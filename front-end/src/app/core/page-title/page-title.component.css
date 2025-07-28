@@ -70,3 +70,70 @@
     flex-wrap: wrap;
   }
 }
+
+/* Effect #2 per pulsante filtri */
+.effect.effect-2 {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  background-color: var(--color-VIOLA-SCURO, #541388);
+  font-family: 'Bitter', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 32px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: none;
+  outline: none;
+  transition: all 0.2s linear 0s;
+  cursor: pointer;
+}
+
+.effect.effect-2:before {
+  content: "\f0a4";
+  font-family: "FontAwesome";
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: -30px;
+  width: 30px;
+  height: 100%;
+  background-color: rgba(255,255,255,0.3);
+  border-radius: 0px 6px 6px 0px;
+  transition: all 0.2s linear 0s;
+  text-align: center;
+}
+
+.effect.effect-2:hover {
+  text-indent: -30px;
+  background-color: #6d28d9; /* viola più acceso su hover */
+  color: #fff;
+}
+
+.effect.effect-2:hover:before {
+  right: 0;
+  text-indent: 0px;
+}
+
+/* Mantieni lo stile del badge */
+.btn-filter-fx .filter-badge {
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.125rem 0.375rem;
+  border-radius: 12px;
+  min-width: 1.125rem;
+  text-align: center;
+  line-height: 1;
+  margin-left: 8px;
+  z-index: 1;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
