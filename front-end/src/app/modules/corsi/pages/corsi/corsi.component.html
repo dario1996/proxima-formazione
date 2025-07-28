@@ -3,8 +3,9 @@
     <app-page-title
       [title]="'Corsi'"
       [subtitle]="'Gestione dei corsi disponibili'"
-      [buttonText]="'Nuovo Corso'"
+      [buttons]="buttons"
       (buttonClick)="gestioneAzione({ tipo: 'add', item: null })"
+      (buttonActionClick)="handleButtonClick($event)"
     ></app-page-title>
   <!-- </div> -->
   
@@ -12,14 +13,14 @@
     <!-- Content Area -->
     <div class="content-area">
       <!-- Filters Section -->
-      <div class="filters-section">
+      <!-- <div class="filters-section">
         <app-advanced-filters 
           [filtri]="filtri" 
           [valori]="valoriFiltri"
           (valoriChange)="onFiltriChange($event)"
           (filtersApplied)="onFiltersApplied($event)">
         </app-advanced-filters>
-      </div>
+      </div> -->
       
       <!-- Table Container -->
       <div class="table-container">

@@ -117,34 +117,6 @@
   cursor: not-allowed;
 }
 
-.btn-primary {
-  background: hsl(222 84% 5%);
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: hsl(222 84% 4%);
-}
-
-.btn-primary:active:not(:disabled) {
-  background: hsl(222 84% 3%);
-}
-
-.btn-secondary {
-  background: white;
-  color: hsl(0 0% 45%);
-  border: 1px solid hsl(0 0% 85%);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: hsl(0 0% 96%);
-  color: hsl(0 0% 9%);
-}
-
-.btn-secondary:active:not(:disabled) {
-  background: hsl(0 0% 91%);
-}
-
 /* Alert */
 .alert {
   padding: 12px 16px;

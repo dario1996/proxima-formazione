@@ -163,7 +163,7 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     {
       text: 'Import massivo',
       icon: 'fas fa-upload',
-      class: 'btn-secondary',
+      class: 'btn-import',
       action: 'bulk-import'
     }
   ];

@@ -291,61 +291,6 @@
   gap: 0.5rem;
 }
 
-.btn {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  border: 1px solid transparent;
-  line-height: 1.25;
-}
-
-.btn-primary {
-  background: #1e293b;
-  border-color: #1e293b;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #0f172a;
-  border-color: #0f172a;
-}
-
-.btn-secondary {
-  background: #ffffff;
-  border-color: #e2e8f0;
-  color: #64748b;
-}
-
-.btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
-
-.btn-outline-secondary {
-  background: transparent;
-  border-color: #e2e8f0;
-  color: #64748b;
-}
-
-.btn-outline-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn:disabled:hover {
-  opacity: 0.5;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .modal-dialog {

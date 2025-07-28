@@ -145,7 +145,7 @@ html, body {
   border: none !important;
 }
 
-.btn-primary {
+.btn-secondary {
   background: var(--color-VIOLA-SCURO-PASTELLO) !important;
   color: var(--color-VIOLA-SCURO) !important;
   border: none !important;
@@ -153,16 +153,16 @@ html, body {
   padding: 0px 10px 0px 10px !important;
 }
 
-.btn-primary:hover {
+.btn-secondary:hover {
   background: var(--color-VIOLA-SCURO) !important;
   color: var(--color-BIANCO-PASTELLO) !important;
 }
 
-.btn-primary:active {
+.btn-secondary:active {
   background: var(--color-VIOLA-SCURO-PASTELLO) !important;
 }
 
-.btn-secondary {
+.btn-primary {
   background: var(--color-BLU-PASTELLO) !important;
   color: var(--color-BLU) !important;
   border: none !important;
@@ -170,8 +170,21 @@ html, body {
   padding: 0px 10px 0px 10px !important;
 }
 
-.btn-secondary:hover {
+.btn-primary:hover {
   background: var(--color-BLU) !important;
+  color: var(--color-BIANCO) !important;
+}
+
+.btn-import {
+  background: #e2e3e5 !important;
+  color: #535252 !important;
+  border: none !important;
+  border-radius: 50px !important;
+  padding: 0px 10px 0px 10px !important;
+}
+
+.btn-import:hover {
+  background: #706f6f !important;
   color: var(--color-BIANCO) !important;
 }
 

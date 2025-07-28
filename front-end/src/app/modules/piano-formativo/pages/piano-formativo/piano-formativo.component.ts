@@ -206,7 +206,7 @@ export class PianoFormativoComponent implements OnInit {
     {
       text: 'Import massivo',
       icon: 'fas fa-upload',
-      class: 'btn-secondary',
+      class: 'btn-import',
       action: 'bulk-import',
     },
   ];

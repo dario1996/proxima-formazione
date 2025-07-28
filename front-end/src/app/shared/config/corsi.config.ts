@@ -1,6 +1,7 @@
 import { IColumnDef } from '../models/ui/column-def';
 import { IAzioneDef, AzioneType, AzioneColor } from '../models/ui/azione-def';
 import { IFiltroDef } from '../models/ui/filtro-def';
+import { ButtonConfig } from '../../core/page-title/page-title.component';
 
 export const CORSI_COLUMNS: IColumnDef[] = [
   { key: 'nome', label: 'Nome', sortable: true, type: 'text' },
@@ -65,4 +66,20 @@ export const CORSI_FILTRI: IFiltroDef[] = [
     options: [],
     colClass: 'col-6 col-md-4 col-lg-3 mb-2',
   },
+];
+
+export const CORSI_AZIONI_PAGINA: 
+ButtonConfig[] = [
+  {
+      text: 'Filtri',
+      icon: 'fas fa-filter',
+      class: 'btn-secondary',
+      action: 'filter',
+    },
+    {
+      text: 'Nuovo Corso',
+      icon: 'fas fa-plus',
+      class: 'btn-primary',
+      action: 'add',
+    },
 ];

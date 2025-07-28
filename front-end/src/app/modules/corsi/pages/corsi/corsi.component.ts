@@ -11,13 +11,13 @@ import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-c
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { AdvancedFiltersComponent } from '../../../../shared/components/advanced-filters/advanced-filters.component';
-// AGGIUNTO: Import del PaginationFooterComponent
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
 import {
   CORSI_COLUMNS,
   CORSI_FILTRI,
   CORSI_AZIONI,
+  CORSI_AZIONI_PAGINA,
 } from '../../../../shared/config/corsi.config';
 
 @Component({
@@ -27,7 +27,6 @@ import {
     TabellaGenericaComponent,
     PageTitleComponent,
     AdvancedFiltersComponent,
-    // AGGIUNTO: PaginationFooterComponent nell'array imports
     PaginationFooterComponent,
   ],
   templateUrl: './corsi.component.html',
@@ -52,6 +51,7 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   columns = CORSI_COLUMNS;
   filtri = CORSI_FILTRI;
   actions = CORSI_AZIONI;
+  buttons = CORSI_AZIONI_PAGINA;
 
   valoriFiltri: { [key: string]: any } = {};
 
@@ -286,6 +286,17 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   cambiaPagina(page: number) {
     if (this.tabellaComponent) {
       this.tabellaComponent.goToPage(page);
+    }
+  }
+
+  
+  handleButtonClick(action: string) {
+    switch (action) {
+      case 'add':
+        this.gestioneAzione({ tipo: 'add', item: null });
+        break;
+      default:
+        console.warn('Azione non riconosciuta:', action);
     }
   }
 }
