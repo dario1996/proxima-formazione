@@ -6,7 +6,7 @@
 .table {
   width: 100%;
   border-spacing: 0;
-  font-size: 14px;
+  font-size: 12px !important;
   margin: 0;
   table-layout: fixed; /* IMPORTANTE: Forza le colonne a rispettare le larghezze definite */
 }
@@ -20,7 +20,7 @@
   vertical-align: middle;
   color: rgb(0, 0, 0);
   padding: 8px; /* RIDOTTO: da 12px a 8px */
-  font-size: 13px; /* AGGIUNTO: Font leggermente più piccolo */
+  font-size: 12px; /* AGGIUNTO: Font leggermente più piccolo */
   font-weight: 600;
 }
 

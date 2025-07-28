@@ -276,7 +276,8 @@ export class PianoFormativoComponent implements OnInit {
       key: 'esito',
       label: 'Esito',
       sortable: true,
-      type: 'text',
+      type: 'badge',
+      statusType: 'esito',
     },
     {
       key: 'attestatoDisplay',
