@@ -440,6 +440,7 @@ th .fa {
 .action-buttons .btn-outline-danger *,
 .action-buttons .btn-danger * {
   color: #de8a8a !important;
+  transition: all 0.25s ease !important;
 }
 
 .action-buttons .btn-outline-danger:hover *,
@@ -466,6 +467,7 @@ th .fa {
 .action-buttons .btn-outline-secondary *,
 .action-buttons .btn-secondary * {
   color: #a4a4a4 !important;
+  transition: all 0.25s ease !important;
 }
 
 .action-buttons .btn-outline-secondary:hover *,

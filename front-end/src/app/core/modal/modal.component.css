@@ -110,19 +110,19 @@
   color: #64748b !important;
   font-size: 1rem !important;
   cursor: pointer !important;
-  padding: 0.5rem !important;
-  border-radius: 6px !important;
+  border-radius: 50px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 2rem !important;
-  height: 2rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
   transition: all 0.15s ease !important;
 }
 
 .btn-close:hover {
-  background: #f1f5f9 !important;
-  color: #1e293b !important;
+  background-color: #ffffff !important;
+  border-radius: 50% !important;
+  color: #000000 !important;
 }
 
 .btn-close i {
