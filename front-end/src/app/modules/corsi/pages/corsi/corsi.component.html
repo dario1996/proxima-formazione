@@ -13,14 +13,17 @@
     <!-- Content Area -->
     <div class="content-area">
       <!-- Filters Section -->
-      <!-- <div class="filters-section">
-        <app-advanced-filters 
-          [filtri]="filtri" 
+      <div class="filters-section">
+        <!-- Filter Panel -->
+        <app-filter-panel
+          [filtri]="filtri"
           [valori]="valoriFiltri"
-          (valoriChange)="onFiltriChange($event)"
-          (filtersApplied)="onFiltersApplied($event)">
-        </app-advanced-filters>
-      </div> -->
+          [isOpen]="isFilterPanelOpen"
+          (close)="closeFilterPanel()"
+          (applyFilters)="applyFilters($event)"
+          (clearFilters)="clearFilters()">
+        </app-filter-panel>
+      </div>
       
       <!-- Table Container -->
       <div class="table-container">

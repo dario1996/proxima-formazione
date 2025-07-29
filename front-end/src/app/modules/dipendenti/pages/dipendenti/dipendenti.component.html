@@ -4,6 +4,7 @@
       [title]="'Dipendenti'"
       [subtitle]="'Gestione dei dipendenti disponibili'"
       [buttons]="buttons"
+      [activeFiltersCount]="getActiveFiltersCount()"
       (buttonActionClick)="handleButtonClick($event)">
     </app-page-title>
   <!-- </div> -->
@@ -11,14 +12,17 @@
   <div class="page-content" #pageContentInner>
     <!-- Content Area -->
     <div class="content-area">
-      <!-- Filters -->
+      <!-- Filters Section -->
       <div class="filters-section">
-        <app-advanced-filters 
-          [filtri]="filtri" 
+        <!-- Filter Panel -->
+        <app-filter-panel
+          [filtri]="filtri"
           [valori]="valoriFiltri"
-          (valoriChange)="onFiltriChange($event)"
-          (filtersApplied)="onFiltersApplied($event)">
-        </app-advanced-filters>
+          [isOpen]="isFilterPanelOpen"
+          (close)="closeFilterPanel()"
+          (applyFilters)="applyFilters($event)"
+          (clearFilters)="clearFilters()">
+        </app-filter-panel>
       </div>
       
       <!-- Table Container -->

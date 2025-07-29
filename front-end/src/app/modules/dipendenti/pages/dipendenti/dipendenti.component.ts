@@ -40,6 +40,7 @@ import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipende
 import { ImportDipendentiComponent } from '../../components/import-dipendenti/import-dipendenti.component';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { AdvancedFiltersComponent } from '../../../../shared/components/advanced-filters/advanced-filters.component';
+import { FilterPanelComponent } from '../../../../shared/components/filter-panel/filter-panel.component';
 
 @Component({
   selector: 'app-dipendenti',
@@ -50,6 +51,7 @@ import { AdvancedFiltersComponent } from '../../../../shared/components/advanced
     ReactiveFormsModule,
     TabellaGenericaComponent,
     AdvancedFiltersComponent,
+    FilterPanelComponent,
     PaginationFooterComponent,
     PageTitleComponent, // AGGIUNTO: Import del PageTitleComponent
   ],
@@ -58,6 +60,7 @@ import { AdvancedFiltersComponent } from '../../../../shared/components/advanced
 })
 export class DipendentiComponent implements OnInit, AfterViewInit {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
+
   
   // CORRETTO: ViewChild per referenziare la tabella come in Corsi
   @ViewChild(TabellaGenericaComponent) 
@@ -66,6 +69,8 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
   }
   
   private tabellaComponent!: TabellaGenericaComponent;
+
+  isFilterPanelOpen = false;
 
   filtri: IFiltroDef[] = [
     {
@@ -154,6 +159,12 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
 
   // Buttons configuration for page title
   buttons: ButtonConfig[] = [
+    {
+      text: 'Filtri',
+      icon: 'fas fa-filter',
+      class: 'btn-secondary',
+      action: 'filter',
+    },
     {
       text: 'Nuovo dipendente',
       icon: 'fas fa-plus',
@@ -445,6 +456,9 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
 
   handleButtonClick(action: string) {
     switch (action) {
+      case 'filter':
+        this.openFilterPanel();
+        break;
       case 'add':
         this.gestioneAzione({ tipo: 'add', item: null });
         break;
@@ -535,5 +549,31 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     if (this.tabellaComponent) {
       this.tabellaComponent.goToPage(page);
     }
+  }
+
+  // Filter panel methods
+  openFilterPanel() {
+    this.isFilterPanelOpen = true;
+  }
+
+  closeFilterPanel() {
+    this.isFilterPanelOpen = false;
+  }
+
+  applyFilters(filtri: { [key: string]: any }) {
+    this.valoriFiltri = filtri;
+    this.applicaFiltri();
+  }
+
+  clearFilters() {
+    this.valoriFiltri = {};
+    this.applicaFiltri();
+  }
+
+    // Get count of active filters
+  getActiveFiltersCount(): number {
+    return Object.values(this.valoriFiltri).filter(
+      value => value !== null && value !== undefined && value !== '',
+    ).length;
   }
 }

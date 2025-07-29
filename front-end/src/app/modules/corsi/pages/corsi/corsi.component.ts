@@ -19,6 +19,7 @@ import {
   CORSI_AZIONI,
   CORSI_AZIONI_PAGINA,
 } from '../../../../shared/config/corsi.config';
+import { FilterPanelComponent } from '../../../../shared/components/filter-panel/filter-panel.component';
 
 @Component({
   selector: 'app-corsi',
@@ -26,6 +27,7 @@ import {
     ToastrModule,
     TabellaGenericaComponent,
     PageTitleComponent,
+    FilterPanelComponent,
     AdvancedFiltersComponent,
     PaginationFooterComponent,
   ],
@@ -43,6 +45,8 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   }
   
   private tabellaComponent!: TabellaGenericaComponent; // AGGIUNTO
+
+  isFilterPanelOpen = false;
 
   corsi: ICorsi[] = [];
   corsiFiltrati: ICorsi[] = [];
@@ -292,6 +296,9 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   
   handleButtonClick(action: string) {
     switch (action) {
+      case 'filter':
+        this.openFilterPanel();
+        break;
       case 'add':
         this.gestioneAzione({ tipo: 'add', item: null });
         break;
@@ -299,4 +306,31 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
         console.warn('Azione non riconosciuta:', action);
     }
   }
+
+  // Filter panel methods
+  openFilterPanel() {
+    this.isFilterPanelOpen = true;
+  }
+
+  closeFilterPanel() {
+    this.isFilterPanelOpen = false;
+  }
+
+  applyFilters(filtri: { [key: string]: any }) {
+    this.valoriFiltri = filtri;
+    this.applicaFiltri();
+  }
+
+  clearFilters() {
+    this.valoriFiltri = {};
+    this.applicaFiltri();
+  }
+
+    // Get count of active filters
+  getActiveFiltersCount(): number {
+    return Object.values(this.valoriFiltri).filter(
+      value => value !== null && value !== undefined && value !== '',
+    ).length;
+  }
+
 }
