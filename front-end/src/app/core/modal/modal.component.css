@@ -37,10 +37,6 @@
   z-index: 1040 !important;
 }
 
-.btn-close {
-  filter: invert(1);
-}
-
 /* Ensure modal dialog is properly centered */
 .modal-dialog {
   max-width: 800px !important;      /* come filter-panel */
@@ -104,28 +100,28 @@
   flex: 1 !important;
 }
 
-.btn-close {
-  background: none !important;
+.button-close {
+  background-color: #f8d7da !important;
   border: none !important;
-  color: #64748b !important;
+  color: #721c24 !important;
   font-size: 1rem !important;
   cursor: pointer !important;
   border-radius: 50px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 1rem !important;
-  height: 1rem !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
   transition: all 0.15s ease !important;
 }
 
-.btn-close:hover {
-  background-color: #ffffff !important;
+.button-close:hover {
+  background: #d60000 !important;
   border-radius: 50% !important;
-  color: #000000 !important;
+  color: #ffffff !important;
 }
 
-.btn-close i {
+.button-close i {
   font-size: 14px !important;
 }
 
