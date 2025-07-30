@@ -157,6 +157,8 @@ html, body {
 .btn-secondary:hover {
   background: var(--color-VIOLA-SCURO) !important;
   color: var(--color-BIANCO-PASTELLO) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
 .btn-secondary:active {
@@ -175,6 +177,8 @@ html, body {
 .btn-primary:hover {
   background: var(--color-BLU) !important;
   color: var(--color-BIANCO) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
 .btn-import {
@@ -189,6 +193,8 @@ html, body {
 .btn-import:hover {
   background: #706f6f !important;
   color: var(--color-BIANCO) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
 .btn-cancel {
@@ -203,6 +209,8 @@ html, body {
 .btn-cancel:hover {
   background: #706f6f !important;
   color: var(--color-BIANCO) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
 .btn-icon {
