@@ -50,7 +50,6 @@ import { FilterPanelComponent } from '../../../../shared/components/filter-panel
     FormsModule,
     ReactiveFormsModule,
     TabellaGenericaComponent,
-    AdvancedFiltersComponent,
     FilterPanelComponent,
     PaginationFooterComponent,
     PageTitleComponent, // AGGIUNTO: Import del PageTitleComponent

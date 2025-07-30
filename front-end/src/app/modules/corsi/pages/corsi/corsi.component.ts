@@ -28,7 +28,6 @@ import { FilterPanelComponent } from '../../../../shared/components/filter-panel
     TabellaGenericaComponent,
     PageTitleComponent,
     FilterPanelComponent,
-    AdvancedFiltersComponent,
     PaginationFooterComponent,
   ],
   templateUrl: './corsi.component.html',
