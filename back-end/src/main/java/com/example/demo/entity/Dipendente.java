@@ -76,7 +76,6 @@ public class Dipendente {
     @JsonIgnore
     private List<LogLogin> logLogin;
 
-    // Costruttori
     public Dipendente() {
         this.dataCreazione = LocalDateTime.now();
     }
@@ -88,18 +87,15 @@ public class Dipendente {
         this.email = email;
     }
 
-    // Metodo per aggiornare timestamp modifica
     @PreUpdate
     public void preUpdate() {
         this.dataModifica = LocalDateTime.now();
     }
 
-    // Metodo helper per nome completo
     public String getNomeCompleto() {
         return nome + " " + cognome;
     }
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }

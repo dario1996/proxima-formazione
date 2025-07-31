@@ -17,7 +17,6 @@ public class AssegnazioneBulkImportRequest {
     @Schema(description = "Opzioni di importazione")
     private BulkImportOptions options;
 
-    // Costruttori
     public AssegnazioneBulkImportRequest() {
         this.options = new BulkImportOptions();
     }
@@ -27,7 +26,6 @@ public class AssegnazioneBulkImportRequest {
         this.options = new BulkImportOptions();
     }
 
-    // Getters e Setters
     public List<AssegnazioneBulkImportItem> getAssegnazioni() {
         return assegnazioni;
     }
@@ -56,12 +54,10 @@ public class AssegnazioneBulkImportRequest {
         @Schema(description = "Se creare automaticamente i corsi mancanti durante l'importazione", example = "false")
         private boolean creaCorsiMancanti = false;
 
-        // Costruttori
-        public BulkImportOptions() {
+            public BulkImportOptions() {
         }
 
-        // Getters e Setters
-        public boolean isSkipErrors() {
+            public boolean isSkipErrors() {
             return skipErrors;
         }
 

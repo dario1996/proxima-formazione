@@ -61,7 +61,6 @@ public class DipendenteCreateRequest {
     @Schema(description = "Responsabile diretto", example = "Mario Rossi")
     private String responsabile;
 
-    // Costruttori
     public DipendenteCreateRequest() {
     }
 
@@ -75,7 +74,6 @@ public class DipendenteCreateRequest {
         this.commerciale = commerciale;
     }
 
-    // Getters e Setters
     public String getNome() {
         return nome;
     }

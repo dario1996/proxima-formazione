@@ -17,7 +17,6 @@ public class DipendenteBulkImportRequest {
     @Schema(description = "Opzioni di importazione")
     private BulkImportOptions options;
 
-    // Costruttori
     public DipendenteBulkImportRequest() {
         this.options = new BulkImportOptions();
     }
@@ -27,7 +26,6 @@ public class DipendenteBulkImportRequest {
         this.options = new BulkImportOptions();
     }
 
-    // Getters e Setters
     public List<DipendenteBulkImportItem> getDipendenti() {
         return dipendenti;
     }
@@ -59,12 +57,10 @@ public class DipendenteBulkImportRequest {
         @Schema(description = "Commerciale di default da assegnare se non specificato", example = "Generale")
         private String defaultCommerciale = "Generale";
 
-        // Costruttori
-        public BulkImportOptions() {
+            public BulkImportOptions() {
         }
 
-        // Getters e Setters
-        public boolean isSkipErrors() {
+            public boolean isSkipErrors() {
             return skipErrors;
         }
 

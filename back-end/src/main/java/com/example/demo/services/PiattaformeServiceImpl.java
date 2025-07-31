@@ -29,13 +29,4 @@ public class PiattaformeServiceImpl implements PiattaformeService {
       piattaformaRepository.deleteById(piattaforma.getId());
     }
 
-  // Implementazione dei metodi del servizio per gestire le piattaforme
-  // Ad esempio, potresti avere metodi per ottenere tutte le piattaforme,
-  // aggiungere una nuova piattaforma, aggiornare o eliminare una piattaforma.
-
-  // Esempio di metodo per ottenere tutte le piattaforme
-  // public List<Piattaforma> getAllPiattaforme() {
-  // return piattaformaRepository.findAll();
-  // }
-
 }

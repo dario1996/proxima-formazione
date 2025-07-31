@@ -83,7 +83,6 @@ public class LogLogin {
     @Column(name = "processed", nullable = false)
     private Boolean processed = false; // Se il log è stato processato per aggiornare le assegnazioni
 
-    // Costruttori
     public LogLogin() {
         this.dataImport = LocalDateTime.now();
     }
@@ -95,13 +94,11 @@ public class LogLogin {
         this.fornitoreContenuto = fornitoreContenuto;
     }
 
-    // Metodi helper
     public boolean isCompletato() {
         return percentualeCompletamento != null &&
                 percentualeCompletamento.compareTo(new BigDecimal("100")) >= 0;
     }
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }

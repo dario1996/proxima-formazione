@@ -25,7 +25,6 @@ public class AssegnazioneBulkImportResponse {
     @Schema(description = "Lista delle assegnazioni importate con successo")
     private List<AssegnazioneBulkImportItem> importedItems;
 
-    // Costruttori
     public AssegnazioneBulkImportResponse() {
     }
 
@@ -36,7 +35,6 @@ public class AssegnazioneBulkImportResponse {
         this.updatedCount = updatedCount;
     }
 
-    // Getters e Setters
     public int getTotalProcessed() {
         return totalProcessed;
     }
@@ -103,8 +101,7 @@ public class AssegnazioneBulkImportResponse {
         @Schema(description = "Elemento che ha causato l'errore")
         private AssegnazioneBulkImportItem item;
 
-        // Costruttori
-        public BulkImportError() {
+            public BulkImportError() {
         }
 
         public BulkImportError(int row, String message) {
@@ -119,8 +116,7 @@ public class AssegnazioneBulkImportResponse {
             this.value = value;
         }
 
-        // Getters e Setters
-        public int getRow() {
+            public int getRow() {
             return row;
         }
 

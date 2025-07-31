@@ -8,10 +8,8 @@ public class CreateMultipleAssegnazioniRequest {
     private boolean obbligatorio;
     private String dataTerminePrevista;
     
-    // Costruttori
     public CreateMultipleAssegnazioniRequest() {}
     
-    // Getters e Setters
     public List<Long> getDipendentiIds() {
         return dipendentiIds;
     }

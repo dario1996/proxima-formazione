@@ -110,7 +110,6 @@ public class JwtTokenUtil {
             final String username = getUsernameFromToken(refreshToken);
             final var claims = getAllClaimsFromToken(refreshToken);
             
-            // Create new access token with fresh expiration
             Map<String, Object> newClaims = new HashMap<>();
             newClaims.put("authorities", claims.get("authorities"));
             newClaims.put("type", "ACCESS_TOKEN");
@@ -122,7 +121,6 @@ public class JwtTokenUtil {
         }
     }
 
-    // Activity-based token extension
     public String extendTokenIfNeeded(String token, UserDetails userDetails) {
         if (!validateToken(token, userDetails)) {
             return null;
@@ -133,7 +131,6 @@ public class JwtTokenUtil {
             final Date now = new Date();
             final long timeUntilExpiration = expiration.getTime() - now.getTime();
             
-            // If token expires within 15 minutes, extend it
             final long fifteenMinutes = 15 * 60 * 1000;
             if (timeUntilExpiration < fifteenMinutes) {
                 log.info("Extending token for user: " + userDetails.getUsername());
@@ -143,6 +140,6 @@ public class JwtTokenUtil {
             log.warning("Token extension check failed: " + e.getMessage());
         }
         
-        return token; // Return original token if no extension needed
+        return token;
     }
 }
