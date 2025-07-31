@@ -58,28 +58,20 @@ public class UtentiController {
 	        log.info("Modifica Utente");
 	        utente.setUsername(checkUtente.getUsername());
 
-	        // Mantiene i dati non aggiornati
 	        if (utente.getPassword() == null || utente.getPassword().isBlank()) {
-	            utente.setPassword(checkUtente.getPassword()); // Evita di codificare una password già codificata
+	            utente.setPassword(checkUtente.getPassword());
 	        } else {
-	            utente.setPassword(passwordEncoder.encode(utente.getPassword())); // Codifica solo se cambiata
+	            utente.setPassword(passwordEncoder.encode(utente.getPassword()));
 	        }
 
 	    } else {
 	        log.info("Inserimento Nuovo Utente");
-	        utente.setPassword(passwordEncoder.encode(utente.getPassword())); // Sempre codificata all'inizio
+	        utente.setPassword(passwordEncoder.encode(utente.getPassword()));
 	    }
 
-	    // Gestione lista ruoli (da List<String> a array per PostgreSQL)
 	    if (utente.getRuoli() != null) {
 	        utente.setRuoli(Arrays.asList(utente.getRuoli().toArray(new String[0])));
 	    }
-
-
-	    // Associa i negozi all'utente
-	    // if (utente.getNegozi() != null) {
-	    //     utente.getNegozi().forEach(negozio -> negozio.setUtente(utente));
-	    // }
 
 	    utentiService.Save(utente);
 

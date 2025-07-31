@@ -33,12 +33,10 @@ public class Piattaforma {
     @Column(nullable = false)
     private Boolean attiva = true;
 
-    // Relazione uno-a-molti con Corso
     @OneToMany(mappedBy = "piattaforma", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Corso> corsi;
 
-    // Costruttori
     public Piattaforma() {
         this.dataCreazione = LocalDateTime.now();
     }
@@ -48,13 +46,11 @@ public class Piattaforma {
         this.nome = nome;
     }
 
-    // Metodo per aggiornare timestamp modifica
     @PreUpdate
     public void preUpdate() {
         this.dataModifica = LocalDateTime.now();
     }
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }

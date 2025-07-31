@@ -32,14 +32,12 @@ public class DipendenteBulkImportResponse {
     @Schema(description = "Tempo di esecuzione in millisecondi", example = "1500")
     private long executionTimeMs;
 
-    // Costruttori
     public DipendenteBulkImportResponse() {
         this.errors = new ArrayList<>();
         this.importedIds = new ArrayList<>();
         this.updatedIds = new ArrayList<>();
     }
 
-    // Getters e Setters
     public int getTotalProcessed() {
         return totalProcessed;
     }
@@ -104,7 +102,6 @@ public class DipendenteBulkImportResponse {
         this.executionTimeMs = executionTimeMs;
     }
 
-    // Metodi di utilità
     public void addError(int rowIndex, String field, String message, String value) {
         this.errors.add(new ImportError(rowIndex, field, message, value));
         this.errorCount++;
@@ -138,8 +135,7 @@ public class DipendenteBulkImportResponse {
         @Schema(description = "Nominativo del dipendente (se disponibile)", example = "Mario Rossi")
         private String nominativo;
 
-        // Costruttori
-        public ImportError() {
+            public ImportError() {
         }
 
         public ImportError(int rowIndex, String field, String message, String value) {
@@ -154,8 +150,7 @@ public class DipendenteBulkImportResponse {
             this.nominativo = nominativo;
         }
 
-        // Getters e Setters
-        public int getRowIndex() {
+            public int getRowIndex() {
             return rowIndex;
         }
 

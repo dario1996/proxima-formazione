@@ -47,7 +47,6 @@ public class AssegnazioneBulkImportItem {
     @Schema(description = "Modalità", example = "Linkedin")
     private String modalita;
 
-    // Costruttori
     public AssegnazioneBulkImportItem() {
     }
 
@@ -56,7 +55,6 @@ public class AssegnazioneBulkImportItem {
         this.corso = corso;
     }
 
-    // Getters e Setters
     public String getNominativo() {
         return nominativo;
     }

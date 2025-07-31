@@ -102,7 +102,6 @@ public class Corso {
         SCADUTO
     }
 
-    // Costruttori
     public Corso() {
         this.dataCreazione = LocalDateTime.now();
     }
@@ -113,13 +112,11 @@ public class Corso {
         this.piattaforma = piattaforma;
     }
 
-    // Metodo per aggiornare timestamp modifica
     @PreUpdate
     public void preUpdate() {
         this.dataModifica = LocalDateTime.now();
     }
 
-    // Metodi helper
     public boolean isScaduto() {
         return dataScadenza != null && LocalDate.now().isAfter(dataScadenza);
     }
@@ -130,7 +127,6 @@ public class Corso {
                 !isScaduto();
     }
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }

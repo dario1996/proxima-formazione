@@ -10,10 +10,8 @@ public class MultipleAssegnazionResponse {
     private int totaleCreate;
     private int totaleErrori;
     
-    // Costruttori
     public MultipleAssegnazionResponse() {}
     
-    // Getters e Setters
     public List<Assegnazione> getAssegnazioniCreate() {
         return assegnazioniCreate;
     }

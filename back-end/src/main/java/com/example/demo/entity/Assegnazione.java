@@ -93,7 +93,6 @@ public class Assegnazione {
         INTERROTTO
     }
 
-    // Costruttori
     public Assegnazione() {
         this.dataCreazione = LocalDateTime.now();
         this.dataAssegnazione = LocalDate.now();
@@ -105,13 +104,11 @@ public class Assegnazione {
         this.corso = corso;
     }
 
-    // Metodo per aggiornare timestamp modifica
     @PreUpdate
     public void preUpdate() {
         this.dataModifica = LocalDateTime.now();
     }
 
-    // Metodi helper
     public boolean isCompletato() {
         return stato == StatoAssegnazione.TERMINATO;
     }
@@ -122,7 +119,6 @@ public class Assegnazione {
                 !isCompletato();
     }
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }

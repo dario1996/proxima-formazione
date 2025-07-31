@@ -65,11 +65,9 @@ public class CorsoCreateRequest {
     @Schema(description = "Indica se viene rilasciata una certificazione", example = "false")
     private Boolean certificazioneRilasciata = false;
 
-    // Costruttori
     public CorsoCreateRequest() {
     }
 
-    // Getters e Setters
     public String getNome() {
         return nome;
     }
@@ -174,7 +172,6 @@ public class CorsoCreateRequest {
         this.certificazioneRilasciata = certificazioneRilasciata;
     }
 
-    // Helper method per convertire stato stringa in enum
     public Corso.StatoCorso getStatoEnum() {
         try {
             return Corso.StatoCorso.valueOf(stato.toUpperCase());

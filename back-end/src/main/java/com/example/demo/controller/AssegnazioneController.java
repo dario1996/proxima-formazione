@@ -440,11 +440,8 @@ public class AssegnazioneController {
             AssegnazioneBulkImportResponse response = assegnazioneBulkImportService.importAssegnazioni(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // Log dell'errore
             log.error("Error during bulk import", e);
-            e.printStackTrace();
 
-            // Risposta di errore
             AssegnazioneBulkImportResponse errorResponse = new AssegnazioneBulkImportResponse();
             errorResponse.setTotalProcessed(0);
             errorResponse.setSuccessCount(0);

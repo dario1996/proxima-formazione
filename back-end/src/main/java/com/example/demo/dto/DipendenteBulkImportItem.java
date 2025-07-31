@@ -41,7 +41,6 @@ public class DipendenteBulkImportItem {
     @Schema(description = "Responsabile diretto", example = "Mario Rossi")
     private String responsabile;
 
-    // Costruttori
     public DipendenteBulkImportItem() {
     }
 
@@ -51,7 +50,6 @@ public class DipendenteBulkImportItem {
         this.azienda = azienda;
     }
 
-    // Getters e Setters
     public String getNominativo() {
         return nominativo;
     }
