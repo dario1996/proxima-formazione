@@ -39,7 +39,10 @@
             </tr>
         </thead>
         <tbody class="table-body">
-        <tr *ngFor="let row of paginatedData" class="row-clickable align-middle" (click)="rowClick.emit(row)">
+        <tr *ngFor="let row of paginatedData"
+            [class.row-clickable]="rowClickable"
+            class="align-middle"
+            (click)="rowClick.emit(row)">
             <td *ngFor="let col of columns">
               <ng-container [ngSwitch]="col.type">
                 <app-status-badge *ngSwitchCase="'badge'" 

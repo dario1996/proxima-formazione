@@ -127,7 +127,7 @@
 
 /* Modal Styles */
 .modal-body {
-  padding: 1.5rem;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 1rem;

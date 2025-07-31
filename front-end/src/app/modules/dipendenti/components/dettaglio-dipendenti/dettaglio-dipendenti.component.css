@@ -12,7 +12,7 @@
 
 .modal-header {
   background: #ffffff !important;
-  padding: 1.5rem 1.5rem 0.75rem 1.5rem !important;
+  padding: 12px!important;
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
@@ -37,7 +37,7 @@
 }
 
 .modal-body {
-  padding: 0 1.5rem 1.5rem 1.5rem !important;
+  padding: 12px !important;
   overflow-y: auto !important;
   flex: 1 !important;
   margin: 0 !important;
@@ -53,7 +53,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
-  margin-top: 0.5rem;
 }
 
 .detail-field {
