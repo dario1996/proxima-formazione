@@ -74,34 +74,7 @@
 .table-container {
   flex: 1;
   min-height: 0;
-  max-height: fit-content;
-  /* margin-bottom: var(--spacing-md); */
   overflow: hidden; /* Prevent table from overflowing */
-}
-
-.table {
-  margin-bottom: 0;
-}
-
-.table thead th {
-  background-color: #054b9a;
-  /* border-bottom: 2px solid #dee2e6; */
-  font-weight: bo;
-  color: #f8f9fa;
-}
-
-.table tbody tr {
-  transition: background-color 0.2s;
-}
-
-.table tbody tr:hover {
-  background-color: #f8f9fa;
-}
-
-.table td {
-  padding: 1rem 0.75rem;
-  vertical-align: middle;
-  border-top: 1px solid #dee2e6;
 }
 
 /* Action Buttons */
@@ -260,7 +233,7 @@
 }
 
 /* Custom Scrollbar */
-.table-container::-webkit-scrollbar {
+/* .table-container::-webkit-scrollbar {
   height: 8px;
 }
 
@@ -276,7 +249,7 @@
 
 .table-container::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
-}
+} */
 
 /* Search dropdown styles */
 .search-container {
@@ -398,11 +371,11 @@
 }
 
 .pagination-container {
-  /* flex-shrink: 0; */
-  /* flex-basis: auto; */
-  /* padding-top: var(--spacing-sm); */
+  flex-shrink: 0;
+  flex-basis: auto;
+  padding-top: var(--spacing-sm);
   border-top: 1px solid var(--color-border);
   background: var(--color-background);
-  /* position: relative; */
+  position: relative;
   z-index: 10; /* Ensure pagination stays on top */
 }

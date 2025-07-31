@@ -51,7 +51,6 @@
           </div>
 
           <!-- Pagination Footer -->
-          <div class="pagination-container">
             <app-pagination-footer
               [currentPage]="paginationInfo.currentPage"
               [totalPages]="paginationInfo.totalPages"
@@ -62,7 +61,6 @@
               [entityName]="paginationInfo.entityName"
               (pageChange)="cambiaPagina($event)">
             </app-pagination-footer>
-          </div>
         </div>
 
         <!-- Future tabs can be added here -->
