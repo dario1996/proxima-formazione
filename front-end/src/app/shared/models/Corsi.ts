@@ -1,6 +1,7 @@
 import { IPiattaforma } from "./Piattaforma";
 
 export interface ICorsi {
+    toLowerCase(): unknown;
     id: number;
     nome: string;
     categoria: string;

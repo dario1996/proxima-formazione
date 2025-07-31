@@ -5,7 +5,10 @@
       [subtitle]="'Gestione dei dipendenti disponibili'"
       [buttons]="buttons"
       [activeFiltersCount]="getActiveFiltersCount()"
-      (buttonActionClick)="handleButtonClick($event)">
+      (buttonActionClick)="handleButtonClick($event)"
+      [searchFields]="searchFields"
+      (searchChange)="filtraTabella($event)"
+      >
     </app-page-title>
   <!-- </div> -->
   

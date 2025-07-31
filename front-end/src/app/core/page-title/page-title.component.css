@@ -55,6 +55,27 @@
   margin-left: 0.25rem;
 }
 
+.search-fields {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.search-input {
+  min-width: 140px;
+}
+
+.form-control {
+  height: 38px;
+  font-size: 12px;
+  border-radius: 50px;
+  border: 1px solid #ced4da;
+  transition:
+      border-color 0.15s ease-in-out,
+      box-shadow 0.15s ease-in-out;
+}
+
 @media (max-width: 768px) {
   .page-header-content {
     flex-direction: column;

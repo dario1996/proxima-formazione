@@ -171,6 +171,7 @@
 
 /* Form Styles */
 .form-control {
+  font-size: 12px;
   border-radius: 6px;
   border: 1px solid #ced4da;
   transition:

@@ -58,6 +58,11 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
 
   valoriFiltri: { [key: string]: any } = {};
 
+  searchFields = [
+    { key: 'nome', placeholder: 'Cerca Nome Corso' },
+    { key: 'macroArgomento', placeholder: 'Cerca Macro-Argomento' }
+  ];
+
   // AGGIUNTO: Dati per il footer di paginazione
   paginationInfo = {
     currentPage: 1,
@@ -331,5 +336,23 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
       value => value !== null && value !== undefined && value !== '',
     ).length;
   }
+
+  filtraTabella(event: { [key: string]: string }) {
+    this.corsiFiltrati = this.corsi.filter(row =>
+      (row.nome?.toLowerCase() || '').includes((event['nome'] || '').toLowerCase()) &&
+      (row.argomento?.toLowerCase() || '').includes((event['macroArgomento'] || '').toLowerCase())
+    );
+  }
+
+  // filtraTabella(event: { [key: string]: string }) {
+  //   const nome = event['nome'] || '';
+  //   const argomento = event['argomento'] || '';
+  //   this.corsi = this.corsi.filter(row => {
+  //     const nome = `${row.nome} ${row.nome}`.trim().toLowerCase();
+  //     const argomento = row.nome ? row.argomento.toLowerCase() : '';
+  //     return nome.includes(nome.toLowerCase()) &&
+  //       argomento.includes(argomento.toLowerCase());
+  //   });
+  // }
 
 }

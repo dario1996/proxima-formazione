@@ -6,6 +6,17 @@
         </p>
     </div>
     <div class="page-actions">
+        <div class="search-fields" *ngIf="searchFields.length > 0">
+            <input
+                *ngFor="let field of searchFields"
+                type="text"
+                class="form-control form-control-sm search-input"
+                [placeholder]="field.placeholder"
+                [(ngModel)]="searchValues[field.key]"
+                (input)="onSearchChange()"
+                autocomplete="off"
+            />
+        </div>
         <!-- Multiple buttons support -->
         <div *ngIf="buttons.length > 0" class="buttons-container">
             <button

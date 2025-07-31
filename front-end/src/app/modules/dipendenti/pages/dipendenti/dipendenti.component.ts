@@ -69,6 +69,10 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
   
   private tabellaComponent!: TabellaGenericaComponent;
 
+  searchFields = [
+    { key: 'nominativo', placeholder: 'Cerca Dipendente' }
+  ];
+
   isFilterPanelOpen = false;
 
   filtri: IFiltroDef[] = [
@@ -575,4 +579,11 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
       value => value !== null && value !== undefined && value !== '',
     ).length;
   }
+
+  filtraTabella(event: { [key: string]: string }) {
+  const nominativo = event['nominativo'] || '';
+  this.dipendentiFiltrati = this.dipendenti.filter(row =>
+    (`${row.nome} ${row.cognome}`.toLowerCase()).includes(nominativo.toLowerCase())
+  );
+}
 }

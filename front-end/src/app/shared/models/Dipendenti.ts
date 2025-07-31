@@ -1,4 +1,5 @@
 export interface IDipendenti {
+  toLowerCase(): unknown;
   id: number;
   nome: string;
   cognome: string;

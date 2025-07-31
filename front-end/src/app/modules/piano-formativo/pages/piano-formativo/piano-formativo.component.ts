@@ -313,6 +313,12 @@ export class PianoFormativoComponent implements OnInit {
     entityName: 'assegnazioni',
   };
 
+  searchTerms = { dipendente: '', corso: '' };
+  searchFields = [
+  { key: 'dipendente', placeholder: 'Cerca Dipendente' },
+  { key: 'corso', placeholder: 'Cerca Corso' }
+];
+
   constructor(
     private assegnazioniService: AssegnazioniService,
     private dipendentiService: DipendentiService,
@@ -713,5 +719,26 @@ export class PianoFormativoComponent implements OnInit {
     d2.setHours(0, 0, 0, 0);
 
     return d1.getTime() === d2.getTime();
+  }
+
+  filtraTabella(event: { [key: string]: string }) {
+    // Esempio per piano formativo:
+    const dipendente = event['dipendente'] || '';
+    const corso = event['corso'] || '';
+    this.formazioneDipendentiFiltrato = this.assegnazioni.filter(row => {
+      const nominativo = `${row.dipendente.nome} ${row.dipendente.cognome}`.trim().toLowerCase();
+      const corsoNome = row.corso.nome ? row.corso.nome.toLowerCase() : '';
+      return nominativo.includes(dipendente.toLowerCase()) &&
+        corsoNome.includes(corso.toLowerCase());
+    });
+  }
+
+  aggiornaFiltrati() {
+    this.formazioneDipendentiFiltrato = this.assegnazioni.filter(row => {
+      const nominativo = `${row.dipendente.nome} ${row.dipendente.cognome}`.trim().toLowerCase();
+      const corsoNome = row.corso.nome ? row.corso.nome.toLowerCase() : '';
+      return nominativo.includes(this.searchTerms.dipendente.toLowerCase()) &&
+        corsoNome.includes(this.searchTerms.corso.toLowerCase());
+    });
   }
 }
