@@ -10,7 +10,6 @@ import { FormCorsiComponent } from '../../components/form-corsi/form-corsi.compo
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { PageTitleComponent } from '../../../../core/page-title/page-title.component';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { AdvancedFiltersComponent } from '../../../../shared/components/advanced-filters/advanced-filters.component';
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { PiattaformeService } from '../../../../core/services/data/piattaforme.service';
 import {
@@ -37,13 +36,12 @@ import { FilterPanelComponent } from '../../../../shared/components/filter-panel
 export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
   
-  // AGGIUNTO: ViewChild per referenziare la tabella
   @ViewChild(TabellaGenericaComponent) 
   set tabella(component: TabellaGenericaComponent) {
     this.tabellaComponent = component;
   }
   
-  private tabellaComponent!: TabellaGenericaComponent; // AGGIUNTO
+  private tabellaComponent!: TabellaGenericaComponent;
 
   isFilterPanelOpen = false;
 
@@ -63,14 +61,13 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
     { key: 'macroArgomento', placeholder: 'Cerca Macro-Argomento' }
   ];
 
-  // AGGIUNTO: Dati per il footer di paginazione
   paginationInfo = {
     currentPage: 1,
     totalPages: 1,
     pages: [] as number[],
     displayedItems: 0,
     totalItems: 0,
-    pageSize: 20, // Will be updated by TabellaGenericaComponent
+    pageSize: 20,
     entityName: 'corsi'
   };
 
@@ -83,12 +80,10 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
   ) {}
 
   ngAfterViewInit() {
-    // RIMOSSO: updatePageSize() e listener resize
     this.cd.detectChanges();
   }
 
   ngOnChanges() {
-    // RIMOSSO: updatePageSize() e listener resize
     this.cd.detectChanges();
   }
 
@@ -110,9 +105,7 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
       },
       error: error => {
         console.log(error);
-        // Check if the error is about no courses available - don't show toast for this
         if (error && error.includes && error.includes('Nessun corso disponibile a sistema')) {
-          // Set empty array and don't show toast when no courses are available
           this.corsi = [];
           this.applicaFiltri();
           this.cd.detectChanges();
@@ -225,7 +218,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
 
   onFiltriChange(valori: { [key: string]: any }) {
     this.valoriFiltri = valori;
-    // Note: No immediate filter application - filters are applied only when the user clicks "Apply" in the panel
   }
 
   onFiltersApplied(valori: { [key: string]: any }) {
@@ -249,7 +241,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
       ) {
         return false;
       }
-      // Filter by ISMS - using any type to access potentially dynamic property
       if (this.valoriFiltri['isms']) {
         const ismsValue = (c as any).isms ? (c as any).isms.trim() : null;
         const filterValue = this.valoriFiltri['isms'];
@@ -286,7 +277,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
     }
   }
 
-  // CORRETTI: Metodi per la paginazione
   aggiornaPaginazione(paginationData: any) {
     this.paginationInfo = { ...paginationData };
   }
@@ -311,7 +301,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
     }
   }
 
-  // Filter panel methods
   openFilterPanel() {
     this.isFilterPanelOpen = true;
   }
@@ -330,7 +319,6 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
     this.applicaFiltri();
   }
 
-    // Get count of active filters
   getActiveFiltersCount(): number {
     return Object.values(this.valoriFiltri).filter(
       value => value !== null && value !== undefined && value !== '',
@@ -343,16 +331,5 @@ export class CorsiComponent implements AfterViewInit, OnInit, OnChanges {
       (row.argomento?.toLowerCase() || '').includes((event['macroArgomento'] || '').toLowerCase())
     );
   }
-
-  // filtraTabella(event: { [key: string]: string }) {
-  //   const nome = event['nome'] || '';
-  //   const argomento = event['argomento'] || '';
-  //   this.corsi = this.corsi.filter(row => {
-  //     const nome = `${row.nome} ${row.nome}`.trim().toLowerCase();
-  //     const argomento = row.nome ? row.argomento.toLowerCase() : '';
-  //     return nome.includes(nome.toLowerCase()) &&
-  //       argomento.includes(argomento.toLowerCase());
-  //   });
-  // }
 
 }

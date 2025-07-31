@@ -13,28 +13,18 @@ import { CommonModule } from '@angular/common';
 import {
   FormsModule,
   ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
 } from '@angular/forms';
-import { ModalComponent } from '../../../../core/modal/modal.component';
-import { NotificationModalComponent } from '../../../../core/modal/notification-modal.component';
-import { ConfirmationModalComponent } from '../../../../core/modal/confirmation-modal.component';
 
 import {
   IAssegnazione,
   AssegnazioneStato,
 } from '../../../../shared/models/Assegnazione';
 import { IDipendenti } from '../../../../shared/models/Dipendenti';
-import { ICorsi } from '../../../../shared/models/Corsi';
 
 import { AssegnazioniService } from '../../../../core/services/data/assegnazioni.service';
 import { DipendentiService } from '../../../../core/services/data/dipendenti.service';
-import { CorsiService } from '../../../../core/services/data/corsi.service';
-import { forkJoin } from 'rxjs';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
 import { FilterPanelComponent } from '../../../../shared/components/filter-panel/filter-panel.component';
-import { FilterButtonComponent } from '../../../../shared/components/filter-button/filter-button.component';
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { DeleteConfirmComponent } from '../../../../core/delete-confirm/delete-confirm.component';
 import { ToastrService } from 'ngx-toastr';
@@ -68,7 +58,6 @@ import { FormModificaAssegnazioneComponent } from '../../components/form-modific
 export class PianoFormativoComponent implements OnInit {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
 
-  // CORRETTO: ViewChild per referenziare la tabella come in Corsi
   @ViewChild(TabellaGenericaComponent)
   set tabella(component: TabellaGenericaComponent) {
     this.tabellaComponent = component;
@@ -76,7 +65,6 @@ export class PianoFormativoComponent implements OnInit {
 
   private tabellaComponent!: TabellaGenericaComponent;
 
-  // Filter panel state
   isFilterPanelOpen = false;
 
   filtri: IFiltroDef[] = [
@@ -188,7 +176,6 @@ export class PianoFormativoComponent implements OnInit {
   assegnazioni: IAssegnazione[] = [];
   formazioneDipendentiFiltrato: IAssegnazione[] = [];
 
-  // Buttons configuration for page title
   buttons: ButtonConfig[] = [
     {
       text: 'Filtri',
@@ -234,11 +221,11 @@ export class PianoFormativoComponent implements OnInit {
       type: 'date',
     },
     {
-      key: 'impattoIsmsDisplay', // ← CAMBIATO: da impattoIsms a impattoIsmsDisplay
+      key: 'impattoIsmsDisplay',
       label: 'Impatto ISMS',
       sortable: true,
-      type: 'badge', // ← CAMBIATO: da 'text' a 'badge' per una migliore visualizzazione
-      statusType: 'impatto', // ← AGGIUNTO: tipo di badge personalizzato
+      type: 'badge',
+      statusType: 'impatto',
     },
     {
       key: 'statoDisplay',
@@ -292,7 +279,7 @@ export class PianoFormativoComponent implements OnInit {
       label: 'Modifica',
       icon: 'fa fa-pen',
       action: AzioneType.Edit,
-      color: AzioneColor.Secondary, // Stesso colore della modifica dei corsi
+      color: AzioneColor.Secondary,
     },
     {
       label: 'Elimina',
@@ -302,14 +289,13 @@ export class PianoFormativoComponent implements OnInit {
     },
   ];
 
-  // CORRETTO: Dati per il footer di paginazione come in Corsi
   paginationInfo = {
     currentPage: 1,
     totalPages: 1,
     pages: [] as number[],
     displayedItems: 0,
     totalItems: 0,
-    pageSize: 20, // Will be updated by TabellaGenericaComponent
+    pageSize: 20,
     entityName: 'assegnazioni',
   };
 
@@ -328,15 +314,12 @@ export class PianoFormativoComponent implements OnInit {
   ) {}
 
   ngAfterViewInit() {
-    // CORRETTO: Rimosso updatePageSize come in Corsi
     this.cd.detectChanges();
   }
 
   ngOnInit(): void {
     this.loadAssegnazioni();
   }
-
-  // RIMOSSO: updatePageSize() method come in Corsi
 
   private getStatoDisplayLabel(stato: AssegnazioneStato): string {
     switch (stato) {
@@ -367,7 +350,6 @@ export class PianoFormativoComponent implements OnInit {
         }));
         this.applicaFiltri();
         this.cd.detectChanges();
-        // AGGIUNTO: Aggiorna totalItems come in Corsi
         this.paginationInfo.totalItems = this.assegnazioni.length;
       },
       error: error => {
@@ -379,7 +361,6 @@ export class PianoFormativoComponent implements OnInit {
   applicaFiltri() {
     this.formazioneDipendentiFiltrato = this.assegnazioni.filter(
       (a: IAssegnazione) => {
-        // Filter by Dipendente Nome
         if (this.valoriFiltri['dipendenteNome']) {
           const nominativo = `${a.dipendente.nome} ${a.dipendente.cognome}`
             .trim()
@@ -393,7 +374,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Corso Nome
         if (this.valoriFiltri['corsoNome']) {
           if (
             !a.corso.nome
@@ -404,7 +384,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Data Assegnazione
         if (this.valoriFiltri['dataAssegnazione']) {
           if (
             !this.compareDates(
@@ -416,7 +395,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Impatto ISMS
         if (this.valoriFiltri['impattoIsmsDisplay']) {
           const impattoDisplay = a.impattoIsms ? 'SI' : 'NO';
           if (impattoDisplay !== this.valoriFiltri['impattoIsmsDisplay']) {
@@ -424,7 +402,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Stato
         if (this.valoriFiltri['statoDisplay']) {
           const statoDisplay = this.getStatoDisplayLabel(a.stato);
           if (statoDisplay !== this.valoriFiltri['statoDisplay']) {
@@ -432,7 +409,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Data Termine Prevista
         if (this.valoriFiltri['dataTerminePrevista']) {
           if (
             !this.compareDates(
@@ -444,7 +420,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Data Inizio
         if (this.valoriFiltri['dataInizio']) {
           if (
             !this.compareDates(a.dataInizio, this.valoriFiltri['dataInizio'])
@@ -453,7 +428,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Data Completamento
         if (this.valoriFiltri['dataCompletamento']) {
           if (
             !this.compareDates(
@@ -465,7 +439,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Attestato
         if (this.valoriFiltri['attestatoDisplay']) {
           const attestatoDisplay = a.attestato ? 'SI' : 'NO';
           if (attestatoDisplay !== this.valoriFiltri['attestatoDisplay']) {
@@ -473,7 +446,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Email
         if (this.valoriFiltri['email']) {
           if (
             !a.dipendente.email
@@ -484,7 +456,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Ruolo
         if (this.valoriFiltri['ruolo']) {
           if (
             !a.dipendente.ruolo
@@ -495,7 +466,6 @@ export class PianoFormativoComponent implements OnInit {
           }
         }
 
-        // Filter by Obbligatorio
         if (
           this.valoriFiltri['obbligatorio'] !== undefined &&
           this.valoriFiltri['obbligatorio'] !== ''
@@ -533,7 +503,6 @@ export class PianoFormativoComponent implements OnInit {
           componente: FormModificaAssegnazioneComponent,
           dati: e.item,
           onConferma: (formValue: any) => {
-            // ✅ CORRETTO: onConferma (come corsi)
             console.log('onConferma ricevuto:', formValue);
             this.updateAssegnazione(e.item.id, formValue);
           },
@@ -551,7 +520,7 @@ export class PianoFormativoComponent implements OnInit {
               e.item.corsoNome +
               '"?',
           },
-          onConferma: () => this.deleteAssegnazione(e.item.id), // ✅ CORRETTO: onConferma (come corsi)
+          onConferma: () => this.deleteAssegnazione(e.item.id),
         });
         break;
       default:
@@ -561,8 +530,6 @@ export class PianoFormativoComponent implements OnInit {
 
   updateAssegnazione(id: number, assegnazioneData: any) {
     console.log('Dati ricevuti dal form:', assegnazioneData);
-
-    // Converti i dati del form nel formato richiesto dal service
     const updateData = {
       stato: assegnazioneData.stato,
       dataAssegnazione: assegnazioneData.dataAssegnazione || null,
@@ -590,7 +557,6 @@ export class PianoFormativoComponent implements OnInit {
     });
   }
 
-  // NUOVO: Metodo per gestire il click del pulsante "Assegna corso"
   onAssegnaCorso() {
     this.modaleService.apri({
       titolo: 'Assegna Corso',
@@ -605,7 +571,6 @@ export class PianoFormativoComponent implements OnInit {
     });
   }
 
-  // Metodo per gestire i click dei pulsanti nella page title
   handleButtonClick(action: string): void {
     switch (action) {
       case 'add':
@@ -618,7 +583,6 @@ export class PianoFormativoComponent implements OnInit {
           dati: {},
           dimensione: 'xxl',
           onConferma: () => {
-            // Refresh the table after import
             this.loadAssegnazioni();
           },
         });
@@ -631,15 +595,12 @@ export class PianoFormativoComponent implements OnInit {
     }
   }
 
-  // NUOVO: Metodo per effettuare l'assegnazione
   assegnaCorso(risultato: any) {
     console.log('Dati ricevuti dal form:', risultato);
     console.log(
       'URL chiamata:',
       `http://${this.assegnazioniService.server}:${this.assegnazioniService.port}/api/assegnazioni/bulk`,
     );
-
-    // Verifica che il metodo esista
     if (!this.assegnazioniService.createMultipleAssegnazioni) {
       console.error(
         'Il metodo createMultipleAssegnazioni non esiste nel service!',
@@ -665,7 +626,6 @@ export class PianoFormativoComponent implements OnInit {
     });
   }
 
-  // CORRETTI: Metodi per la paginazione come in Corsi
   aggiornaPaginazione(paginationData: any) {
     this.paginationInfo = { ...paginationData };
   }
@@ -676,7 +636,6 @@ export class PianoFormativoComponent implements OnInit {
     }
   }
 
-  // Filter panel methods
   openFilterPanel() {
     this.isFilterPanelOpen = true;
   }
@@ -695,34 +654,26 @@ export class PianoFormativoComponent implements OnInit {
     this.applicaFiltri();
   }
 
-  // Get count of active filters
   getActiveFiltersCount(): number {
     return Object.values(this.valoriFiltri).filter(
       value => value !== null && value !== undefined && value !== '',
     ).length;
   }
 
-  // Check if there are any active filters
   hasActiveFilters(): boolean {
     return this.getActiveFiltersCount() > 0;
   }
 
-  // Utility method to compare dates
   private compareDates(date1: string | Date, date2: string | Date): boolean {
     if (!date1 || !date2) return false;
-
     const d1 = new Date(date1);
     const d2 = new Date(date2);
-
-    // Reset time to compare only dates
     d1.setHours(0, 0, 0, 0);
     d2.setHours(0, 0, 0, 0);
-
     return d1.getTime() === d2.getTime();
   }
 
   filtraTabella(event: { [key: string]: string }) {
-    // Esempio per piano formativo:
     const dipendente = event['dipendente'] || '';
     const corso = event['corso'] || '';
     this.formazioneDipendentiFiltrato = this.assegnazioni.filter(row => {
@@ -730,15 +681,6 @@ export class PianoFormativoComponent implements OnInit {
       const corsoNome = row.corso.nome ? row.corso.nome.toLowerCase() : '';
       return nominativo.includes(dipendente.toLowerCase()) &&
         corsoNome.includes(corso.toLowerCase());
-    });
-  }
-
-  aggiornaFiltrati() {
-    this.formazioneDipendentiFiltrato = this.assegnazioni.filter(row => {
-      const nominativo = `${row.dipendente.nome} ${row.dipendente.cognome}`.trim().toLowerCase();
-      const corsoNome = row.corso.nome ? row.corso.nome.toLowerCase() : '';
-      return nominativo.includes(this.searchTerms.dipendente.toLowerCase()) &&
-        corsoNome.includes(this.searchTerms.corso.toLowerCase());
     });
   }
 }

@@ -9,20 +9,13 @@ import {
 import { PageTitleComponent, ButtonConfig } from '../../../../core/page-title/page-title.component'; // AGGIUNTO
 import {
   IDipendenti,
-  DipendenteCreateRequest,
 } from '../../../../shared/models/Dipendenti';
 import { DipendentiService } from '../../../../core/services/data/dipendenti.service';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
   ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
 } from '@angular/forms';
-import { ModalComponent } from '../../../../core/modal/modal.component';
-import { NotificationModalComponent } from '../../../../core/modal/notification-modal.component';
-import { ConfirmationModalComponent } from '../../../../core/modal/confirmation-modal.component';
 import { TabellaGenericaComponent } from '../../../../shared/components/tabella-generica/tabella-generica.component';
 import { PaginationFooterComponent } from '../../../../shared/components/pagination-footer/pagination-footer.component';
 import { IColumnDef } from '../../../../shared/models/ui/column-def';
@@ -39,7 +32,6 @@ import { FormDipendentiComponent } from '../../components/form-dipendenti/form-d
 import { DettaglioDipendentiComponent } from '../../components/dettaglio-dipendenti/dettaglio-dipendenti.component';
 import { ImportDipendentiComponent } from '../../components/import-dipendenti/import-dipendenti.component';
 import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
-import { AdvancedFiltersComponent } from '../../../../shared/components/advanced-filters/advanced-filters.component';
 import { FilterPanelComponent } from '../../../../shared/components/filter-panel/filter-panel.component';
 
 @Component({
@@ -52,7 +44,7 @@ import { FilterPanelComponent } from '../../../../shared/components/filter-panel
     TabellaGenericaComponent,
     FilterPanelComponent,
     PaginationFooterComponent,
-    PageTitleComponent, // AGGIUNTO: Import del PageTitleComponent
+    PageTitleComponent,
   ],
   templateUrl: './dipendenti.component.html',
   styleUrls: ['./dipendenti.component.css'],
@@ -60,8 +52,7 @@ import { FilterPanelComponent } from '../../../../shared/components/filter-panel
 export class DipendentiComponent implements OnInit, AfterViewInit {
   @ViewChild('pageContentInner') pageContentInner!: ElementRef<HTMLDivElement>;
 
-  
-  // CORRETTO: ViewChild per referenziare la tabella come in Corsi
+
   @ViewChild(TabellaGenericaComponent) 
   set tabella(component: TabellaGenericaComponent) {
     this.tabellaComponent = component;
@@ -160,7 +151,6 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
   dipendenti: IDipendenti[] = [];
   dipendentiFiltrati: IDipendenti[] = [];
 
-  // Buttons configuration for page title
   buttons: ButtonConfig[] = [
     {
       text: 'Filtri',
@@ -251,14 +241,13 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     },
   ];
 
-  // CORRETTO: Dati per il footer di paginazione come in Corsi
   paginationInfo = {
     currentPage: 1,
     totalPages: 1,
     pages: [] as number[],
     displayedItems: 0,
     totalItems: 0,
-    pageSize: 20, // Will be updated by TabellaGenericaComponent
+    pageSize: 20,
     entityName: 'dipendenti'
   };
 
@@ -270,15 +259,12 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    // CORRETTO: Rimosso updatePageSize come in Corsi
     this.cd.detectChanges();
   }
 
   ngOnInit(): void {
     this.loadDipendenti();
   }
-
-  // RIMOSSO: updatePageSize() method come in Corsi
 
   private loadDipendenti() {
     this.dipendentiService.getListaDipendenti().subscribe({
@@ -290,7 +276,6 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
         }));
         this.applicaFiltri();
         this.cd.detectChanges();
-        // AGGIUNTO: Aggiorna totalItems come in Corsi
         this.paginationInfo.totalItems = this.dipendenti.length;
       },
       error: error => {
@@ -301,7 +286,6 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
 
   onFiltriChange(valori: { [key: string]: any }) {
     this.valoriFiltri = valori;
-    // Note: No immediate filter application - filters are applied only when the user clicks "Apply" in the panel
   }
 
   onFiltersApplied(valori: { [key: string]: any }) {
@@ -313,7 +297,6 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     this.dipendentiFiltrati = this.dipendenti.filter(d => {
       const nominativo = `${d.nome} ${d.cognome}`.trim().toLowerCase();
 
-      // Filter by nominativo (name + surname)
       if (
         this.valoriFiltri['nominativo'] &&
         !nominativo.includes(this.valoriFiltri['nominativo'].toLowerCase())
@@ -471,7 +454,6 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
           componente: ImportDipendentiComponent,
           dati: {},
           onConferma: () => {
-            // Refresh the table after import
             this.loadDipendenti();
           }
         });
@@ -543,7 +525,6 @@ export class DipendentiComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // CORRETTI: Metodi per la paginazione come in Corsi
   aggiornaPaginazione(paginationData: any) {
     this.paginationInfo = { ...paginationData };
   }
