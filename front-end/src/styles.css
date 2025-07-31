@@ -158,7 +158,7 @@ html, body {
   background: var(--color-VIOLA-SCURO) !important;
   color: var(--color-BIANCO-PASTELLO) !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  /* box-shadow: 0 4px 8px rgba(125, 125, 125, 0.3); */
 }
 
 .btn-secondary:active {
@@ -178,7 +178,7 @@ html, body {
   background: var(--color-BLU) !important;
   color: var(--color-BIANCO) !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  /* box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3); */
 }
 
 .btn-import {
@@ -194,7 +194,7 @@ html, body {
   background: #706f6f !important;
   color: var(--color-BIANCO) !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  /* box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3); */
 }
 
 .btn-cancel {
@@ -210,7 +210,7 @@ html, body {
   background: #706f6f !important;
   color: var(--color-BIANCO) !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  /* box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3); */
 }
 
 .btn-icon {
@@ -552,15 +552,11 @@ html, body {
   margin-left: var(--sidebar-collapsed-width);
   width: calc(100vw - var(--sidebar-collapsed-width));
   min-width: 0;
-  max-width: calc(100vw - var(--sidebar-collapsed-width));
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: none;
   flex: 1;
-  /* margin-left: 50px; */
-  /* background: var(--color-muted); */
-  /* flex-direction: column; */
 }
 
 /* Quando la sidebar è aperta, il main-content NON cambia */
@@ -606,7 +602,6 @@ html, body {
     z-index: 30;
   }
 
-  /* Main content NON si sposta mai */
   .main-content,
   .sidebar:hover ~ .main-content,
   .sidebar.sidebar-open ~ .main-content {

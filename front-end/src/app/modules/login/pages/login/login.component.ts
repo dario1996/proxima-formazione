@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
   nologged$: Observable<string | null> = of('');
   expired$: Observable<string | null> = of('');
 
-  errMsg = 'Spiacente, la userid o la password sono errati!';
+  errMsg = 'Spiacente, username o password errati! Riprova';
   errMsg2 =
     'Spiacente, devi autenticarti per poter accedere alla pagina selezionata!';
   errMsg3 = "Sessione Scaduta! Eserguire nuovamente l'accesso!";
