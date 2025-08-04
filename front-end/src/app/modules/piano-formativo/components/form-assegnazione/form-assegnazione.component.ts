@@ -45,7 +45,7 @@ export class FormAssegnazioneComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       dipendentiIds: [[], Validators.required],
-      corsiIds: [[], Validators.required], // AGGIUNGI: Array di corsi
+      corsiIds: [[], Validators.required],
       searchDipendente: [''],
       searchCorso: [''],
       obbligatorio: [false],
@@ -98,29 +98,18 @@ export class FormAssegnazioneComponent implements OnInit {
   }
 
   filtraDipendenti(searchTerm: string) {
-    // Mostra dropdown solo se c'è un termine di ricerca
-    if (!searchTerm || searchTerm.length === 0) {
-      this.dipendentiFiltrati = [];
-      this.showDipendentiDropdown = false;
-      return;
+    const term = searchTerm?.toLowerCase() || '';
+    if (term.length === 0) {
+      this.dipendentiFiltrati = [...this.dipendenti];
+    } else {
+      this.dipendentiFiltrati = this.dipendenti.filter(d => 
+        d.nome.toLowerCase().includes(term) ||
+        d.cognome.toLowerCase().includes(term) ||
+        d.email.toLowerCase().includes(term) ||
+        `${d.nome} ${d.cognome}`.toLowerCase().includes(term)
+      );
     }
-    // Mostra dropdown solo se c'è almeno 1 carattere
-    if (searchTerm.length < 1) {
-      this.dipendentiFiltrati = [];
-      this.showDipendentiDropdown = false;
-      return;
-    }
-
-    const term = searchTerm.toLowerCase();
-    this.dipendentiFiltrati = this.dipendenti.filter(d => 
-      d.nome.toLowerCase().includes(term) ||
-      d.cognome.toLowerCase().includes(term) ||
-      d.email.toLowerCase().includes(term) ||
-      `${d.nome} ${d.cognome}`.toLowerCase().includes(term)
-    );
-
-    // Mostra dropdown solo se ci sono risultati
-    this.showDipendentiDropdown = this.dipendentiFiltrati.length > 0;
+    // La visibilità la gestisci solo al focus e blur
   }
 
   filtraCorsi(searchTerm: string) {
@@ -223,6 +212,8 @@ export class FormAssegnazioneComponent implements OnInit {
   rimuoviDipendente(index: number) {
     this.dipendentiSelezionati.splice(index, 1);
     this.aggiornaDipendentiIds();
+    this.form.get('searchDipendente')?.setValue('');
+    this.filtraDipendenti('');
   }
 
   rimuoviCorso(index: number) {
@@ -288,29 +279,21 @@ export class FormAssegnazioneComponent implements OnInit {
 
   // MIGLIORA: Gestione del focus per i dipendenti
   onDipendenteFocus() {
-    if (this.isPossibileAggiungereDipendenti) {
+      const searchTerm = this.form.get('searchDipendente')?.value || '';
+      this.filtraDipendenti(searchTerm);
       this.showDipendentiDropdown = true;
-    }
   }
 
   // MIGLIORA: Gestione del focus per i corsi  
   onCorsoFocus() {
-    if (this.isPossibileAggiungereCorsi) {
       this.showCorsiDropdown = true;
-    }
   }
 
   // MIGLIORA: Gestione della ricerca dipendenti
   onSearchDipendente(event: any) {
     const searchTerm = event.target.value;
-    
-    if (searchTerm.length >= 1) {
-      this.filtraDipendenti(searchTerm);
-      this.showDipendentiDropdown = true;
-    } else {
-      this.dipendentiFiltrati = [];
-      this.showDipendentiDropdown = false;
-    }
+    this.filtraDipendenti(searchTerm);
+    this.showDipendentiDropdown = this.dipendentiFiltrati.length > 0;
   }
 
   // Gestione ricerca corsi

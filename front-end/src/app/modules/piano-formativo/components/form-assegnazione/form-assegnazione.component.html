@@ -8,34 +8,31 @@
         <div class="search-container">
           <!-- Input Dipendenti -->
           <input 
-            type="text" 
             id="searchDipendente"
+            type="text"
             class="form-control searchable-dropdown-input"
             formControlName="searchDipendente"
             placeholder="Digita nome, cognome o email"
             (input)="onSearchDipendente($event)"
             (focus)="onDipendenteFocus()"
-            (blur)="onDipendenteBlur()">
-          
-          <!-- Dropdown dipendenti -->
-          <div class="search-dropdown position-absolute w-100" 
-               *ngIf="shouldShowDipendentiDropdown">
-            
-            <!-- SPOSTA QUI: Messaggio di limitazione come primo elemento -->
+            (blur)="onDipendenteBlur()"
+            [disabled]="!isPossibileAggiungereDipendenti"
+            [ngClass]="{ 'is-invalid': form.get('dipendentiIds')?.invalid && form.get('dipendentiIds')?.touched }" />
+          <div *ngIf="shouldShowDipendentiDropdown"
+                class="search-dropdown position-absolute w-100">           
             <div *ngIf="showDipendentiBloccoMessage" 
                  class="search-dropdown-header">
-              <div class="search-dropdown-item p-3 text-warning border-bottom">
+              <div class="search-dropdown-item p-2 text-warning border-bottom">
                 <i class="fas fa-lock me-2"></i>
                 <strong>Hai selezionato {{ corsiSelezionati.length }} corsi. Puoi selezionare solo 1 dipendente.</strong>
                 <br><small class="text-muted">Clicca su un dipendente per sostituire la selezione.</small>
               </div>
             </div>
             
-            <!-- Lista dipendenti - ora sotto il messaggio -->
-            <div class="search-dropdown-item p-2 cursor-pointer" 
-                 *ngFor="let dipendente of dipendentiFiltrati"
-                 [ngClass]="{'opacity-75': showDipendentiBloccoMessage}"
-                 (click)="aggiungiDipendente(dipendente)">
+            <div  [ngClass]="{'opacity-75': showDipendentiBloccoMessage}"
+                  *ngFor="let dipendente of dipendentiFiltrati.slice(0, 10)"
+                  class="search-dropdown-item p-2 cursor-pointer"
+                  (mousedown)="aggiungiDipendente(dipendente)">
               <div class="fw-bold">{{ dipendente.nome }} {{ dipendente.cognome }}</div>
               <small class="text-muted">{{ dipendente.email }} • {{ dipendente.ruolo }}</small>
               <small *ngIf="showDipendentiBloccoMessage" class="text-primary d-block">
@@ -124,12 +121,9 @@
             (focus)="onCorsoFocus()"
             (blur)="onCorsoBlur()"
             [ngClass]="{ 'is-invalid': form.get('corsiIds')?.invalid && form.get('corsiIds')?.touched }" />
-          
-          <!-- Dropdown corsi -->
           <div *ngIf="shouldShowCorsiDropdown" 
                class="search-dropdown position-absolute w-100">
             
-            <!-- SPOSTA QUI: Messaggio di limitazione come primo elemento -->
             <div *ngIf="showCorsiBloccoMessage" 
                  class="search-dropdown-header">
               <div class="search-dropdown-item p-3 text-warning border-bottom">
@@ -139,10 +133,9 @@
               </div>
             </div>
             
-            <!-- Lista corsi - ora sotto il messaggio -->
-            <div *ngFor="let corso of corsiFiltrati.slice(0, 10)" 
-                 class="search-dropdown-item p-3 cursor-pointer"
-                 [ngClass]="{'opacity-75': showCorsiBloccoMessage}"
+            <div [ngClass]="{'opacity-75': showCorsiBloccoMessage}"
+                 *ngFor="let corso of corsiFiltrati.slice(0, 10)" 
+                 class="search-dropdown-item p-2 cursor-pointer"
                  (mousedown)="aggiungiCorso(corso)">
               <div class="d-flex justify-content-between align-items-start">
                 <div class="flex-grow-1">
@@ -155,24 +148,13 @@
                   <div class="text-secondary small" *ngIf="corso.piattaforma?.nome">
                     <i class="fas fa-laptop me-1"></i>{{ corso.piattaforma.nome }}
                   </div>
-                  <small *ngIf="showCorsiBloccoMessage" class="text-primary d-block mt-1">
+                  <small *ngIf="showCorsiBloccoMessage" class="text-primary d-block">
                     <i class="fas fa-refresh me-1"></i>Sostituirà la selezione corrente
                   </small>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- MODIFICA: Messaggio di limitazione - solo quando ci sono conflitti reali -->
-        <!-- <div *ngIf="messaggioLimitazione" class="alert alert-info py-2 px-3 mb-2">
-          <i class="fas fa-info-circle me-2"></i>
-          {{ messaggioLimitazione }}
-        </div> -->
-        
-        <div *ngIf="form.get('corsiIds')?.invalid && form.get('corsiIds')?.touched" 
-             class="invalid-feedback">
-          Seleziona almeno un corso.
         </div>
       </div>
       
