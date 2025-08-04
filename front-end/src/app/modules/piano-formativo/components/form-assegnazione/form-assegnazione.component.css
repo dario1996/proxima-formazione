@@ -188,7 +188,7 @@
   background-color: white;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   z-index: 1000;
-  max-height: 300px;
+  max-height: 200px;
   overflow-y: auto;
   margin-top: 2px;
 }
@@ -196,6 +196,7 @@
 .search-dropdown-item {
   border-bottom: 1px solid #f8f9fa;
   transition: background-color 0.15s ease-in-out;
+  font-size: 12px;
 }
 
 .search-dropdown-item:last-child {

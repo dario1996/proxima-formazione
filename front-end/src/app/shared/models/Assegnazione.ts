@@ -57,3 +57,11 @@ export interface AssegnazioneUpdateRequest {
   dataTerminePrevista?: string;
   modalita?: string;
 }
+
+export interface IMultipleAssegnazionResponse {
+  assegnazioniCreate: IAssegnazione[];
+  errori: string[];
+  totaleRichieste: number;
+  totaleCreate: number;
+  totaleErrori: number;
+}

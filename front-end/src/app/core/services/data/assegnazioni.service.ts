@@ -7,6 +7,7 @@ import {
   AssegnazioneCreateRequest,
   AssegnazioneUpdateRequest,
   AssegnazioneStato,
+  IMultipleAssegnazionResponse,
 } from '../../../shared/models/Assegnazione';
 
 @Injectable({
@@ -164,15 +165,20 @@ export class AssegnazioniService {
       importData,
     );
 
-  // AGGIUNGI questo metodo alla fine della classe AssegnazioniService
   createMultipleAssegnazioni = (data: {
     dipendentiIds: number[];
-    corsiIds: number[];  // AGGIUNGI
+    corsiIds: number[];
     obbligatorio: boolean;
     dataTerminePrevista?: string;
   }) =>
-    this.httpClient.post<IAssegnazione[]>(
+    this.httpClient.post<IMultipleAssegnazionResponse>(
       `http://${this.server}:${this.port}/api/assegnazioni/assegnazioneMultipla`,
       data
     );
+
+  existsByDipendenteIdAndCorsoId(dipendenteId: number, corsoId: number) {
+    return this.httpClient.get<boolean>(
+      `/api/assegnazioni/exists?dipendenteId=${dipendenteId}&corsoId=${corsoId}`
+    );
+  }
 }

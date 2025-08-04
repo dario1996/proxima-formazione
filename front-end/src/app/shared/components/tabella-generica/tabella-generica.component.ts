@@ -18,6 +18,7 @@ export class TabellaGenericaComponent {
   @Input() azioni: IAzioneDef[] = [];
   @Input() pageSize = 20; // Default: 20 items per page for consistent UX across all tables
   @Input() entityName = 'elementi';
+  @Input() rowClickable = false;
 
   // Output events
   @Output() action = new EventEmitter<{ tipo: string; item: any }>();

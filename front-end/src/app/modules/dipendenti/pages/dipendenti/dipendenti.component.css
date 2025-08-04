@@ -14,8 +14,17 @@
 }
 
 /* ================== MODAL FORM STYLING =================== */
+.modal-body {
+  padding: 12px !important;
+  overflow-y: auto !important;
+  flex: 1 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 .modal-body-content {
-  padding: 24px;
+  padding: 12px;
 }
 
 .form-field {

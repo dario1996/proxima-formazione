@@ -35,6 +35,7 @@
           [entityName]="'dipendenti'"
           (action)="gestioneAzione($event)"
           (rowClick)="gestioneAzione({tipo: 'view', item: $event})"
+          [rowClickable]="true"
           (paginationInfo)="aggiornaPaginazione($event)">
         </app-tabella-generica>
       </div>

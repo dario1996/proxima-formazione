@@ -54,7 +54,7 @@ public class AssegnazioneController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Assegnazione creata con successo", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Assegnazione.class))),
             @ApiResponse(responseCode = "404", description = "Dipendente o corso non trovato"),
-            @ApiResponse(responseCode = "409", description = "Assegnazione già esistente per questo dipendente e corso")
+            @ApiResponse(responseCode = "409", description = "Assegnazione già esistente tra il dipendente e il corso")
     })
     @PostMapping("/dipendenti/{dipendenteId}/corsi/{corsoId}")
     public ResponseEntity<?> assignCorsoToDipendente(
@@ -79,7 +79,7 @@ public class AssegnazioneController {
         // Verifica se l'assegnazione esiste già
         if (assegnazioneRepository.existsByDipendenteIdAndCorsoId(dipendenteId, corsoId)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Assegnazione già esistente per dipendente " + dipendenteId + " e corso " + corsoId);
+                    .body("Assegnazione già esistente tra il dipendente " + dipendenteId + " e corso " + corsoId);
         }
 
         // Crea nuova assegnazione
@@ -483,7 +483,9 @@ public class AssegnazioneController {
                         
                         // Verifica duplicati
                         if (assegnazioneRepository.existsByDipendenteIdAndCorsoId(dipendenteId, corsoId)) {
-                            errori.add("Assegnazione già esistente per dipendente " + dipendenteId + " e corso " + corsoId);
+                            String nomeDipendente = dipendente.isPresent() ? dipendente.get().getNome() + " " + dipendente.get().getCognome() : "ID " + dipendenteId;
+                            String nomeCorso = corso.isPresent() ? corso.get().getNome() : "ID " + corsoId;
+                            errori.add("Assegnazione già esistente tra il dipendente " + nomeDipendente + " e corso " + nomeCorso);
                             continue;
                         }
                         
@@ -528,5 +530,13 @@ public class AssegnazioneController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Errore interno del server: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/assegnazioni/exists")
+    public ResponseEntity<Boolean> existsByDipendenteIdAndCorsoId(
+        @RequestParam Long dipendenteId,
+        @RequestParam Long corsoId) {
+        boolean exists = assegnazioneRepository.existsByDipendenteIdAndCorsoId(dipendenteId, corsoId);
+        return ResponseEntity.ok(exists);
     }
 }
