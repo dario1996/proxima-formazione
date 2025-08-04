@@ -6,7 +6,7 @@ import com.example.demo.entity.Dipendente;
 import com.example.demo.repository.AssegnazioneRepository;
 import com.example.demo.repository.CorsoRepository;
 import com.example.demo.repository.DipendenteRepository;
-import com.example.demo.service.AssegnazioneBulkImportService;
+import com.example.demo.services.AssegnazioneBulkImportService;
 import com.example.demo.dto.AssegnazioneBulkImportRequest;
 import com.example.demo.dto.AssegnazioneBulkImportResponse;
 import com.example.demo.dto.CreateMultipleAssegnazioniRequest;
