@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.services;
 
 import com.example.demo.dto.AssegnazioneBulkImportItem;
 import com.example.demo.dto.AssegnazioneBulkImportRequest;

@@ -5,7 +5,7 @@ import com.example.demo.dto.DipendenteBulkImportRequest;
 import com.example.demo.dto.DipendenteBulkImportResponse;
 import com.example.demo.entity.Dipendente;
 import com.example.demo.repository.DipendenteRepository;
-import com.example.demo.service.DipendenteBulkImportService;
+import com.example.demo.services.DipendenteBulkImportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

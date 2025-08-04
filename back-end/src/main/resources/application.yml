@@ -49,6 +49,6 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.web.servlet.mvc.method.annotation: DEBUG
     com.example.demo: DEBUG
-    com.example.demo.service.AssegnazioneBulkImportService: DEBUG
+    com.example.demo.services.AssegnazioneBulkImportService: DEBUG
     com.example.demo.controller: DEBUG
     root: INFO
