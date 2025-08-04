@@ -244,7 +244,7 @@ export class FormAssegnazioneComponent implements OnInit {
     if (this.form.valid) {
       const formData = {
         dipendentiIds: this.form.value.dipendentiIds,
-        corsiIds: this.form.value.corsiIds, // AGGIUNGI
+        corsiIds: this.form.value.corsiIds,
         obbligatorio: this.form.value.obbligatorio,
         dataTerminePrevista: this.form.value.dataTerminePrevista
       };
@@ -306,7 +306,7 @@ export class FormAssegnazioneComponent implements OnInit {
     
     if (searchTerm.length >= 1) {
       this.filtraDipendenti(searchTerm);
-      this.showDipendentiDropdown = true; // Sempre true quando si cerca
+      this.showDipendentiDropdown = true;
     } else {
       this.dipendentiFiltrati = [];
       this.showDipendentiDropdown = false;
@@ -319,25 +319,21 @@ export class FormAssegnazioneComponent implements OnInit {
     
     if (searchTerm.length >= 1) {
       this.filtraCorsi(searchTerm);
-      this.showCorsiDropdown = true; // Sempre true quando si cerca
+      this.showCorsiDropdown = true;
     } else {
       this.corsiFiltrati = [];
       this.showCorsiDropdown = false;
     }
   }
 
-  // MODIFICA: Permettere sempre la ricerca, ma limitare la selezione
   get isPossibileAggiungereCorsi(): boolean {
-    // Sempre possibile cercare, ma limitare la selezione se necessario
     return true;
   }
 
   get isPossibileAggiungereDipendenti(): boolean {
-    // Sempre possibile cercare, ma limitare la selezione se necessario
     return true;
   }
 
-  // AGGIUNGI: Nuovi getter per controllare se è possibile SELEZIONARE
   get isPossibileSelezionareCorsi(): boolean {
     return this.dipendentiSelezionati.length <= 1;
   }
@@ -346,7 +342,6 @@ export class FormAssegnazioneComponent implements OnInit {
     return this.corsiSelezionati.length <= 1;
   }
 
-  // MODIFICA: Mostra dropdown basato solo sui risultati filtrati
   get shouldShowCorsiDropdown(): boolean {
     return this.showCorsiDropdown && 
            (this.corsiFiltrati.length > 0 || this.showCorsiBloccoMessage);
@@ -357,7 +352,6 @@ export class FormAssegnazioneComponent implements OnInit {
            (this.dipendentiFiltrati.length > 0 || this.showDipendentiBloccoMessage);
   }
 
-  // AGGIORNA: Messaggi di blocco più specifici
   get showDipendentiBloccoMessage(): boolean {
     return this.showDipendentiDropdown && 
            this.dipendentiFiltrati.length > 0 && 
@@ -371,7 +365,6 @@ export class FormAssegnazioneComponent implements OnInit {
   }
 
   get messaggioLimitazione(): string {
-    // Mostra il messaggio solo se ci sono effettivamente limitazioni attive
     if (this.dipendentiSelezionati.length > 1 && this.corsiSelezionati.length > 0) {
       return `Hai selezionato ${this.dipendentiSelezionati.length} dipendenti. Puoi selezionare solo 1 corso.`;
     }

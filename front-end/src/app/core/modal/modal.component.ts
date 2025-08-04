@@ -91,4 +91,5 @@ export class ModalComponent implements OnDestroy {
   ngOnDestroy() {
     this.chiudi();
   }
+  
 }

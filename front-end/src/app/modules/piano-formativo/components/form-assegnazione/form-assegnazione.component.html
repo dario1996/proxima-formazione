@@ -13,7 +13,6 @@
             class="form-control searchable-dropdown-input"
             formControlName="searchDipendente"
             placeholder="Digita nome, cognome o email"
-            [disabled]="!isPossibileAggiungereDipendenti"
             (input)="onSearchDipendente($event)"
             (focus)="onDipendenteFocus()"
             (blur)="onDipendenteBlur()">

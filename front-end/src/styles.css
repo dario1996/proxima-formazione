@@ -935,7 +935,7 @@ app-pagination-footer {
 }
 
 /* Override ngx-toastr defaults with strong specificity */
-.toast-container .radix-toast {
+/* .toast-container .radix-toast {
   position: relative !important;
   box-sizing: border-box !important;
   margin: 0 0 12px 0 !important;
@@ -949,11 +949,10 @@ app-pagination-footer {
   color: var(--color-foreground) !important;
   cursor: pointer !important;
   display: block !important;
-  /* Remove all default ngx-toastr animations */
   animation: none !important;
   transform: none !important;
   transition: none !important;
-}
+} */
 
 /* Remove all default toastr icons and decorations */
 .toast-container .radix-toast:before,
@@ -970,6 +969,24 @@ app-pagination-footer {
 .radix-toast .toast-title {
   padding: 0 !important;
   margin: 0 !important;
+}
+
+/* Cambia il colore di background di tutti i toastr */
+.toast {
+  background-color: #1976d2 !important; /* blu */
+  color: #fff !important;
+}
+
+/* Oppure solo per errori */
+.toast-error {
+  background-color: #d32f2f !important; /* rosso */
+  color: #fff !important;
+}
+
+/* Solo per successi */
+.toast-success {
+  background-color: #388e3c !important; /* verde */
+  color: #fff !important;
 }
 
 /* Mobile responsive */

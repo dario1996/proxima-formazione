@@ -18,6 +18,7 @@ import {
 import {
   IAssegnazione,
   AssegnazioneStato,
+  IMultipleAssegnazionResponse,
 } from '../../../../shared/models/Assegnazione';
 import { IDipendenti } from '../../../../shared/models/Dipendenti';
 
@@ -609,18 +610,23 @@ export class PianoFormativoComponent implements OnInit {
     }
 
     this.assegnazioniService.createMultipleAssegnazioni(risultato).subscribe({
-      next: response => {
+      next: (response: IMultipleAssegnazionResponse) => {
         console.log('Risposta dal server:', response);
-        const count = Array.isArray(response) ? response.length : 1;
-        this.toastr.success(`${count} assegnazione/i create con successo`);
+
+        // Gestione errori: mostra tutti i messaggi ricevuti dal backend
+        if (response && Array.isArray(response.errori) && response.errori.length > 0) {
+          this.toastr.error(response.errori.join('\n'));
+        }
+
+        // Gestione successo: mostra solo se almeno una assegnazione è stata creata
+        if (response && typeof response.totaleCreate === 'number' && response.totaleCreate > 0) {
+          this.toastr.success(`${response.totaleCreate} assegnazione/i create con successo`);
+        }
+
         this.loadAssegnazioni();
         this.modaleService.chiudi();
       },
       error: error => {
-        console.error('Errore completo:', error);
-        console.error('Status:', error.status);
-        console.error('Message:', error.message);
-        console.error('URL:', error.url);
         this.toastr.error("Errore durante l'assegnazione del corso");
       },
     });
