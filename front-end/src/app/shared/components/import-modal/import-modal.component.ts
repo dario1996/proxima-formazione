@@ -34,7 +34,12 @@ export class ImportModalComponent implements OnInit {
   @Input() supportedFormats: string[] = [];
   @Input() expectedHeaders: string[] = [];
   @Input() previewData: ImportData[] = [];
-  @Input() importOptions: ImportOption[] = [];
+  @Input() importOptions: Array<{
+    key: string;
+    label: string;
+    description?: string;
+    value: boolean;
+  }> = [];
   @Input() isProcessing: boolean = false;
   @Input() showPreview: boolean = false;
   @Input() validationErrors: string[] = [];
@@ -48,6 +53,7 @@ export class ImportModalComponent implements OnInit {
 
   selectedFile: File | null = null;
   optionsExpanded: boolean = false;
+  showOptionsDropdown = false;
 
   ngOnInit(): void {}
 
@@ -136,6 +142,38 @@ export class ImportModalComponent implements OnInit {
 
   toggleOptions(): void {
     this.optionsExpanded = !this.optionsExpanded;
+  }
+
+  toggleOptionsDropdown() {
+    this.showOptionsDropdown = !this.showOptionsDropdown;
+    
+    // Chiudi quando si clicka fuori
+    if (this.showOptionsDropdown) {
+      setTimeout(() => {
+        document.addEventListener('click', this.closeOptionsOnOutsideClick.bind(this), { once: true });
+      }, 100);
+    }
+  }
+
+  private closeOptionsOnOutsideClick(event: Event) {
+    const target = event.target as HTMLElement;
+    const dropdown = target.closest('.options-dropdown');
+    if (!dropdown) {
+      this.showOptionsDropdown = false;
+    }
+  }
+
+  onImportOptionChange(optionKey: string, event: any) {
+    const isChecked = event.target.checked;
+    
+    // Trova l'opzione e aggiorna il valore
+    const option = this.importOptions.find(opt => opt.key === optionKey);
+    if (option) {
+      option.value = isChecked;
+    }
+    
+    // Emetti l'evento per notificare il componente padre
+    this.importOptionsChanged.emit({ key: optionKey, value: isChecked });
   }
 
   getFormattedFileTypes(): string {

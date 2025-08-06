@@ -54,88 +54,114 @@
 
   <!-- Preview Section -->
   <div class="preview-section" *ngIf="showPreview && !isProcessing">
-    
     <!-- Preview Header -->
     <div class="preview-header">
-      <div class="preview-title">
-        <h6>Anteprima Dati</h6>
-        <span class="preview-count">{{ previewData.length }} righe</span>
-      </div>
-      <button class="btn btn-outline-secondary btn-sm" (click)="onResetImport()">
-        <i class="fas fa-redo me-2"></i>
-        Carica altro file
-      </button>
-    </div>
-
-    <!-- Summary Statistics -->
-    <div class="stats-grid">
-      <div class="stat-card stat-total">
-        <div class="stat-icon">
-          <i class="fas fa-file-alt"></i>
+      <div class="header-layout">
+        <!-- ZONA SINISTRA: Anteprima Dati -->
+        <div class="header-left">
+          <div class="preview-title">
+            <h6>Anteprima Dati</h6>
+            <span class="preview-count">{{ previewData.length }} righe</span>
+          </div>
         </div>
-        <div class="stat-content">
-          <div class="stat-value">{{ getStats().total }}</div>
-          <div class="stat-label">Totale</div>
-        </div>
-      </div>
-      
-      <div class="stat-card stat-valid">
-        <div class="stat-icon">
-          <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-value">{{ getStats().valid }}</div>
-          <div class="stat-label">Valide</div>
-        </div>
-      </div>
-      
-      <div class="stat-card stat-duplicate">
-        <div class="stat-icon">
-          <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-value">{{ getStats().duplicates }}</div>
-          <div class="stat-label">Duplicati</div>
-        </div>
-      </div>
-      
-      <div class="stat-card stat-error">
-        <div class="stat-icon">
-          <i class="fas fa-times-circle"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-value">{{ getStats().errors }}</div>
-          <div class="stat-label">Errori</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Import Options -->
-    <div class="import-options" *ngIf="importOptions.length > 0">
-      <div class="options-header" (click)="toggleOptions()">
-        <span class="options-title">
-          <i class="fas fa-cog me-2"></i>
-          Opzioni di importazione
-        </span>
-        <button type="button" class="btn btn-link btn-sm p-0">
-          <i class="fas" [class.fa-chevron-down]="!optionsExpanded" [class.fa-chevron-up]="optionsExpanded"></i>
-        </button>
-      </div>
-      
-      <div class="options-content" [class.expanded]="optionsExpanded">
-        <div class="options-grid">
-          <div class="option-item" *ngFor="let option of importOptions">
-            <div class="form-check">
-              <input class="form-check-input" 
-                     type="checkbox" 
-                     [id]="option.key"
-                     [(ngModel)]="option.value"
-                     (change)="onOptionChange()">
-              <label class="form-check-label" [for]="option.key">
-                {{ option.label }}
-              </label>
+        
+        <!-- ZONA CENTRO: Statistiche -->
+        <div class="header-center">
+          <div class="center-content">
+            <!-- Statistiche -->
+            <div class="stats-grid">
+              <div class="stat-card stat-total">
+                <div class="stat-content">
+                  <div class="stat-value">{{ getStats().total }}</div>
+                  <div class="stat-label">Totale</div>
+                </div>
+                <div class="stat-icon">
+                  <i class="fas fa-file-alt"></i>
+                </div>
+              </div>
+              
+              <div class="stat-card stat-valid">
+                <div class="stat-content">
+                  <div class="stat-value">{{ getStats().valid }}</div>
+                  <div class="stat-label">Valide</div>
+                </div>
+                <div class="stat-icon">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+              </div>
+              
+              <div class="stat-card stat-duplicate">
+                <div class="stat-content">
+                  <div class="stat-value">{{ getStats().duplicates }}</div>
+                  <div class="stat-label">Duplicati</div>
+                </div>
+                <div class="stat-icon">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+              </div>
+              
+              <div class="stat-card stat-error">
+                <div class="stat-content">
+                  <div class="stat-value">{{ getStats().errors }}</div>
+                  <div class="stat-label">Errori</div>
+                </div>
+                <div class="stat-icon">
+                  <i class="fas fa-times-circle"></i>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+        
+        <!-- ZONA DESTRA: Pulsanti -->
+        <div class="header-right">
+          <!-- 🔧 SPOSTATO QUI: Pulsante Opzioni -->
+          <div class="options-dropdown" *ngIf="importOptions && importOptions.length > 0">
+            <button class="options-toggle" 
+                    [class.active]="showOptionsDropdown"
+                    (click)="toggleOptionsDropdown()"
+                    type="button"
+                    title="Opzioni di importazione">
+              <i class="fas fa-cog"></i>
+            </button>
+            
+            <!-- Dropdown Menu -->
+            <div class="options-menu" [class.show]="showOptionsDropdown" *ngIf="showOptionsDropdown">
+              <div class="options-header">
+                <span>Opzioni di importazione</span>
+                <button class="close-options" 
+                        (click)="toggleOptionsDropdown()" 
+                        type="button">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              
+              <div class="options-content">
+                <div class="option-group" *ngFor="let option of importOptions">
+                  <label class="option-item">
+                    <input type="checkbox" 
+                           [checked]="option.value" 
+                           (change)="onImportOptionChange(option.key, $event)">
+                    <span class="checkmark"></span>
+                    <div class="option-info">
+                      <span class="option-title">{{ option.label }}</span>
+                      <span class="option-description" *ngIf="option.description">
+                        {{ option.description }}
+                      </span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pulsante Carica altro file -->
+          <button class="btn btn-outline-secondary btn-sm" 
+                  (click)="onResetImport()"
+                  type="button">
+            <i class="fas fa-redo me-2"></i>
+            Carica altro file
+          </button>
         </div>
       </div>
     </div>
