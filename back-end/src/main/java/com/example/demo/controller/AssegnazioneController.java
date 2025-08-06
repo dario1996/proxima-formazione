@@ -10,6 +10,9 @@ import com.example.demo.services.AssegnazioneBulkImportService;
 import com.example.demo.dto.AssegnazioneBulkImportRequest;
 import com.example.demo.dto.AssegnazioneBulkImportResponse;
 import com.example.demo.dto.CreateMultipleAssegnazioniRequest;
+import com.example.demo.dto.LinkedInBulkUpdateRequest;
+import com.example.demo.dto.LinkedInBulkUpdateResponse;
+import com.example.demo.services.LinkedInBulkUpdateService;
 import com.example.demo.dto.MultipleAssegnazionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -47,6 +50,10 @@ public class AssegnazioneController {
 
     @Autowired
     private AssegnazioneBulkImportService assegnazioneBulkImportService;
+
+    @Autowired
+    private LinkedInBulkUpdateService linkedInBulkUpdateService;
+
 
     @Operation(summary = "Assegna un corso a un dipendente", description = "Crea una nuova assegnazione collegando un dipendente specifico a un corso specifico. "
             +
@@ -539,4 +546,49 @@ public class AssegnazioneController {
         boolean exists = assegnazioneRepository.existsByDipendenteIdAndCorsoId(dipendenteId, corsoId);
         return ResponseEntity.ok(exists);
     }
+
+    /* Gestione update progressi LinkedIn */
+    @Operation(summary = "Importazione LinkedIn Learning CSV",
+        description = "Importa dati di completamento corsi da CSV esportato da LinkedIn Learning")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Importazione LinkedIn completata",
+                    content = @Content(mediaType = "application/json", 
+                    schema = @Schema(implementation = LinkedInBulkUpdateResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+            @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    @PostMapping("/assegnazioni/linkedin-update")
+    public ResponseEntity<LinkedInBulkUpdateResponse> linkedinUpdateAssegnazioni(
+            @RequestBody LinkedInBulkUpdateRequest request) {
+        try {
+            log.info("LinkedIn update request received with {} items", request.getAssegnazioni().size());
+
+            if (!request.getAssegnazioni().isEmpty()) {
+                var firstItem = request.getAssegnazioni().get(0);
+                log.debug("First LinkedIn item: nome={}, email={}, contenuto={}, linkedinId={}", 
+                        firstItem.getNomeDipendente(), firstItem.getEmailDipendente(), 
+                        firstItem.getCorso(), firstItem.getLinkedinContentId());
+            }
+            
+            LinkedInBulkUpdateResponse response = linkedInBulkUpdateService.updateFromLinkedIn(request);
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("Error during LinkedIn import", e);
+
+            LinkedInBulkUpdateResponse errorResponse = new LinkedInBulkUpdateResponse();
+            errorResponse.setTotalProcessed(0);
+            errorResponse.setSuccessCount(0);
+            errorResponse.setErrorCount(1);
+            errorResponse.setUpdatedCount(0);
+
+            List<LinkedInBulkUpdateResponse.LinkedInUpdateError> errors = new ArrayList<>();
+            errors.add(new LinkedInBulkUpdateResponse.LinkedInUpdateError(
+                    0, "Errore LinkedIn import: " + e.getMessage()));
+            errorResponse.setErrors(errors);
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
 }

@@ -31,7 +31,7 @@ export interface ImportStats {
 })
 export class ImportModalComponent implements OnInit {
   @Input() title: string = 'Importazione Dati';
-  @Input() supportedFormats: string[] = ['.xlsx', '.xls'];
+  @Input() supportedFormats: string[] = [];
   @Input() expectedHeaders: string[] = [];
   @Input() previewData: ImportData[] = [];
   @Input() importOptions: ImportOption[] = [];

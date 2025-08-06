@@ -181,4 +181,10 @@ export class AssegnazioniService {
       `/api/assegnazioni/exists?dipendenteId=${dipendenteId}&corsoId=${corsoId}`
     );
   }
+
+  linkedinUpdate = (importData: any) =>
+  this.httpClient.post<any>(
+    `http://${this.server}:${this.port}/api/assegnazioni/linkedin-update`,
+    importData
+  );
 }

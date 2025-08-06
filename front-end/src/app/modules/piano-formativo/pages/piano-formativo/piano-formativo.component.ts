@@ -40,6 +40,7 @@ import { IFiltroDef } from '../../../../shared/models/ui/filtro-def';
 import { FormAssegnazioneComponent } from '../../components/form-assegnazione/form-assegnazione.component';
 import { ImportAssegnazioniComponent } from '../../components/import-assegnazioni/import-assegnazioni.component';
 import { FormModificaAssegnazioneComponent } from '../../components/form-modifica-assegnazione/form-modifica-assegnazione.component';
+import { LinkedinUpdateComponent } from '../../components/linkedin-update/linkedin-update.component';
 
 @Component({
   selector: 'app-piano-formativo',
@@ -189,6 +190,12 @@ export class PianoFormativoComponent implements OnInit {
       icon: 'fas fa-plus',
       class: 'btn-primary',
       action: 'add',
+    },
+    {
+      text: 'LinkedIn Update',
+      icon: 'fas fa-brands fa-linkedin',
+      class: 'btn-linkedin',
+      action: 'linkedin-upd',
     },
     {
       text: 'Import massivo',
@@ -576,6 +583,17 @@ export class PianoFormativoComponent implements OnInit {
     switch (action) {
       case 'add':
         this.onAssegnaCorso();
+        break;
+      case 'linkedin-upd':
+        this.modaleService.apri({
+          titolo: 'Aggiorna progressi piattaforma LinkedIn',
+          componente: LinkedinUpdateComponent,
+          dati: {},
+          dimensione: 'xxl',
+          onConferma: () => {
+            this.loadAssegnazioni();
+          },
+        });
         break;
       case 'bulk-import':
         this.modaleService.apri({
